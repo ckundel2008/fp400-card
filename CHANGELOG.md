@@ -1,3 +1,10 @@
+# 1.1.3 – 22.10.2026
+
+- Startpaket mit aktuellem Prüfstand: Sitztest mit einer echten Person bestanden, gezielter Gangtest weiterhin offen.
+- Echte Radar- und Sofa-Aufnahmen samt Prüfsummen im ZIP enthalten; relative Bildverweise funktionieren nach dem Entpacken.
+- Versionsangabe und Arbeitsverzeichnis für die Prüfkommandos korrigiert.
+- Paketbau nimmt ausschließlich ausdrücklich vorgesehene Dateien auf. Controller-App bleibt 0.1.2; keine Änderung am Laufzeitverhalten.
+
 # 1.1.2 – 22.10.2026
 
 - Erforderliche Hassfest-Prüfung für die offizielle HACS-Einreichung ergänzt.

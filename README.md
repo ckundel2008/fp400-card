@@ -110,7 +110,7 @@ Den Platzhalter durch die Zonen-Entität des eigenen Radar-Geräts ersetzen. Die
 
 ## ZIP für die manuelle Installation
 
-[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.2/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads der Vorabversion](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.2)
+[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.3/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads der Vorabversion](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.3)
 
 Dieser alternative Ablauf nutzt File editor und Terminal & SSH, prüft die ZIP-Prüfsumme und legt eine lokale App an. Das ist dieselbe Controller-Lösung, aber ein anderer Installationsweg. Für eine neue Installation nur einen der beiden App-Wege wählen.
 

@@ -14,6 +14,17 @@ test('distributed archives and checksums agree, with no cached/user-specific dat
     assert.equal(createHash('sha256').update(await fs.readFile(path.join(dist, name))).digest('hex'), expected, name);
   }
   const zip = path.join(dist, 'fp400-app.zip');
+  const outer = path.join(dist, 'FP400-Startpaket.zip');
+  const outerNames = execFileSync('unzip', ['-Z1', outer], { encoding: 'utf8' }).trim().split('\n');
+  assert.deepEqual(outerNames.sort(), [...Object.keys(sums), 'SHA256SUMS.json'].sort());
+  const report = execFileSync('unzip', ['-p', outer, 'PRUEFSTAND.md'], { encoding: 'utf8' });
+  assert.match(report, /Sitztest mit einer echten Person – bestanden/);
+  for (const [, image] of report.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g)) {
+    assert.ok(outerNames.includes(image), image);
+    const bytes = execFileSync('unzip', ['-p', outer, image]);
+    assert.equal(createHash('sha256').update(bytes).digest('hex'), sums[image], image);
+    assert.deepEqual(bytes, await fs.readFile(path.join(root, image)), image);
+  }
   const names = execFileSync('unzip', ['-Z1', zip], { encoding: 'utf8' }).trim().split('\n');
   assert.equal(new Set(names).size, names.length);
   assert.ok(names.includes('fp400_setup/integration/aqara_fp400/config_flow.py'));

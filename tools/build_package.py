@@ -8,6 +8,12 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
+PACKAGE_FILES = (
+    "fp400-app.zip", "fp400-installieren.sh", "START-HIER.html",
+    "ANLEITUNG.md", "LICENSE", "THIRD-PARTY.md", "PRUEFSTAND.md",
+    "docs/images/04-radar-sitztest-echt.jpg",
+    "docs/images/05-sofa-belegung-echt.jpg",
+)
 
 
 def add_tree(archive, source, prefix):
@@ -29,6 +35,10 @@ def build():
     (DIST / "fp400-installieren.sh").write_text(installer)
     for name in ("ANLEITUNG.md", "LICENSE", "THIRD-PARTY.md", "PRUEFSTAND.md"):
         shutil.copy2(ROOT / name, DIST / name)
+    for name in PACKAGE_FILES:
+        if name.startswith("docs/images/"):
+            (DIST / name).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(ROOT / name, DIST / name)
     guide = (ROOT / "ANLEITUNG.md").read_text()
     # Self-contained, printable guide; render a small controlled Markdown subset.
     # Inline escaping deliberately keeps prose/code safe in a local downloaded file.
@@ -62,9 +72,9 @@ def build():
         elif line.strip(): lines.append("<p>" + inline(line) + "</p>")
     page = '''<!doctype html><html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FP400 – Schritt für Schritt</title><style>body{font:17px/1.65 system-ui,sans-serif;max-width:850px;margin:40px auto;padding:0 22px;color:#18342c;background:#fafcfa}h1{font-size:34px;line-height:1.2}h2{margin-top:42px;font-size:24px}pre{background:#eaf0ed;border-radius:10px;padding:18px;overflow:auto;font-size:14px}code{font-size:.9em}a{color:#176952}.item{margin:6px 0}table{width:100%;border-collapse:collapse;font-size:15px}td,th{text-align:left;vertical-align:top;border-bottom:1px solid #cad9d0;padding:10px;overflow-wrap:anywhere}@media print{body{font-size:11pt}h2{break-after:avoid}pre{white-space:pre-wrap}}</style><main>''' + "\n".join(lines) + '</main></html>'
     (DIST / "START-HIER.html").write_text(page)
-    manifest = {item.name: sha256(item.read_bytes()).hexdigest() for item in sorted(DIST.iterdir()) if item.is_file() and item.name != "SHA256SUMS.json"}
-    # Existing outer archives must never be recursively included in subsequent builds.
-    manifest = {name: value for name, value in manifest.items() if name != "FP400-Startpaket.zip"}
+    # Include only named deliverables, including the report's relative image paths.
+    # Stale build outputs and unrelated local files must never enter the archive.
+    manifest = {name: sha256((DIST / name).read_bytes()).hexdigest() for name in PACKAGE_FILES}
     (DIST / "SHA256SUMS.json").write_text(json.dumps(manifest, indent=2) + "\n")
     with zipfile.ZipFile(DIST / "FP400-Startpaket.zip", "w", zipfile.ZIP_DEFLATED) as archive:
         for name in [*manifest, "SHA256SUMS.json"]:
