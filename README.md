@@ -6,6 +6,12 @@ Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqar
 
 > **Teststand:** Auf HA OS 18.3 / Core 2026.10.2 (amd64) mit echtem FP400 1.2.0.0 zusätzlich gekoppelt. Vier Zonen, zwei Bereiche, frische Leermeldungen und Wiederverbindung nach App-Neustart geprüft. Alle 16 vorhandenen Matter-Geräteregister-IDs und 23 Radar-Entitäts-IDs blieben erhalten. **Der Bewegungstest mit einer Person ist noch offen.** ARM64 und eine reale Anlage mit 32 Geräten wurden nicht getestet. [Vollständiger Prüfstand](PRUEFSTAND.md).
 
+## Vorschau
+
+![FP400-Zonenkarte mit vier Beispielzonen, Erfassungsbereich und zwei simulierten Personenpositionen](docs/images/03-zonenkarte-demo.jpg)
+
+*Dokumentationsdemo mit Beispieldaten. Die beiden dargestellten Personen sind simuliert; das Bild ist kein Nachweis des noch offenen Bewegungstests. Die Screenshots des Einrichtungsdialogs weiter unten stammen ebenfalls aus einer lokalen Demo.*
+
 ## Was das Projekt macht
 
 Die Integration liefert eine interaktive Zonenkarte, Radar-Sensoren und Einstellungen. Für die herstellerspezifischen Zusatzfunktionen läuft eine eigene HA-App **FP400 Einrichtung** mit einem lokalen Matter-Controller. Ausschließlich der bereits in HA vorhandene FP400 wird zusätzlich verbunden. Er wird anhand von Seriennummer, Hersteller und Produkt seinem bestehenden HA-Gerät zugeordnet.
@@ -23,14 +29,48 @@ Der bisherige Matter-Server wird nicht ersetzt oder umkonfiguriert. Die zusätzl
 
 Für den kompletten Einrichtungsdialog ist HACS nicht erforderlich:
 
-1. **Einstellungen → Apps → App-Store → Menü → Repositories** öffnen.
+### Schritt 1: Bestehendes HA sichern
+
+Öffne **Einstellungen → System → Backups** und erstelle eine vollständige Sicherung einschließlich deines bisherigen Matter-Servers. Warte auf den Abschluss. Läuft der Server außerhalb von HA, sichere seine Daten zusätzlich dort. Prüfe, dass dein FP400 schon in HA über Matter erreichbar ist.
+
+### Schritt 2: App-Quelle hinzufügen und installieren
+
+1. **Einstellungen → Apps → App-Store → Menü → Repositorys** öffnen.
 2. `https://github.com/ckundel2008/fp400-card` hinzufügen und die Store-Seite neu laden.
 3. Unter **FP400 Card & Controller** die App **FP400 Einrichtung** installieren. Der lokale Build kann mehrere Minuten dauern.
-4. **Beim Systemstart starten** aktivieren und die App starten. Schutzmodus eingeschaltet lassen.
-5. **Benutzeroberfläche öffnen** wählen. Der Dialog sichert eine vorhandene FP400-Integration und installiert die mitgelieferte Ausgabe. Danach HA einmal neu starten.
-6. Am bestehenden FP400-Matter-Gerät **Gerät teilen** wählen. Den frischen Freigabecode in den Assistenten einfügen. **Kein Werksreset, keine Geräte entfernen, keinen bisherigen Matter-Server umstellen.**
-7. Nach erfolgreicher Verbindung **Aqara FP400 (Zusatzcontroller)** unter Geräte & Dienste hinzufügen. Bei vorhandenem FP400-Integrationseintrag dessen **Konfigurieren**-Dialog verwenden und den Zusatzcontroller einschalten; keinen zweiten Eintrag anlegen.
-8. Am Radar-Gerät **Live-Positionen** einschalten. Vor dem Sensor bewegen, Karte und bisherige Matter-Geräte prüfen. Den fertigen Zustand einschließlich dieser App sichern.
+
+### Schritt 3: Einrichtungsdialog öffnen
+
+Aktiviere **Beim Systemstart starten**, starte die App und wähle **Benutzeroberfläche öffnen**. Lass den Schutzmodus eingeschaltet. Bestätige im Dialog deine abgeschlossene Sicherung.
+
+![Einrichtungsdialog mit Bereitschaftsanzeige und Bestätigung der abgeschlossenen HA-Sicherung](docs/images/01-einrichtungsdialog.jpg)
+
+### Schritt 4: FP400-Integration vorbereiten
+
+Klicke im Dialog **FP400-Integration installieren**. Eine vorhandene FP400-Integration wird vorher gesichert. Starte danach **Home Assistant einmal neu** und öffne den Assistenten wieder. Der bestehende Matter-Server bleibt eingerichtet.
+
+### Schritt 5: Nur den FP400 zusätzlich verbinden
+
+1. Öffne **Einstellungen → Geräte & Dienste → Matter → deinen FP400**.
+2. Wähle **Gerät teilen** beziehungsweise **Mit anderem Ökosystem verbinden**.
+3. Kopiere den frisch erzeugten Freigabecode in den Assistenten und bestätige, dass er zu deinem FP400 gehört.
+4. Klicke **FP400 zusätzlich verbinden** und warte auf die Bestätigung.
+
+**Keinen Code vom Aufkleber verwenden, keinen Werksreset durchführen, keine bestehenden Geräte entfernen und den bisherigen Matter-Server nicht umstellen.**
+
+![Schritt 3 des Assistenten: zusätzliche FP400-Verbindung mit leerem Feld für einen neuen Freigabecode](docs/images/02-fp400-verbinden.jpg)
+
+### Schritt 6: Integration in HA aktivieren
+
+Öffne **Einstellungen → Geräte & Dienste → Integration hinzufügen**, suche **Aqara FP400 (Zusatzcontroller)** und bestätige den Dialog. Eine Serveradresse musst du nicht eingeben.
+
+**Bereits ein FP400-Integrationseintrag vorhanden?** Öffne dessen **Konfigurieren**-Dialog, aktiviere **Zusätzlichen FP400-Controller verwenden (empfohlen)** und speichere. Keinen zweiten Eintrag anlegen und das bestehende Matter-Gerät behalten.
+
+### Schritt 7: Karte und Live-Positionen prüfen
+
+Öffne das Radar-Gerät und schalte **Live-Positionen** ein. Füge die Karte wie unter [Karte anzeigen](#karte-anzeigen) beschrieben hinzu. Bewege dich vor dem Sensor: Die Personenanzahl und Positionen sollen sich verändern. Bei Fernzugriff muss dafür jemand zu Hause sein.
+
+Prüfe anschließend einige deiner bisherigen Matter-Geräte und eine bestehende Automation. Sichere den fertigen Zustand **einschließlich FP400 Einrichtung**. Die App bleibt für die Zusatzfunktionen eingeschaltet.
 
 Wenn HA beim Hinzufügen der Repository-Adresse einen Fehler wie `required key not provided ... repository` meldet, den ZIP-Weg unten verwenden. Diese Meldung trat im getesteten HA-Dialog auf; über die Supervisor-Schnittstelle wurde dieselbe Quelle akzeptiert und die App korrekt im Katalog erkannt. Dafür müssen keine bestehenden Matter-Einstellungen geändert werden.
 

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FP400-Karte – Dokumentationsdemo</title>
+<style>
+  :root { font-family: system-ui, sans-serif; color: #172a35; background: #f2f6f7;
+    --primary-text-color: #172a35; --secondary-text-color: #586c77;
+    --ha-card-background: #fff; --card-background-color: #fff;
+    --divider-color: #dbe6e8; --primary-color: #156451;
+    --ha-card-border-radius: 18px; }
+  body { max-width: 850px; margin: 24px auto; padding: 0 24px; }
+  h1 { font-size: 29px; margin: 8px 0; }
+  .demo { font-size: 14px; color: #586c77; margin: 8px 0 20px; }
+  aqara-fp400-zone-card { display: block; }
+</style>
+<h1>FP400 · Zonen und Positionen</h1>
+<p class="demo">Dokumentationsdemo · Beispieldaten · keine Verbindung zu einem echten Sensor</p>
+<aqara-fp400-zone-card></aqara-fp400-zone-card>
+<script src="../custom_components/aqara_fp400/www/aqara-fp400-zone-card.js"></script>
+<script>
+  const cells = (r1, r2, c1, c2) => Array.from({length: r2-r1+1}, (_, r) =>
+    Array.from({length: c2-c1+1}, (_, c) => [r+r1,c+c1])).flat();
+  const card = document.querySelector('aqara-fp400-zone-card');
+  card.setConfig({entity:'sensor.demo_zones',title:'FP400 – Zonenkarte',sensor_at:'top'});
+  card.hass = {states:{
+    'sensor.demo_zones':{state:'4',attributes:{max_zones:8,zones:[
+      {id:1,type:0,enabled:true,cells:cells(2,6,2,5)},
+      {id:2,type:0,enabled:true,cells:cells(2,6,10,13)},
+      {id:3,type:0,enabled:true,cells:cells(10,14,2,5)},
+      {id:4,type:0,enabled:true,cells:cells(10,14,10,13)}]}},
+    'sensor.demo_regions':{state:'2',attributes:{regions:{
+      entry_exit:cells(17,18,7,8),interference:[],monitoring:cells(1,18,1,14)}}},
+    'sensor.demo_tracked_people':{state:'2',attributes:{live_tracking:true,
+      activity_state:'walking',targets:[
+        {id:1,x:180,y:240,activity:'walking',zones:[1]},
+        {id:2,x:-180,y:620,activity:'still',zones:[4]}]}}
+    },entities:{},callService:async()=>{throw new Error('Documentation demo is read-only');}};
+</script>
+</html>
