@@ -4,13 +4,21 @@
 
 Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Kein offizielles Aqara-, Home-Assistant- oder HACS-Produkt.
 
-> **Teststand:** Auf HA OS 18.3 / Core 2026.10.2 (amd64) mit echtem FP400 1.2.0.0 zusätzlich gekoppelt. Vier Zonen, zwei Bereiche, frische Leermeldungen und Wiederverbindung nach App-Neustart geprüft. Alle 16 vorhandenen Matter-Geräteregister-IDs und 23 Radar-Entitäts-IDs blieben erhalten. **Der Bewegungstest mit einer Person ist noch offen.** ARM64 und eine reale Anlage mit 32 Geräten wurden nicht getestet. [Vollständiger Prüfstand](PRUEFSTAND.md).
+> **Teststand:** Auf HA OS 18.3 / Core 2026.10.2 (amd64) mit echtem FP400 1.2.0.0 zusätzlich gekoppelt. Vier Zonen, zwei Bereiche, frische Leermeldungen und Wiederverbindung nach App-Neustart geprüft. **Sitztest bestanden:** Eine tatsächlich sitzende Person wird mit Live-Position, Zustand „still“ und passender Sofa-Belegung erkannt. Alle 16 vorhandenen Matter-Geräteregister-IDs und 23 Radar-Entitäts-IDs blieben erhalten. **Der gezielte Gangtest bleibt offen.** ARM64 und eine reale Anlage mit 32 Geräten wurden nicht getestet. [Vollständiger Prüfstand](PRUEFSTAND.md).
 
 ## Vorschau
 
-![FP400-Zonenkarte mit vier Beispielzonen, Erfassungsbereich und zwei simulierten Personenpositionen](docs/images/03-zonenkarte-demo.jpg)
+### Echte Radar-Karte
 
-*Ansicht der tatsächlichen Zonenkarte mit Beispieldaten. Die beiden dargestellten Personen sind simuliert; das Bild ist kein Nachweis des noch offenen Bewegungstests.*
+![Echte Home-Assistant-Radarkarte: vier Zonen und eine tatsächlich sitzende Person mit aktiver Live-Position](docs/images/04-radar-sitztest-echt.jpg)
+
+*Aufnahme aus dem echten HA-Betrieb mit FP400: eine Person, Zustand „still“, Live-Tracking eingeschaltet. Keine simulierten Personenpositionen.*
+
+### Echte Personenerkennung und Sofa-Belegung
+
+![Echte HA-Zustände: Live-Positionen eingeschaltet, eine Person und Sofa als belegt erkannt](docs/images/05-sofa-belegung-echt.jpg)
+
+*Der Sitztest ist bestanden. Die Bilder belegen keine kontrollierte Gehstrecke; dieser Test steht weiterhin aus. Die Ausschnitte enthalten keine HA-Adresse, Zugangsdaten oder persönlichen Profilangaben.*
 
 ## Was das Projekt macht
 

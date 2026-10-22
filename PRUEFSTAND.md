@@ -1,6 +1,6 @@
 # Prüfstand – FP400 Einrichtung 0.1.2
 
-Stand: 22.10.2026. Experimentelle Ausgabe, kein offizielles HA-/Aqara-Paket. Technische Live-Prüfung weitgehend bestanden; Bewegungstest noch offen.
+Stand: 22.10.2026. Experimentelle Ausgabe, kein offizielles HA-/Aqara-Paket. Technische Live-Prüfung einschließlich Sitztest bestanden; gezielter Gangtest noch offen.
 
 ## Am echten HA und FP400 geprüft
 
@@ -15,6 +15,18 @@ Stand: 22.10.2026. Experimentelle Ausgabe, kein offizielles HA-/Aqara-Paket. Tec
 - Live-Positionen eingeschaltet; frische Leermeldung mit null Personen empfangen. Nach Neustart ausschließlich der neuen App kamen Zonen, Bereiche und eine neue Live-Meldung zurück; Kopplung blieb erhalten. Dabei automatische Netzwerkauswahl verwendet.
 - Vorheriger zusätzlicher FP400-Controller als Rückweg gestoppt, Start manuell; Daten nicht gelöscht. Haupt-Matter-Server weder gestoppt noch umkonfiguriert.
 
+## Sitztest mit einer echten Person – bestanden
+
+Am 22.10.2026 bestätigte der Nutzer eine auf dem Sofa sitzende Person. HA meldete eine verfolgte Person, Personenanzahl 1, Aktivitätszustand `still` und eingeschaltetes Live-Tracking. Die tatsächlichen Zielkoordinaten kamen über den Zusatzcontroller an und aktualisierten sich in mehreren Abfragen. Die Radar-Karte zeigte dieselbe Person an; die bestehende Sofa-Belegung meldete „Erkannt“.
+
+![Echte Radar-Karte beim bestandenen Sitztest](docs/images/04-radar-sitztest-echt.jpg)
+
+![Echte Personenzahl und Sofa-Belegung](docs/images/05-sofa-belegung-echt.jpg)
+
+Die Ausschnitte stammen aus dem echten HA und enthalten keine simulierten Positionen. Prüfung ausschließlich lesend; keine Änderungen an Zonen, Automationen, Matter-Geräten oder Kopplungen. Private Rohmesswerte bleiben außerhalb dieses Repositories.
+
+Der Nutzer bestätigte vorheriges Gehen; während der begleiteten Prüfung war nur Sitzen möglich. Frühere Zonenereignisse sind im Verlauf vorhanden, die laufenden Einzelkoordinaten werden jedoch nicht im Recorder gespeichert. Damit ist die sitzende Erkennung mit echten Positionsmeldungen belegt, eine kontrollierte Gehstrecke nicht.
+
 ## Beim Live-Test behobene Fehler
 
 - 0.1.1: eigener Healthcheck beendet den zuvor dauerhaft angezeigten Supervisor-Startstatus; Link auf aktuelle HA-App-Seite korrigiert.
@@ -28,7 +40,7 @@ Stand: 22.10.2026. Experimentelle Ausgabe, kein offizielles HA-/Aqara-Paket. Tec
 
 ## Verbleibende Grenzen
 
-**Der Bewegungstest mit einer echten Person steht aus:** Bei der Prüfung war niemand zu Hause. Null Personen und frische Zeitstempel beweisen den Datenweg, aber keine bewegten Koordinaten. Erst nach Prüfung vor Ort vollständig als bewegungsgetestet bezeichnen.
+**Der gezielte Gangtest mit einer echten Person steht aus.** Beim Ersttest war niemand zu Hause; inzwischen ist der Sitztest mit echter Person und aktualisierten Positionsmeldungen bestanden. Die kleinen Positionsänderungen beim Sitzen ersetzen keine kontrollierte Gehstrecke. Erst nach einem begleiteten Gangtest vollständig als bewegungsgetestet bezeichnen.
 
 Nicht live geprüft: ARM64-Hardware, reale Installation mit 32 Matter-Geräten, anderer Hauptserver als 1.5.2, erstmaliger Integrationseintrag auf einem frischen HA, Zonen schreiben/löschen, reale Ausführung aller bestehenden Automationen und Apple-/Aqara-App-Bedienung. Keine bestehenden Kopplungen gelöscht; deren Funktion in jeder Fremd-App nicht separat bedient. Zonenanzahl vor/nachher gleich; vollständige Zellmasken erst nach Kopplung erfasst.
 
