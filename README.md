@@ -10,7 +10,7 @@ Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqar
 
 ![FP400-Zonenkarte mit vier Beispielzonen, Erfassungsbereich und zwei simulierten Personenpositionen](docs/images/03-zonenkarte-demo.jpg)
 
-*Dokumentationsdemo mit Beispieldaten. Die beiden dargestellten Personen sind simuliert; das Bild ist kein Nachweis des noch offenen Bewegungstests. Die Screenshots des Einrichtungsdialogs weiter unten stammen ebenfalls aus einer lokalen Demo.*
+*Ansicht der tatsächlichen Zonenkarte mit Beispieldaten. Die beiden dargestellten Personen sind simuliert; das Bild ist kein Nachweis des noch offenen Bewegungstests.*
 
 ## Was das Projekt macht
 
@@ -43,8 +43,6 @@ Für den kompletten Einrichtungsdialog ist HACS nicht erforderlich:
 
 Aktiviere **Beim Systemstart starten**, starte die App und wähle **Benutzeroberfläche öffnen**. Lass den Schutzmodus eingeschaltet. Bestätige im Dialog deine abgeschlossene Sicherung.
 
-![Einrichtungsdialog mit Bereitschaftsanzeige und Bestätigung der abgeschlossenen HA-Sicherung](docs/images/01-einrichtungsdialog.jpg)
-
 ### Schritt 4: FP400-Integration vorbereiten
 
 Klicke im Dialog **FP400-Integration installieren**. Eine vorhandene FP400-Integration wird vorher gesichert. Starte danach **Home Assistant einmal neu** und öffne den Assistenten wieder. Der bestehende Matter-Server bleibt eingerichtet.
@@ -57,8 +55,6 @@ Klicke im Dialog **FP400-Integration installieren**. Eine vorhandene FP400-Integ
 4. Klicke **FP400 zusätzlich verbinden** und warte auf die Bestätigung.
 
 **Keinen Code vom Aufkleber verwenden, keinen Werksreset durchführen, keine bestehenden Geräte entfernen und den bisherigen Matter-Server nicht umstellen.**
-
-![Schritt 3 des Assistenten: zusätzliche FP400-Verbindung mit leerem Feld für einen neuen Freigabecode](docs/images/02-fp400-verbinden.jpg)
 
 ### Schritt 6: Integration in HA aktivieren
 
