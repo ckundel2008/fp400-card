@@ -1,0 +1,33 @@
+"""Base entity."""
+
+from __future__ import annotations
+
+from homeassistant.helpers.entity import Entity
+
+from .const import DOMAIN
+from .node import FP400Node
+
+
+class FP400Entity(Entity):
+    """Entity bound to one FP400 node."""
+
+    _attr_has_entity_name = True
+    _attr_should_poll = False
+    _follows_targets = False  # also update on every position event
+
+    def __init__(self, fp: FP400Node, key: str) -> None:
+        """Set up identity and device link."""
+        self.fp = fp
+        registry_node_id = fp.registry_node_id if fp.registry_node_id is not None else fp.node_id
+        self._attr_unique_id = f"{DOMAIN}_{registry_node_id}_{key}"
+        self._attr_translation_key = key
+        self._attr_device_info = fp.device_info
+
+    @property
+    def available(self) -> bool:
+        """Unavailable while the Matter node is offline, like the Matter integration's own entities."""
+        return self.fp.node.available
+
+    async def async_added_to_hass(self) -> None:
+        """Follow node updates."""
+        self.async_on_remove(self.fp.add_listener(self.async_write_ha_state, targets=self._follows_targets))

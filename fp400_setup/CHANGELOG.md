@@ -1,0 +1,16 @@
+# 0.1.2 – 2026-10-22
+
+- Geräteerkennung an das tatsächliche WebSocket-Antwortformat von Matter Server 1.5.2 angepasst; kurzer Diskriminator wird aus dem langen abgeleitet. Falsche oder mehrdeutige Geräte bleiben gesperrt.
+
+# 0.1.1 – 2026-10-22
+
+- Echte Controller-Bereitschaftsprüfung für den Supervisor ergänzt. `HEALTHCHECK NONE` hinterließ die App auf dem getesteten Supervisor im Startstatus.
+- Link auf die aktuelle HA-App-Seite korrigiert (`/config/app/.../info`).
+
+# 0.1.0 – 2026-10-22
+
+- Lokale App mit Einrichtungsdialog auf Deutsch.
+- Installation mit Sicherung einer vorhandenen FP400-Integration.
+- Zusätzliche FP400-Kopplung über Freigabecode; bestehender Matter-Server bleibt unangetastet.
+- Geräteprüfung, sichere Wiederverbindung und verständliche Fehlermeldungen.
+- Experimentelle Ausgabe: automatisierte lokale Tests und simulierte Browserprüfung; frischer HA-OS-/Hardwaretest noch ausstehend.

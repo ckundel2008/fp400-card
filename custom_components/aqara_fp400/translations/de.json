@@ -1,0 +1,68 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "FP400-Zusatzcontroller verbinden",
+        "description": "Öffne zuerst die App **FP400 Einrichtung** und schließe dort die zusätzliche Kopplung ab. Dein FP400 muss außerdem weiterhin in der bisherigen Matter-Integration von Home Assistant vorhanden sein. Mit **Absenden** werden beide Verbindungen geprüft und derselbe FP400 anhand seiner Seriennummer zugeordnet. Dein bisheriger Matter-Server und die anderen Geräte werden nicht verändert."
+      }
+    },
+    "error": {
+      "cannot_connect": "Die App FP400 Einrichtung ist nicht erreichbar. Starte sie, warte eine Minute und versuche es erneut.",
+      "matter_not_loaded": "Die bisherige Matter-Integration ist noch nicht bereit. Warte, bis deine bisherigen Matter-Geräte erreichbar sind, und versuche es erneut.",
+      "fp400_not_in_matter": "In der bisherigen Matter-Integration wurde kein FP400 gefunden. Füge ihn zuerst dort hinzu. Deine anderen Geräte bleiben bestehen.",
+      "fp400_not_paired": "Im Zusatzcontroller ist noch kein FP400 vorhanden. Schließe zuerst die Kopplung in der App FP400 Einrichtung ab und sende diesen Dialog danach erneut ab.",
+      "fp400_mismatch": "Der FP400 im Zusatzcontroller lässt sich deinem bisherigen Matter-Gerät nicht eindeutig zuordnen. Prüfe, ob du denselben FP400 geteilt hast. Setze ihn nicht zurück.",
+      "fp400_unavailable": "Die FP400-Kopplung ist gespeichert, der Sensor aber noch nicht erreichbar. Warte eine Minute und prüfe die App FP400 Einrichtung. Kopple den Sensor nicht erneut und setze ihn nicht zurück.",
+      "invalid_controller_url": "Verwende ws://127.0.0.1:5581/ws oder lasse das Feld leer."
+    },
+    "abort": {
+      "matter_not_loaded": "Die bisherige Matter-Integration muss zuerst eingerichtet und erreichbar sein.",
+      "single_instance_allowed": "Die Integration ist bereits eingerichtet. Öffne zum Ändern ihre Optionen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Verbindung zum FP400",
+        "description": "Lasse den Schalter eingeschaltet, um die App FP400 Einrichtung zu verwenden. Deine bisherige Matter-Verbindung und die anderen Geräte bleiben erhalten. Ausschalten bedeutet Rückkehr zum Hauptserver; dort können Zonen und Live-Positionen wegen seiner Herstellerkennung eingeschränkt sein.",
+        "data": {"use_secondary_controller": "Zusätzlichen FP400-Controller verwenden (empfohlen)"}
+      }
+    },
+    "error": {
+      "invalid_controller_url": "Verwende ws://127.0.0.1:5581/ws oder lasse das Feld leer.",
+      "cannot_connect": "Die App FP400 Einrichtung ist nicht erreichbar. Starte sie, warte eine Minute und versuche es erneut.",
+      "matter_not_loaded": "Warte, bis die bisherige Matter-Integration und ihre Geräte wieder erreichbar sind.",
+      "fp400_not_in_matter": "In der bisherigen Matter-Integration wurde kein FP400 gefunden. Füge ihn zuerst dort hinzu.",
+      "fp400_not_paired": "Schließe zuerst die zusätzliche FP400-Kopplung in der App FP400 Einrichtung ab.",
+      "fp400_unavailable": "Die Kopplung ist gespeichert, der FP400 aber momentan nicht erreichbar. Warte und prüfe die App FP400 Einrichtung. Nicht erneut koppeln oder zurücksetzen.",
+      "fp400_mismatch": "Der zusätzliche FP400 lässt sich deinem bisherigen Gerät nicht eindeutig zuordnen. Teile denselben FP400 und setze ihn nicht zurück."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "zones": {"name": "Zonen"},
+      "targets": {"name": "Verfolgte Personen"},
+      "target_x": {"name": "Person {index} x"},
+      "target_y": {"name": "Person {index} y"},
+      "last_motion": {"name": "Letzte Bewegung"},
+      "activity_state": {"name": "Aktivität"},
+      "human_count": {"name": "Personenanzahl"},
+      "install_status": {"name": "Montagestatus"},
+      "install_angle": {"name": "Montagewinkel"},
+      "regions": {"name": "Bereiche"}
+    },
+    "switch": {"live_tracking": {"name": "Live-Positionen"}},
+    "button": {
+      "start_learning": {"name": "Hintergrundlernen starten"},
+      "clear_zones": {"name": "Alle Zonen löschen"}
+    },
+    "select": {
+      "install_mode": {"name": "Montageart"},
+      "side_install": {"name": "Seitliche Montageposition"},
+      "coordinate_reverse": {"name": "Koordinaten umkehren"},
+      "detection_direction": {"name": "Erkennungsrichtung"},
+      "proximity_distance_level": {"name": "Erkennungsabstand"}
+    },
+    "number": {"install_height": {"name": "Montagehöhe"}}
+  }
+}
