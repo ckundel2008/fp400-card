@@ -32,6 +32,8 @@ Für den kompletten Einrichtungsdialog ist HACS nicht erforderlich:
 7. Nach erfolgreicher Verbindung **Aqara FP400 (Zusatzcontroller)** unter Geräte & Dienste hinzufügen. Bei vorhandenem FP400-Integrationseintrag dessen **Konfigurieren**-Dialog verwenden und den Zusatzcontroller einschalten; keinen zweiten Eintrag anlegen.
 8. Am Radar-Gerät **Live-Positionen** einschalten. Vor dem Sensor bewegen, Karte und bisherige Matter-Geräte prüfen. Den fertigen Zustand einschließlich dieser App sichern.
 
+Wenn HA beim Hinzufügen der Repository-Adresse einen Fehler wie `required key not provided ... repository` meldet, den ZIP-Weg unten verwenden. Diese Meldung trat im getesteten HA-Dialog auf; über die Supervisor-Schnittstelle wurde dieselbe Quelle akzeptiert und die App korrekt im Katalog erkannt. Dafür müssen keine bestehenden Matter-Einstellungen geändert werden.
+
 **Schon die lokale App aus dem ZIP installiert?** Diese weiterverwenden. Die Repository-App hat einen anderen internen Namen und eigene Kopplungsdaten. Nicht beide gleichzeitig starten (Port 5581), die lokale App nicht einfach deinstallieren. Eine Migration der gespeicherten Controllerdaten ist hier nicht automatisiert.
 
 ## Optional: Integration mit HACS verwalten
@@ -46,6 +48,8 @@ Das Repository ist für **HACS → Benutzerdefinierte Repositories → Typ Integ
 **Wechsel vom Original RAR:** Beide Projekte verwenden bewusst die Domain `aqara_fp400`, damit Geräte- und Entitäts-IDs erhalten bleiben. Sie dürfen denselben Ordner nicht parallel aktualisieren. Zuerst HA sichern und diese Fork-Quelle in HACS hinzufügen. Den ursprünglichen Download in HACS deinstallieren, unmittelbar anschließend diese Fork herunterladen und erst danach HA neu starten. **Den bestehenden Eintrag unter Geräte & Dienste und das Matter-Gerät nicht löschen.** Kann HACS die neue Quelle nicht anbieten, den bisherigen Stand beibehalten und die Paketinstallation verwenden. Automatische Updates des Originalprojekts dürfen die Fork nicht überschreiben.
 
 Es gibt bislang keine Zusage oder Einreichung für den HACS-Standardkatalog. [Offizielle Anforderungen](https://www.hacs.xyz/docs/publish/integration/), [benutzerdefinierte Quellen](https://www.hacs.xyz/docs/faq/custom_repositories/).
+
+**Zusätzlich geprüft:** Das echte HA akzeptiert die Quelle als benutzerdefinierte HACS-Integration und erkennt die Controller-App im App-Katalog. GitHub Actions hat Paketbau, 36 Tests und die offizielle HACS-Strukturprüfung erfolgreich ausgeführt. Das Hinzufügen wurde geprüft; eine HACS-Neuinstallation auf einem leeren HA nicht. Bei der experimentellen Vorabversion gegebenenfalls die Anzeige von Vorabversionen einschalten oder beim Download den Standardzweig wählen.
 
 ## Karte anzeigen
 

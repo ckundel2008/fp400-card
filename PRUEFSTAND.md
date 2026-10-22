@@ -43,6 +43,8 @@ python3.13 tests/test_config_flow.py
 python3.13 -m compileall -q custom_components
 ```
 
-Die zusätzliche Repository-Struktur wurde mit insgesamt 20 Node- und 16 Python-Tests geprüft. Öffentliche Integrationsversion 1.1.1 unterscheidet sich vom live verwendeten Python-Code ausschließlich durch Versions-/Projektmetadaten und ein Icon; der Controller-Code entspricht der live geprüften App 0.1.2. HACS-Erkennung wird separat dokumentiert, sobald geprüft.
+Die zusätzliche Repository-Struktur wurde mit insgesamt 20 Node- und 16 Python-Tests geprüft. Öffentliche Integrationsversion 1.1.1 unterscheidet sich vom live verwendeten Python-Code ausschließlich durch Versions-/Projektmetadaten und ein Icon; der Controller-Code entspricht der live geprüften App 0.1.2.
+
+GitHub Actions hat Paketbau, Tests und HACS-Prüfung erfolgreich ausgeführt ([Prüflauf](https://github.com/ckundel2008/fp400-card/actions/runs/39744481406)). Der echte HA akzeptierte das öffentliche Repository als benutzerdefinierte HACS-Integration; kein HACS-Download oder Wechsel vom Original wurde auf dem bestehenden HA ausgeführt. Der App-Katalog erkannte auch die Repository-App 0.1.2 als verfügbar. Der HA-UI-Dialog zum Hinzufügen der App-Quelle meldete einen fehlenden Repository-Parameter; dieselbe Quelle wurde über die Supervisor-Schnittstelle erfolgreich hinzugefügt. Die README nennt den geprüften ZIP-Weg als Ausweichweg. Keine zweite Controller-App installiert oder gestartet.
 
 Private Vorher-/Nachher-Daten bleiben außerhalb des weitergebbaren Pakets. Es enthält keine HA-Adressen, Kopplungscodes oder Matter-Schlüssel.
