@@ -1,4 +1,6 @@
 {
+  "domain": "aqara_fp400",
+  "name": "Aqara FP400 (Zusatzcontroller)",
   "after_dependencies": [
     "http",
     "frontend",
@@ -12,12 +14,10 @@
     "matter"
   ],
   "documentation": "https://github.com/ckundel2008/fp400-card",
-  "domain": "aqara_fp400",
   "integration_type": "hub",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/ckundel2008/fp400-card/issues",
-  "name": "Aqara FP400 (Zusatzcontroller)",
   "requirements": [],
   "single_config_entry": true,
-  "version": "1.1.1"
+  "version": "1.1.2"
 }
