@@ -16,6 +16,7 @@ jobs:
       - run: python tools/build_package.py
       - run: node --test tests/addon.test.mjs tests/package.test.mjs tests/file-preview.test.mjs tests/repository.test.mjs
       - run: python tests/test_config_flow.py
+      - run: python tests/test_node_updates.py
       - run: python -m compileall -q custom_components
       - run: git diff --exit-code -- fp400_setup/integration
   hacs:

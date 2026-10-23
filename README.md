@@ -95,7 +95,7 @@ Das Repository ist für **HACS → Benutzerdefinierte Repositories → Typ Integ
 
 Die Aufnahme in den allgemeinen HACS-Katalog wurde mit [Antrag #12425](https://github.com/hacs/default/pull/12425) eingereicht. Sie ist noch nicht angenommen; bis dahin erfolgt die Installation als benutzerdefinierte Quelle. [Offizielle Anforderungen](https://www.hacs.xyz/docs/publish/integration/), [benutzerdefinierte Quellen](https://www.hacs.xyz/docs/faq/custom_repositories/).
 
-**Zusätzlich geprüft:** Das echte HA akzeptiert die Quelle als benutzerdefinierte HACS-Integration und erkennt die Controller-App im App-Katalog. Für 1.1.6 sind Paketbau, 41 Tests, HACS und Hassfest bestanden. Der Projektinhaber bestätigt außerdem einen erfolgreichen Praxistest des Pakets bei einem Kollegen. 1.1.6 führt diese reguläre Veröffentlichung fort; Vorabversionen müssen dafür nicht aktiviert werden. Einzelheiten und Grenzen stehen im [Prüfstand](PRUEFSTAND.md).
+**Zusätzlich geprüft:** Das echte HA akzeptiert die Quelle als benutzerdefinierte HACS-Integration und erkennt die Controller-App im App-Katalog. Für 1.2.0 werden Paketbau, 49 Tests, HACS und Hassfest vor der Veröffentlichung geprüft. Der Projektinhaber bestätigt außerdem einen erfolgreichen Praxistest des Pakets bei einem Kollegen. 1.2.0 führt diese reguläre Veröffentlichung fort; Vorabversionen müssen dafür nicht aktiviert werden. Einzelheiten und Grenzen stehen im [Prüfstand](PRUEFSTAND.md).
 
 ## Karte anzeigen
 
@@ -132,11 +132,11 @@ Die Integration registriert die Kartenressource automatisch. Bei „Custom eleme
 
 ## ZIP für die manuelle Installation
 
-Version 1.1.6 enthält die Schritt-für-Schritt-Anleitung für den Kartenkatalog und Entitäten-Dialog, den aktualisierten Prüfstand und beide echten Bilder. Der Karteneditor aus 1.1.4 wurde am 23.10.2026 im echten HA erfolgreich geprüft: Katalogsuche, automatische Vorauswahl, manuelle Entitätenauswahl und Übernahme in den Konfigurationscode. Die Kartenfunktion ist in 1.1.6 unverändert.
+Version 1.2.0 enthält die Schritt-für-Schritt-Anleitung für den Kartenkatalog und Entitäten-Dialog, den aktualisierten Prüfstand und beide echten Bilder. Der Karteneditor aus 1.1.4 wurde am 23.10.2026 im echten HA erfolgreich geprüft: Katalogsuche, automatische Vorauswahl, manuelle Entitätenauswahl und Übernahme in den Konfigurationscode. Version 1.2.0 ergänzt das bestätigte Verwerfen einzelner Erkennungen und korrigiert Live-Attributmeldungen.
 
-[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.6/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.6)
+[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.2.0/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads](https://github.com/ckundel2008/fp400-card/releases/tag/v1.2.0)
 
-Das Startpaket wurde für App 0.1.5 und Integration 1.1.6 neu gebaut. Es enthält die aktuelle Anleitung, den ergänzten Prüfstand und beide echten Bilder. Die App ist jetzt ebenfalls als reguläre Ausgabe (`stable`) gekennzeichnet; der Funktionscode bleibt unverändert.
+Das Startpaket wurde für App 0.1.6 und Integration 1.2.0 neu gebaut. Es enthält die aktuelle Anleitung, den ergänzten Prüfstand und beide echten Bilder. Die App bleibt eine reguläre Ausgabe (`stable`) und bündelt die neue Integration. Der Controller und seine Kopplungsdaten bleiben unverändert.
 
 Dieser alternative Ablauf nutzt File editor und Terminal & SSH, prüft die ZIP-Prüfsumme und legt eine lokale App an. Das ist dieselbe Controller-Lösung, aber ein anderer Installationsweg. Für eine neue Installation nur einen der beiden App-Wege wählen.
 
@@ -162,3 +162,7 @@ python3.13 -m compileall -q custom_components
 ```
 
 MIT-Lizenz; ursprüngliche Integration und Karte © 2026 Andrew Rankin. OHF Matter Server 1.5.2 unter Apache-2.0, festgelegtes Basis-Image. Änderungen: separater Controller, sichere Zuordnung/Wiederverbindung, Installer und Dialog. [Lizenz](LICENSE) · [Drittanbieter](THIRD-PARTY.md). Bei Fehlerberichten keine Freigabecodes, Tokens oder Matter-Schlüssel veröffentlichen.
+
+## Neu in 1.2.0
+
+Live-Attributmeldungen aktualisieren den Zustand zuverlässig auch bei einzelnen Zahlenwerten. Falsche Personenpunkte lassen sich nach Anklicken und ausdrücklicher Bestätigung verwerfen. Die Vorschau bleibt schreibgeschützt. [Bedienung und Update](ANLEITUNG.md). Die neuen Funktionen wurden automatisiert geprüft; die bisherigen echten Sitz- und Gangtests sind im Prüfstand separat dokumentiert.

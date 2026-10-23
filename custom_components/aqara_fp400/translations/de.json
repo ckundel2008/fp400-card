@@ -25,7 +25,9 @@
       "init": {
         "title": "Verbindung zum FP400",
         "description": "Lasse den Schalter eingeschaltet, um die App FP400 Einrichtung zu verwenden. Deine bisherige Matter-Verbindung und die anderen Geräte bleiben erhalten. Ausschalten bedeutet Rückkehr zum Hauptserver; dort können Zonen und Live-Positionen wegen seiner Herstellerkennung eingeschränkt sein.",
-        "data": {"use_secondary_controller": "Zusätzlichen FP400-Controller verwenden (empfohlen)"}
+        "data": {
+          "use_secondary_controller": "Zusätzlichen FP400-Controller verwenden (empfohlen)"
+        }
       }
     },
     "error": {
@@ -40,29 +42,87 @@
   },
   "entity": {
     "sensor": {
-      "zones": {"name": "Zonen"},
-      "targets": {"name": "Verfolgte Personen"},
-      "target_x": {"name": "Person {index} x"},
-      "target_y": {"name": "Person {index} y"},
-      "last_motion": {"name": "Letzte Bewegung"},
-      "activity_state": {"name": "Aktivität"},
-      "human_count": {"name": "Personenanzahl"},
-      "install_status": {"name": "Montagestatus"},
-      "install_angle": {"name": "Montagewinkel"},
-      "regions": {"name": "Bereiche"}
+      "zones": {
+        "name": "Zonen"
+      },
+      "targets": {
+        "name": "Verfolgte Personen"
+      },
+      "target_x": {
+        "name": "Person {index} x"
+      },
+      "target_y": {
+        "name": "Person {index} y"
+      },
+      "last_motion": {
+        "name": "Letzte Bewegung"
+      },
+      "activity_state": {
+        "name": "Aktivität"
+      },
+      "human_count": {
+        "name": "Personenanzahl"
+      },
+      "install_status": {
+        "name": "Montagestatus"
+      },
+      "install_angle": {
+        "name": "Montagewinkel"
+      },
+      "regions": {
+        "name": "Bereiche"
+      }
     },
-    "switch": {"live_tracking": {"name": "Live-Positionen"}},
+    "switch": {
+      "live_tracking": {
+        "name": "Live-Positionen"
+      }
+    },
     "button": {
-      "start_learning": {"name": "Hintergrundlernen starten"},
-      "clear_zones": {"name": "Alle Zonen löschen"}
+      "start_learning": {
+        "name": "Hintergrundlernen starten"
+      },
+      "clear_zones": {
+        "name": "Alle Zonen löschen"
+      }
     },
     "select": {
-      "install_mode": {"name": "Montageart"},
-      "side_install": {"name": "Seitliche Montageposition"},
-      "coordinate_reverse": {"name": "Koordinaten umkehren"},
-      "detection_direction": {"name": "Erkennungsrichtung"},
-      "proximity_distance_level": {"name": "Erkennungsabstand"}
+      "install_mode": {
+        "name": "Montageart"
+      },
+      "side_install": {
+        "name": "Seitliche Montageposition"
+      },
+      "coordinate_reverse": {
+        "name": "Koordinaten umkehren"
+      },
+      "detection_direction": {
+        "name": "Erkennungsrichtung"
+      },
+      "proximity_distance_level": {
+        "name": "Erkennungsabstand"
+      }
     },
-    "number": {"install_height": {"name": "Montagehöhe"}}
+    "number": {
+      "install_height": {
+        "name": "Montagehöhe"
+      }
+    }
+  },
+  "services": {
+    "remove_target": {
+      "name": "Einzelne Erkennung verwerfen",
+      "description": "Eine falsche Personenerkennung verwerfen. Tatsächlich anwesende Personen können erneut erkannt werden.",
+      "fields": {
+        "device_id": {
+          "name": "Gerät",
+          "description": "Der FP400."
+        },
+        "target_id": {
+          "name": "Erkennungsnummer",
+          "description": "ID aus Verfolgte Personen (0–255)."
+        }
+      }
+    }
   }
 }

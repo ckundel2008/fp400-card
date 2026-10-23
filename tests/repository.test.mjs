@@ -93,7 +93,37 @@ test('picker preview cannot write zones or regions to a real sensor', async () =
   card.shadowRoot = { querySelector: () => error };
   card._hass = { callService() { assert.fail('preview must not call a service'); } };
   assert.equal(await card._runService('set_zones', {}), false);
+  assert.equal(await card._runService('remove_target', { target_id: 1 }), false);
   assert.match(error.textContent, /Vorschau/);
+});
+
+test('forget requires confirmation and keeps selection on failure', async () => {
+  const { Card, context } = await cardClasses();
+  const element = () => ({ children: [], appendChild(x) { this.children.push(x); }, addEventListener(k, fn) { this[k] = fn; } });
+  context.document.createElement = element;
+  const card = new Card(); card._forget = 7; card._render = () => {};
+  let calls = 0;
+  card._runService = async (service, data) => { calls++; assert.equal(service, 'remove_target'); assert.equal(data.target_id, 7); return false; };
+  const panel = element(); card._forgetPanel(panel);
+  assert.equal(calls, 0);
+  const [cancel, confirm] = panel.children[0].children;
+  await confirm.click(); assert.equal(calls, 1); assert.equal(card._forget, 7);
+  cancel.click(); assert.equal(card._forget, null); assert.equal(calls, 1);
+  card._forget = 7; card._runService = async () => true;
+  await confirm.click(); assert.equal(card._forget, null);
+});
+
+test('forget is disabled in preview and missing device cannot call service', async () => {
+  const { Card, context } = await cardClasses();
+  const element = () => ({ children: [], appendChild(x) { this.children.push(x); }, addEventListener() {} });
+  context.document.createElement = element;
+  const card = new Card(); card._forget = 1; card.preview = true;
+  const panel = element(); card._forgetPanel(panel);
+  assert.equal(panel.children[0].children[1].disabled, true);
+  card.preview = false; card._config = { entity: 'sensor.missing' };
+  card._hass = { entities: {}, callService() { assert.fail('no device'); } };
+  card.shadowRoot = { querySelector: () => ({ textContent: '' }) };
+  assert.equal(await card._runService('remove_target', { target_id: 1 }), false);
 });
 
 test('HACS integration and app-bundled integration are identical', async () => {

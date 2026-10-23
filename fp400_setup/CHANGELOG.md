@@ -1,3 +1,9 @@
+# 0.1.6 – 2026-10-23
+
+- Integration 1.2.0 mit korrigierten Live-Meldungen und bestätigtem Verwerfen einzelner Erkennungen gebündelt.
+- Controller, App-Slug und gespeicherte Kopplungen unverändert. Keine erneute Kopplung erforderlich.
+- Integration zusätzlich über HACS aktualisieren oder im App-Dialog installieren; danach HA neu starten.
+
 # 0.1.5 – 2026-10-23
 
 - Reguläre App-Ausgabe (`stage: stable`) nach bestätigtem Praxistest beim Kollegen.

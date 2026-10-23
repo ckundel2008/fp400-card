@@ -1,4 +1,10 @@
-# Prüfstand – Integration 1.1.6 / FP400 Einrichtung 0.1.5
+# Prüfstand – Integration 1.2.0 / FP400 Einrichtung 0.1.6
+
+## Neue Funktionen 1.2.0
+
+Automatisierte Prüfungen: skalare Attributmeldungen über echte Node-Callbacks mit simuliertem Matter-Transport, gezielte Abonnements, Null-Personen-Meldungen, Zonen-/Bereichsschutz bei ausstehenden Schreibvorgängen und abgefangene Callback-Fehler. Zielentfernung prüft gültige IDs, Erfolg, Gerätefehler und Zeitüberschreitung. Kartenprüfungen decken Bestätigung, Abbruch, Fehlererhalt, fehlende Gerätezuordnung und Vorschau-Schreibsperre ab.
+
+Release-Prüfung: 27 Node-Tests und 22 Python-Tests, Paketbau, HACS und Hassfest. Der Release-Workflow veröffentlicht nur nach erfolgreicher Prüfung. Kein neuer Live-Test der Zielentfernung oder des Callback-Fixes am echten Sensor; die folgenden Sitz-, Gang- und Editorprüfungen gelten für die jeweils genannten älteren Stände. Controller-Image, App-Slug, Ports und Kopplungsspeicher sind unverändert.
 
 ## Reguläre App-Ausgabe 0.1.5
 

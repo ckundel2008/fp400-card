@@ -1,3 +1,10 @@
+# 1.2.0 – 23.10.2026
+
+- Upstream-Fix für skalare Attributmeldungen übernommen; gezielte Abonnements erhalten Live-Zustand und Zonenaktualisierungen.
+- Einzelne Erkennung per Kartenpunkt und Bestätigung oder Aktion `aqara_fp400.remove_target` verwerfen.
+- Vorschau-Schreibsperre, Gerätezuordnung und Fehlerbehandlung erhalten; ungültige Zielnummern werden abgelehnt.
+- Neue Regressionstests und Anleitung; App 0.1.6 bündelt die Integration. Bestehende Matter-Kopplungen bleiben bestehen.
+
 # 1.1.6 – 23.10.2026
 
 - FP400 Einrichtung 0.1.5 als reguläre App mit `stage: stable` veröffentlicht.

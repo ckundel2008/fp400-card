@@ -32,10 +32,10 @@ def main():
              f"Source: https://github.com/{REPO}", "",
              f"Commits since observation baseline: {comparison['ahead_by']}",
              f"Compare: https://github.com/{REPO}/compare/{BASELINE}...{commits[0]['sha']}", "",
-             "## Pending review in our fork", "",
-             "- v1.1.1: attribute-update callback fix; assess compatibility with the secondary controller.",
-             "- v1.2.0: remove_target service and map action for ghost targets; assess UI preview/write safeguards.",
-             "- These are review candidates, not automatically accepted or installed changes.", "", "## Releases", ""]
+             "## Reviewed changes in our fork", "",
+             "- Upstream v1.1.1 callback fix: adopted in fork v1.2.0 with regression tests.",
+             "- Upstream v1.2.0 remove_target: adopted in fork v1.2.0 with confirmation, preview guard and error tests.",
+             "- New upstream changes still require individual review. Adoption does not imply installation in HA.", "", "## Releases", ""]
     for release in releases:
         lines.extend([f"### {clean(release['tag_name'])}", release['html_url'],
                       f"Published: {release['published_at']}; prerelease: {release['prerelease']}",

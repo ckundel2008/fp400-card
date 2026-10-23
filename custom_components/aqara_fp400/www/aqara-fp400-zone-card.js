@@ -137,6 +137,8 @@ class AqaraFp400ZoneCard extends HTMLElement {
   }
 
   setConfig(config) {
+    this._forget = null;
+    this._controlsKey = null;
     this._config = config;
     this._top = config.sensor_at !== "bottom"; // sensor drawn at the top, room extends downward (as in the Aqara app)
     this._mode = "zones"; // "zones" or a REGION_KEYS entry
@@ -202,7 +204,7 @@ class AqaraFp400ZoneCard extends HTMLElement {
         .sensor-halo { fill: var(--primary-text-color); fill-opacity: 0.08; }
         .region-outline { fill: none; stroke-width: 0.16; stroke-linecap: square; stroke-linejoin: round; }
         .region-outline.dim { stroke-opacity: 0.55; }
-        .target { fill: var(--primary-color); stroke: var(--card-background-color, #fff); stroke-width: 0.1; }
+        .target { fill: var(--primary-color); stroke: var(--card-background-color, #fff); stroke-width: 0.1; cursor: pointer; }
         .target.still { fill: var(--card-background-color, #fff); stroke: var(--primary-color); stroke-width: 0.12; }
         .target-halo { fill: var(--primary-color); fill-opacity: 0.18; }
 
@@ -471,6 +473,8 @@ class AqaraFp400ZoneCard extends HTMLElement {
       const title = this._el("title");
       title.textContent = `Person ${t.id}: ${(t.y / 100).toFixed(1)} m ahead, ${Math.abs(t.x / 100).toFixed(1)} m ${t.x < 0 ? "right" : "left"}, ${t.activity}${t.zones?.length ? ", in zone " + t.zones.join(", ") : ""}`;
       dot.appendChild(title);
+      // a click on a dot offers to forget it (ghosts); stop it reaching the painting handler
+      dot.addEventListener("pointerdown", (ev) => { ev.stopPropagation(); this._forget = t.id; this._controlsKey = null; this._render(); });
       this._targetLayer.appendChild(dot);
     }
 
@@ -478,7 +482,7 @@ class AqaraFp400ZoneCard extends HTMLElement {
     // second while live tracking is on, and replacing a button between mousedown and mouseup
     // swallows the click.
     const key = JSON.stringify([
-      this._mode, this._active, !!this._saving, !!this._edit, this._regionEdit?.key, !!this._confirmedEmpty,
+      this._mode, this._active, !!this._saving, !!this._edit, this._regionEdit?.key, !!this._confirmedEmpty, this._forget,
       [...zones].map(([id, z]) => [id, z.cells.size, z.enabled]),
       REGION_KEYS.map((k) => regions[k].size),
       state?.attributes?.max_zones,
@@ -564,6 +568,32 @@ class AqaraFp400ZoneCard extends HTMLElement {
     panel.className = "panel";
     if (this._mode === "zones") this._zoneTools(tools, panel, zones, state);
     else this._regionTools(tools, panel, regions);
+    if (this._forget != null) this._forgetPanel(panel);
+  }
+
+  // offered after a click on a target dot: the sensor drops that track (a real person comes back)
+  _forgetPanel(panel) {
+    const id = this._forget;
+    if (!Number.isInteger(id) || id < 0 || id > 255) return;
+    panel.innerHTML = `<span class="name">Erkennung ${id}</span>
+      <span class="meta">Diese Erkennung verwerfen? Der Sensor entfernt die aktuelle Spur. Eine anwesende Person kann erneut erkannt werden. Wiederkehrende Störungen lassen sich im Interferenzbereich ausblenden.</span><span class="spacer"></span>`;
+    const group = document.createElement("span");
+    group.className = "btns";
+    const cancel = document.createElement("button");
+    cancel.className = "secondary small";
+    cancel.textContent = "Abbrechen";
+    cancel.addEventListener("click", () => { this._forget = null; this._render(); });
+    group.appendChild(cancel);
+    const forget = document.createElement("button");
+    forget.className = "secondary small danger";
+    forget.textContent = "Erkennung verwerfen";
+    forget.disabled = this._saving || this.preview;
+    forget.addEventListener("click", async () => {
+      if (await this._runService("remove_target", { target_id: id })) this._forget = null;
+      this._render();
+    });
+    group.appendChild(forget);
+    panel.appendChild(group);
   }
 
   _zoneTools(tools, panel, zones, state) {

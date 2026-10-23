@@ -1,13 +1,11 @@
-FP400 Einrichtung **0.1.5** ist jetzt auch im HA-App-Katalog als reguläre App (`stable`) gekennzeichnet. Dieses Release bündelt Integration **1.1.6** und ein neu gebautes Startpaket mit aktueller Anleitung, Prüfstand und echten Bildern.
+Integration **1.2.0** und FP400 Einrichtung **0.1.6** sind reguläre Ausgaben.
 
-- Karten- und Controller-Code unverändert; App-Slug und Kopplungsspeicher bleiben erhalten.
-- Der erfolgreiche Praxistest des Vorgängerpakets beim Kollegen ist als Rückmeldung des Projektinhabers dokumentiert.
-- Repository-App: HA-Sicherung einschließlich App erstellen, vorhandene App im HA-App-Store aktualisieren, nach dem Start den vorhandenen FP400 prüfen. Nicht deinstallieren oder neu koppeln.
-- HACS aktualisiert nur Integration und Karte. Ohne HACS den Integrations-Installationsschritt im aktualisierten App-Dialog ausführen, danach HA neu starten.
-- Lokale ZIP-App: keine Repository-Updates; nicht durch eine zweite Repository-App ersetzen, da deren Daten nicht automatisch übernommen werden. Für reine Kartenupdates die laufende App behalten und die Integration über HACS verwalten.
+- Live-Meldungen: skalare Attributwerte werden korrekt verarbeitet; Null-Personen-Meldungen und Zonenänderungen kommen im Zustand an.
+- Falsche Personenerkennung: Punkt auf der Karte antippen und **Erkennung verwerfen** bestätigen. Fehler erhalten die Auswahl; Vorschau bleibt schreibgeschützt.
+- Controller, Gerätezuordnung und Kopplungsspeicher unverändert. Nicht neu koppeln oder zurücksetzen.
+- Vorher HA einschließlich App sichern. HACS aktualisiert Integration und Karte; anschließend HA neu starten und Browser neu laden. Ohne HACS die gebündelte Integration im aktualisierten App-Dialog installieren.
+- Repository-App über HA aktualisieren. Lokale ZIP-Apps erhalten keine Repository-Updates; nicht durch eine zweite App ersetzen. Für reine Integrationsupdates kann die laufende App beibehalten werden.
 
-**Downloads:** `FP400-Startpaket.zip` entpacken und `START-HIER.html` öffnen. Das Paket enthält den aktuellen Prüfstand und beide echten Sitztest-Bilder. `SHA256SUMS.json` enthält die Prüfsummen der Paketbestandteile.
+Paket mit aktueller Anleitung, ehrlichem Prüfstand und beiden echten Sitztest-Bildern. Vor Veröffentlichung: Paketbau, 27 Node-Tests, 22 Python-Tests, HACS und Hassfest. Neue Funktionen automatisiert geprüft, noch kein neuer Hardwaretest; bisherige Sitz-/Gangtests bleiben gesondert dokumentiert.
 
-Vor Veröffentlichung werden 25 Node-Tests, 16 Python-Tests sowie HACS und Hassfest ausgeführt. Diese Metadaten-/Dokumentationsausgabe wurde nicht erneut auf dem produktiven HA installiert. Keine offizielle HA-/Aqara-Ausgabe.
-
-[Update-Anleitung](https://github.com/ckundel2008/fp400-card/blob/v1.1.6/ANLEITUNG.md#update-einer-bestehenden-installation) · [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/v1.1.6/PRUEFSTAND.md)
+[Anleitung](https://github.com/ckundel2008/fp400-card/blob/v1.2.0/ANLEITUNG.md) · [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/v1.2.0/PRUEFSTAND.md)

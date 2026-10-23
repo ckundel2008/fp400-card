@@ -36,7 +36,7 @@ Der Schreibzugriff auf den HA-Konfigurationsordner dient ausschließlich der FP4
 
 # Updates / Abschalten
 
-Aktuell: **FP400 Einrichtung 0.1.5**, reguläre App-Ausgabe, mit Integration 1.1.6.
+Aktuell: **FP400 Einrichtung 0.1.6**, reguläre App-Ausgabe, mit Integration 1.2.0.
 
 1. Vollständige HA-Sicherung einschließlich dieser App erstellen.
 2. Bei Installation über unser GitHub-App-Repository den App-Store aktualisieren, die bestehende **FP400 Einrichtung** öffnen und **Aktualisieren** wählen. Die App wird dabei neu gestartet. Nicht deinstallieren.
