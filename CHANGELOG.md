@@ -1,3 +1,11 @@
+# 1.1.4 – 23.10.2026
+
+- Visueller Karteneditor mit Auswahl für Zonen, verfolgte Personen, Bereiche, Titel und Sensorausrichtung. Katalogname: FP400 Radar – Zonen und Personen.
+- Sprachunabhängige Zuordnung anhand von Sensorattributen und HA-Gerätezuordnung; keine automatische Auswahl zwischen mehreren Geräten oder mehrdeutigen Sensoren.
+- Fehlende Tracking-Daten werden als fehlende Zuordnung angezeigt. Schreibende Sensoraktionen in der Kartenvorschau gesperrt.
+- Startpaket, HTML-Anleitung, Prüfstand und echte Bilder auf den aktuellen Dokumentationsstand gebracht.
+- Automatisierte Editorprüfung; Browser-/Live-Abnahme im HA-Karteneditor noch offen. Controller-Protokoll und Kopplungsdaten unverändert.
+
 # Dokumentationsnachtrag – 23.10.2026
 
 - Alle drei Karten-Entitäten mit deutscher/englischer Bezeichnung und vollständiger YAML-Vorlage dokumentiert.

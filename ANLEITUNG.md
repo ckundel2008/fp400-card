@@ -97,7 +97,9 @@ Ein Freigabecode ist nur kurz gültig. Der Assistent speichert ihn nicht dauerha
 
 Öffne das FP400-Radar-Gerät. Schalte **Live-Tracking / Live-Positionen** ein und bewege dich vor dem Sensor. Die Personenanzahl und Positionen sollen sich ändern. Vorhandene Zonen werden eingelesen; bei der Einrichtung werden keine Zonen überschrieben. Nach einem vollständigen HA-Neustart den Schalter prüfen und gegebenenfalls wieder einschalten. Ein leerer Raum mit null Personen bestätigt noch keinen erfolgreichen Bewegungstest.
 
-Für die Karte: **Dashboard bearbeiten → Karte hinzufügen → Manuell**. Füge Folgendes ein:
+Ab Integration 1.1.4: **Dashboard bearbeiten → Karte hinzufügen → Nach Karte** öffnen, nach **FP400** suchen und **FP400 Radar – Zonen und Personen** auswählen. Im visuellen Editor zuerst **Zonen** auswählen. Eindeutig zugehörige Sensoren für **Verfolgte Personen** und **Bereiche** werden vorausgewählt; alle drei können über Auswahlfelder geändert werden. Bei mehreren FP400 zunächst die Zonen des gewünschten Geräts wählen. Titel und Darstellung **Oben/Unten** sind ebenfalls einstellbar. Die Kartenvorschau schreibt keine Änderungen am Sensor.
+
+Alternativ **Manuell** wählen und Folgendes einfügen:
 
 ```yaml
 type: custom:aqara-fp400-zone-card
@@ -116,7 +118,7 @@ Ersetze alle drei Platzhalter durch die vollständigen Entitäts-IDs desselben R
 | `targets_entity` | Verfolgte Personen / Tracked people | Personenpositionen und Live-Tracking-Anzeige |
 | `regions_entity` | Bereiche / Regions | Entry/Exit, Monitoring und Interference |
 
-Die automatische Zuordnung erwartet englische Endungen `_zones`, `_tracked_people` und `_regions`. Bei deutschen, umbenannten oder nummerierten IDs deshalb alle drei ausdrücklich angeben. Sonst kann die Karte trotz eingeschaltetem Tracking „live tracking off“ und leere Bereiche anzeigen. Keine Entitäten umbenennen; „Personenanzahl“ ersetzt nicht „Verfolgte Personen“. Für Entry/Exit, Monitoring und Interference gibt es keine eigenen Karten-Einträge. Bleiben Bereiche leer, bei ihrer Entität unter **Entwicklerwerkzeuge → Zustände** das Attribut `regions` prüfen.
+Ab 1.1.4 erkennt die automatische Zuordnung Sensorattribute und die HA-Gerätezuordnung; deutsche und umbenannte IDs werden unterstützt. Bei mehrdeutiger Zuordnung alle drei ausdrücklich auswählen. Ältere Kartenversionen erwarten englische Endungen `_zones`, `_tracked_people` und `_regions`; dort alle drei IDs in YAML eintragen. Keine Entitäten umbenennen; „Personenanzahl“ ersetzt nicht „Verfolgte Personen“. Für Entry/Exit, Monitoring und Interference gibt es keine eigenen Karten-Einträge. Bleiben Bereiche leer, bei ihrer Entität unter **Entwicklerwerkzeuge → Zustände** das Attribut `regions` prüfen.
 
 `sensor_at` erlaubt `top` oder `bottom`; Eckpositionen und freie Drehwinkel werden nicht unterstützt. Die Kartenressource wird von der Integration registriert. Bei „Custom element doesn't exist“ die Browserseite vollständig neu laden.
 
@@ -128,6 +130,16 @@ Die automatische Zuordnung erwartet englische Endungen `_zones`, `_tracked_peopl
 - Ein Neustart ausschließlich der App **FP400 Einrichtung** führt nach kurzer Wartezeit wieder zu aktuellen Radar-Daten.
 
 Erstelle anschließend eine neue vollständige Sicherung **einschließlich FP400 Einrichtung**. Die App muss für die Zusatzfunktionen weiterlaufen. Ihre privaten Daten enthalten die zusätzliche FP400-Kopplung.
+
+## Update einer bestehenden Installation
+
+Vorher eine vollständige HA-Sicherung einschließlich der Controller-App erstellen. Für den neuen Karteneditor muss die **Integration auf 1.1.4** aktualisiert werden; ein erneutes Koppeln ist nicht erforderlich.
+
+- **Integration bereits in HACS verwaltet:** Dort FP400 Card & Controller auf 1.1.4 aktualisieren; falls nötig Vorabversionen anzeigen. Danach HA neu starten und die Browserseite vollständig neu laden.
+- **Bisher nur per ZIP/Einrichtungsdialog installiert:** Die bereits laufende Controller-App beibehalten. In HACS dieses Repository als benutzerdefinierte Quelle vom Typ **Integration** hinzufügen und Version 1.1.4 herunterladen. Danach HA neu starten und den Browser neu laden. Den vorhandenen Integrationseintrag weiterverwenden. Nicht zusätzlich eine zweite Controller-App starten. Falls noch das Original RAR in HACS verwaltet wird, den Wechselhinweis in der README beachten.
+- **Repository-App über den App-Store aktualisiert:** App 0.1.3 liefert die neue Integration mit. Im aktualisierten Einrichtungsdialog den Schritt **FP400-Integration installieren** ausführen, danach HA neu starten und den Browser neu laden. Den Kopplungsschritt überspringen. Bei HACS-Verwaltung stattdessen den ersten Weg verwenden.
+
+Das ZIP-Installationsskript überschreibt eine vorhandene lokale App absichtlich nicht. Eine alte lokale App kann deshalb weiter die alte Integration mitliefern: Nach dem HACS-Update deren Installationsschritt nicht erneut ausführen. App-Daten und bestehende Kopplungen behalten.
 
 ## Wenn etwas nicht klappt
 
@@ -155,6 +167,6 @@ Eine vorher vorhandene FP400-Integration liegt unverändert unter `/config/fp400
 
 ## Stand und Herkunft
 
-Paket 0.1.2, 22.10.2026. Eigene lokale App auf Basis des OHF Matter Servers 1.5.2 und einer angepassten Ausgabe von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Keine offizielle Home-Assistant- oder Aqara-App. Die bekannte Herstellerkennungs-Beschränkung des FP400 wird über einen zusätzlichen Controller umgangen, ohne den bisherigen Server umzustellen.
+Integration 1.1.4 / App 0.1.3, 23.10.2026. Eigene lokale App auf Basis des OHF Matter Servers 1.5.2 und einer angepassten Ausgabe von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Keine offizielle Home-Assistant- oder Aqara-App. Die bekannte Herstellerkennungs-Beschränkung des FP400 wird über einen zusätzlichen Controller umgangen, ohne den bisherigen Server umzustellen. Der neue Karteneditor wurde automatisiert geprüft; seine Browser-/Live-Abnahme im HA-Karteneditor steht noch aus.
 
 Dieses Paket wurde auf HA OS 18.3 / Core 2026.10.2 (Intel/AMD 64 Bit) installiert und mit einem echten FP400 (Firmware 1.2.0.0) zusätzlich gekoppelt. Zonen, Bereiche und Wiederverbindung nach App-Neustart wurden geprüft. Alle 16 dort vorhandenen Matter-Geräteregistereinträge und die 23 Radar-Entitäts-IDs blieben erhalten. Der Sitztest mit einer echten Person, aktuellen Positionsmeldungen und passender Sofa-Belegung ist bestanden. Den abgeschlossenen Gangtest bestätigte der Nutzer am 23.10.2026 als bestanden; dazu wurde kein weiterer eigener Live-Test durchgeführt. ARM64, eine reale Anlage mit 32 Geräten und ein anderer Hauptserver als Matter Server 1.5.2 wurden nicht live getestet. Details siehe `PRUEFSTAND.md`.

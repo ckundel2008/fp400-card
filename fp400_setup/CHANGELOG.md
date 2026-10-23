@@ -1,3 +1,8 @@
+# 0.1.3 – 2026-10-23
+
+- Gebündelte Integration 1.1.4 mit visuellem Karteneditor und sprachunabhängiger Entitätszuordnung.
+- Controller-Code, Ports und Kopplungsspeicher unverändert. Ein App-Update allein ersetzt nicht die bereits installierte Integration; diese über HACS aktualisieren oder den Installationsschritt im aktualisierten Dialog ausführen.
+
 # 0.1.2 – 2026-10-22
 
 - Geräteerkennung an das tatsächliche WebSocket-Antwortformat von Matter Server 1.5.2 angepasst; kurzer Diskriminator wird aus dem langen abgeleitet. Falsche oder mehrdeutige Geräte bleiben gesperrt.

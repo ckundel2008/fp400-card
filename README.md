@@ -97,7 +97,11 @@ Die Aufnahme in den allgemeinen HACS-Katalog wurde mit [Antrag #12425](https://g
 
 ## Karte anzeigen
 
-Dashboard bearbeiten → Karte hinzufügen → Manuell:
+Ab Version **1.1.4**: **Dashboard bearbeiten → Karte hinzufügen → Nach Karte**, nach **FP400** suchen und **FP400 Radar – Zonen und Personen** auswählen. Im visuellen Editor **Zonen**, **Verfolgte Personen** und **Bereiche** auswählen; Titel und Sensorausrichtung sind ebenfalls einstellbar. Nach Auswahl der Zonen werden eindeutig zugehörige Personen- und Bereiche-Sensoren desselben Geräts vorausgewählt. Bei mehreren FP400 zuerst das gewünschte Gerät anhand seiner Zonen wählen. Die Vorschau schreibt keine Änderungen an den Sensor.
+
+Nach dem Integrationsupdate HA neu starten und die Browserseite vollständig neu laden, damit die neue Kartenressource geladen wird. Für eine bestehende ZIP-/App-Installation siehe den Updatehinweis in der [Anleitung](ANLEITUNG.md#update-einer-bestehenden-installation). Falls die Karte fehlt, prüfen, ob die FP400-Integration eingerichtet und ihre Kartenressource geladen ist. Bei YAML-Ressourcenverwaltung muss die Ressource manuell eingetragen werden.
+
+Alternativ **Manuell** auswählen und YAML verwenden:
 
 ```yaml
 type: custom:aqara-fp400-zone-card
@@ -116,7 +120,7 @@ Alle drei Platzhalter durch die vollständigen Entitäts-IDs desselben FP400-Rad
 | `targets_entity` | Verfolgte Personen / Tracked people | Personenpositionen und Live-Tracking-Zustand |
 | `regions_entity` | Bereiche / Regions | Entry/Exit, Monitoring und Interference gemeinsam |
 
-**Bei deutschen, umbenannten oder nummerierten Entitäts-IDs alle drei ausdrücklich angeben.** Ohne diese Angaben ersetzt die Karte die Endung `_zones` automatisch durch `_tracked_people` bzw. `_regions`. Das funktioniert nicht zuverlässig bei anderen Namen. Eine fehlende Personen-Entität kann deshalb irreführend „live tracking off“ anzeigen; eine fehlende Bereiche-Entität kann leere Bereiche anzeigen. „Personenanzahl“ ist kein Ersatz für „Verfolgte Personen“.
+Ab 1.1.4 erkennt die Karte zugehörige Sensoren anhand ihrer Attribute und der HA-Gerätezuordnung, unabhängig von deutschen oder umbenannten IDs. Bei mehrdeutiger Zuordnung die drei Entitäten ausdrücklich auswählen. „Personenanzahl“ ist kein Ersatz für „Verfolgte Personen“. Fehlen gültige Tracking-Daten, erscheint „Personen-Entität prüfen“ statt einer falschen Aus-Anzeige. In älteren Versionen erwartet die automatische Zuordnung englische Endungen; dort alle drei IDs ausdrücklich in YAML angeben.
 
 Für Entry/Exit, Monitoring und Interference gibt es keine separaten YAML-Einträge. Bleiben sie nach korrekter Zuordnung leer, unter **Entwicklerwerkzeuge → Zustände** bei der Bereiche-Entität das Attribut `regions` prüfen. `title` setzt den Kartentitel; `sensor_at` erlaubt nur `top` oder `bottom`, keine Eckposition oder freie Drehung.
 
@@ -124,9 +128,9 @@ Die Integration registriert die Kartenressource automatisch. Bei „Custom eleme
 
 ## ZIP für die manuelle Installation
 
-Die Online-Anleitung und der Prüfstand enthalten den Nachtrag vom 23.10.2026 zu Entitätszuordnung und Gangtest. Die Download-Dateien der Version 1.1.3 enthalten noch den Dokumentationsstand vom 22.10.2026; für die Kartenkonfiguration die vollständige Vorlage oben verwenden.
+Version 1.1.4 enthält die aktuelle Anleitung, den aktualisierten Prüfstand mit Nutzerbestätigung des Gangtests und beide echten Bilder. Die neue Editorfunktion wurde automatisiert geprüft; die Browser-/Live-Abnahme im HA-Karteneditor steht noch aus.
 
-[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.3/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads der Vorabversion](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.3)
+[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.4/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads der Vorabversion](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.4)
 
 Dieser alternative Ablauf nutzt File editor und Terminal & SSH, prüft die ZIP-Prüfsumme und legt eine lokale App an. Das ist dieselbe Controller-Lösung, aber ein anderer Installationsweg. Für eine neue Installation nur einen der beiden App-Wege wählen.
 

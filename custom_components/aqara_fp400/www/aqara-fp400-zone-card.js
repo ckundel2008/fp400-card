@@ -28,14 +28,115 @@ const REGION_META = {
 };
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+// Identify sensors by their payload, not translated entity IDs.
+function fp400Entities(hass, kind) {
+  return Object.entries(hass?.states || {}).filter(([id, state]) => {
+    if (!id.startsWith("sensor.")) return false;
+    const a = state.attributes || {};
+    if (kind === "zones") return Array.isArray(a.zones) && "grid_rows" in a;
+    if (kind === "targets") return Array.isArray(a.targets) && "live_tracking" in a;
+    return a.regions && typeof a.regions === "object" && "grid_rows" in a;
+  }).map(([id]) => id);
+}
+
+function fp400Companion(hass, zoneId, kind) {
+  const candidates = fp400Entities(hass, kind);
+  const device = hass?.entities?.[zoneId]?.device_id;
+  if (device) {
+    const sameDevice = candidates.filter(id => hass.entities[id]?.device_id === device);
+    return sameDevice.length === 1 ? sameDevice[0] : undefined;
+  }
+  // Compatibility for frontends without an entity registry: exact legacy naming only.
+  const legacy = zoneId?.replace(/_zones$/, kind === "targets" ? "_tracked_people" : "_regions");
+  return legacy !== zoneId && candidates.includes(legacy) ? legacy : undefined;
+}
+
+class AqaraFp400ZoneCardEditor extends HTMLElement {
+  setConfig(config) { this._config = { ...config }; this._render(); }
+  set hass(hass) { this._hass = hass; this._render(); }
+
+  _change(key, value) {
+    const config = { ...this._config, type: "custom:aqara-fp400-zone-card" };
+    if (value) config[key] = value; else delete config[key];
+    if (key === "entity") {
+      for (const [field, kind] of [["targets_entity", "targets"], ["regions_entity", "regions"]]) {
+        delete config[field];
+        const companion = fp400Companion(this._hass, value, kind);
+        if (companion) config[field] = companion;
+      }
+    }
+    this._config = config;
+    this._render();
+    this.dispatchEvent(new CustomEvent("config-changed", {
+      detail: { config }, bubbles: true, composed: true,
+    }));
+  }
+
+  _render() {
+    if (!this._config || !this._hass) return;
+    if (!this.shadowRoot) {
+      const root = this.attachShadow({ mode: "open" });
+      root.innerHTML = `<style>
+        :host{display:block;color:var(--primary-text-color)}
+        label{display:block;margin:16px 0 6px;font-weight:500}
+        select,input{box-sizing:border-box;width:100%;min-width:0;padding:12px;border:1px solid var(--divider-color,#888);border-radius:8px;background:var(--card-background-color,#fff);color:var(--primary-text-color,#222);font:inherit}
+        p{line-height:1.5;color:var(--secondary-text-color)}
+        small{display:block;margin-top:6px;color:var(--secondary-text-color)}
+      </style><p>Zuerst die Zonen des gewünschten FP400 auswählen. Eindeutig zugehörige Personen- und Bereiche-Sensoren werden vorausgewählt.</p>`;
+      this._fields = {};
+      for (const [key, label, kind] of [
+        ["entity", "Zonen", "zones"],
+        ["targets_entity", "Verfolgte Personen", "targets"],
+        ["regions_entity", "Bereiche (Entry/Exit, Monitoring, Interference)", "regions"],
+        ["title", "Titel", null],
+        ["sensor_at", "Sensor in der Darstellung", "orientation"],
+      ]) {
+        const labelEl = document.createElement("label");
+        labelEl.htmlFor = key; labelEl.textContent = label;
+        const field = document.createElement(kind ? "select" : "input");
+        field.id = key;
+        field.addEventListener("change", event => this._change(key, event.target.value));
+        root.append(labelEl, field);
+        this._fields[key] = { field, kind };
+      }
+      const note = document.createElement("small");
+      note.textContent = "Fehlt ein Sensor in der Auswahl, seine Entität in HA aktivieren und die Verbindung prüfen. Alle drei Sensoren müssen zum selben FP400 gehören. Eckpositionen und freie Drehwinkel werden nicht unterstützt.";
+      root.append(note);
+    }
+    for (const [key, { field, kind }] of Object.entries(this._fields)) {
+      if (!kind) { if (field.value !== (this._config[key] || "")) field.value = this._config[key] || ""; continue; }
+      const options = kind === "orientation"
+        ? [["top", "Oben"], ["bottom", "Unten"]]
+        : [["", key === "entity" ? "Zonen-Entität auswählen" : "Automatisch (gleiches Gerät)"],
+          ...fp400Entities(this._hass, kind).map(id => [id, `${this._hass.states[id].attributes.friendly_name || id} — ${id}`])];
+      const selected = this._config[key] || (kind === "orientation" ? "top" : "");
+      if (selected && !options.some(([value]) => value === selected)) options.push([selected, `${selected} (nicht verfügbar oder unpassender Sensor)`]);
+      const signature = JSON.stringify(options);
+      if (signature !== field._options) {
+        field.replaceChildren(...options.map(([value, text]) => {
+          const option = document.createElement("option"); option.value = value; option.textContent = text; return option;
+        }));
+        field._options = signature;
+      }
+      field.value = selected;
+    }
+  }
+}
+
 class AqaraFp400ZoneCard extends HTMLElement {
+  static getConfigElement() {
+    return document.createElement("aqara-fp400-zone-card-editor");
+  }
+
   static getStubConfig(hass) {
-    const entity = Object.keys(hass.states).find((id) => id.startsWith("sensor.") && id.endsWith("_zones"));
-    return { entity: entity || "sensor.aqara_spatial_multi_sensor_fp400_zones" };
+    const candidates = fp400Entities(hass, "zones");
+    if (candidates.length !== 1) return { title: "FP400", sensor_at: "top" };
+    const entity = candidates[0];
+    return { entity, targets_entity: fp400Companion(hass, entity, "targets"),
+      regions_entity: fp400Companion(hass, entity, "regions"), sensor_at: "top" };
   }
 
   setConfig(config) {
-    if (!config.entity) throw new Error("entity (the Zones sensor) is required");
     this._config = config;
     this._top = config.sensor_at !== "bottom"; // sensor drawn at the top, room extends downward (as in the Aqara app)
     this._mode = "zones"; // "zones" or a REGION_KEYS entry
@@ -254,7 +355,7 @@ class AqaraFp400ZoneCard extends HTMLElement {
   // ---------------------------------------------------------------- state (regions)
 
   _regionsEntity() {
-    return this._config.regions_entity || this._config.entity.replace(/_zones$/, "_regions");
+    return this._config.regions_entity || fp400Companion(this._hass, this._config.entity, "regions");
   }
 
   _entityRegions() {
@@ -281,7 +382,7 @@ class AqaraFp400ZoneCard extends HTMLElement {
   }
 
   _targetsEntity() {
-    return this._config.targets_entity || this._config.entity.replace(/_zones$/, "_tracked_people");
+    return this._config.targets_entity || fp400Companion(this._hass, this._config.entity, "targets");
   }
 
   _deviceId() {
@@ -312,12 +413,14 @@ class AqaraFp400ZoneCard extends HTMLElement {
     root.querySelector(".title").textContent = this._config.title || state?.attributes?.friendly_name?.replace(/ Zones$/, "") || "FP400";
     const targetsState = this._hass.states[this._targetsEntity()];
     const targets = targetsState?.attributes?.targets || [];
-    const live = !!targetsState?.attributes?.live_tracking;
+    const trackingKnown = targetsState && !["unknown", "unavailable"].includes(targetsState.state)
+      && typeof targetsState.attributes?.live_tracking === "boolean";
+    const live = trackingKnown && targetsState.attributes.live_tracking;
     root.querySelector(".live-dot").classList.toggle("on", live);
     const activity = targetsState?.attributes?.activity_state;
     root.querySelector(".sub-text").textContent = state
-      ? `${targets.length === 1 ? "1 person" : `${targets.length} people`}${activity && activity !== "unknown" ? ` · ${activity}` : ""}${live ? " · live" : " · live tracking off"}`
-      : "entity not found";
+      ? `${targets.length === 1 ? "1 person" : `${targets.length} people`}${activity && activity !== "unknown" ? ` · ${activity}` : ""}${!trackingKnown ? " · Personen-Entität prüfen" : live ? " · live" : " · live tracking off"}`
+      : "Bitte Zonen-Entität auswählen";
     this._renderSync(state);
 
     const zones = this._zones();
@@ -641,6 +744,10 @@ class AqaraFp400ZoneCard extends HTMLElement {
   async _runService(service, data) {
     const error = this.shadowRoot.querySelector(".error");
     error.textContent = "";
+    if (this.preview) {
+      error.textContent = "Vorschau: Änderungen am Sensor sind hier deaktiviert.";
+      return false;
+    }
     const deviceId = this._deviceId();
     if (!deviceId) {
       error.textContent = "Cannot resolve the device of " + this._config.entity;
@@ -684,11 +791,13 @@ class AqaraFp400ZoneCard extends HTMLElement {
   }
 }
 
+customElements.define("aqara-fp400-zone-card-editor", AqaraFp400ZoneCardEditor);
 customElements.define("aqara-fp400-zone-card", AqaraFp400ZoneCard);
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "aqara-fp400-zone-card",
-  name: "Aqara FP400 zone card",
-  description: "Paint detection zones and regions and watch tracked people on the FP400 grid.",
-  preview: false,
+  name: "FP400 Radar – Zonen und Personen",
+  description: "Zonen, Live-Positionen und Bereiche. Entitäten bequem im visuellen Editor auswählen.",
+  preview: true,
+  documentationURL: "https://github.com/ckundel2008/fp400-card#karte-anzeigen",
 });
