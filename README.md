@@ -101,6 +101,8 @@ Ab Version **1.1.4**: **Dashboard bearbeiten → Karte hinzufügen → Nach Kart
 
 Nach dem Integrationsupdate HA neu starten und die Browserseite vollständig neu laden, damit die neue Kartenressource geladen wird. Für eine bestehende ZIP-/App-Installation siehe den Updatehinweis in der [Anleitung](ANLEITUNG.md#update-einer-bestehenden-installation). Falls die Karte fehlt, prüfen, ob die FP400-Integration eingerichtet und ihre Kartenressource geladen ist. Bei YAML-Ressourcenverwaltung muss die Ressource manuell eingetragen werden.
 
+Die [sieben Einrichtungsschritte](ANLEITUNG.md#9-zonen-und-live-positionen-anzeigen) führen vom Dashboard bis **Speichern → Fertig**. Bei „Visueller Editor wird nicht unterstützt“ hilft die [Update- und Cache-Prüfung](ANLEITUNG.md#wenn-etwas-nicht-klappt). Ein Update erfordert kein erneutes Anlernen deiner Matter-Geräte.
+
 Alternativ **Manuell** auswählen und YAML verwenden:
 
 ```yaml
@@ -128,9 +130,9 @@ Die Integration registriert die Kartenressource automatisch. Bei „Custom eleme
 
 ## ZIP für die manuelle Installation
 
-Version 1.1.4 enthält die aktuelle Anleitung, den aktualisierten Prüfstand mit Nutzerbestätigung des Gangtests und beide echten Bilder. Die neue Editorfunktion wurde automatisiert geprüft; die Browser-/Live-Abnahme im HA-Karteneditor steht noch aus.
+Version 1.1.5 enthält die Schritt-für-Schritt-Anleitung für den Kartenkatalog und Entitäten-Dialog, den aktualisierten Prüfstand und beide echten Bilder. Der Karteneditor aus 1.1.4 wurde am 23.10.2026 im echten HA erfolgreich geprüft: Katalogsuche, automatische Vorauswahl, manuelle Entitätenauswahl und Übernahme in den Konfigurationscode. Die Kartenfunktion ist in 1.1.5 unverändert.
 
-[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.4/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads der Vorabversion](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.4)
+[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.5/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads der Vorabversion](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.5)
 
 Dieser alternative Ablauf nutzt File editor und Terminal & SSH, prüft die ZIP-Prüfsumme und legt eine lokale App an. Das ist dieselbe Controller-Lösung, aber ein anderer Installationsweg. Für eine neue Installation nur einen der beiden App-Wege wählen.
 

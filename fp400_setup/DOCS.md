@@ -8,6 +8,15 @@
 6. Nach erfolgreicher zusätzlicher Verbindung unter **Einstellungen → Geräte & Dienste → Integration hinzufügen** die Integration **Aqara FP400 (Zusatzcontroller)** hinzufügen. Bei vorhandenem FP400-Eintrag dessen Konfigurieren-Dialog nutzen und den Zusatzcontroller aktivieren.
 7. Live-Positionen einschalten, bisherige Geräte prüfen und fertigen Zustand einschließlich dieser App sichern.
 
+# Karte zum Dashboard hinzufügen
+
+1. **Dashboard bearbeiten → Karte hinzufügen → Nach Karte** öffnen.
+2. Nach **FP400** suchen und **FP400 Radar – Zonen und Personen** auswählen.
+3. Unter **Zonen** das gewünschte Radar-Gerät wählen. **Verfolgte Personen** und **Bereiche** desselben Geräts prüfen; eindeutige Sensoren werden vorausgewählt.
+4. Bei Bedarf Titel und Darstellung **Oben/Unten** wählen, dann **Speichern → Fertig**. Personenanzahl ist kein Ersatz für den Sensor Verfolgte Personen. Entry/Exit, Monitoring und Interference kommen gemeinsam aus Bereiche.
+
+Fehlt die Karte oder erscheint „Visueller Editor wird nicht unterstützt“, ist meist noch die alte Karte geladen: Integration aktualisieren, HA nach einem vollständigen Integrationsupdate neu starten und den Browser vollständig neu laden. Die Ressourcenkennung muss zur tatsächlich installierten Datei passen. Keine doppelte FP400-Ressource hinzufügen und keine Geräte neu koppeln. Ausführliche [Update- und Cache-Hilfe](https://github.com/ckundel2008/fp400-card/blob/main/ANLEITUNG.md#update-einer-bestehenden-installation).
+
 # Optionen und Berechtigungen
 
 `network_interface` bleibt normalerweise leer (automatische Auswahl). Bei mehreren Netzwerkkarten lässt sich dort der Linux-Schnittstellenname zum FP400 eintragen. Änderungen erfordern einen Neustart ausschließlich dieser App.

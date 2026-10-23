@@ -1,3 +1,10 @@
+# 1.1.5 – 23.10.2026
+
+- Visueller Karteneditor im echten HA erfolgreich geprüft: Katalogsuche, automatische Vorauswahl, Entitätenauswahl und Konfigurationsübernahme.
+- Sieben Klickschritte zur Einrichtung ohne YAML; Update- und Cache-Hilfe für eine noch geladene alte Karte.
+- Anleitung und ehrlicher Prüfstand auch im neu gebauten Startpaket und in START-HIER.html enthalten.
+- Karten- und Controller-Verhalten unverändert gegenüber 1.1.4; keine neue Kopplung erforderlich.
+
 # 1.1.4 – 23.10.2026
 
 - Visueller Karteneditor mit Auswahl für Zonen, verfolgte Personen, Bereiche, Titel und Sensorausrichtung. Katalogname: FP400 Radar – Zonen und Personen.

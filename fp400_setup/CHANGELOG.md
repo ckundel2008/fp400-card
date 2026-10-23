@@ -1,3 +1,8 @@
+# 0.1.4 – 2026-10-23
+
+- Integration 1.1.5 gebündelt; Karten- und Controller-Verhalten gegenüber 0.1.3 unverändert.
+- Startpaket mit Klickanleitung, Updatehilfe und bestandenem Live-Test des Karteneditors.
+
 # 0.1.3 – 2026-10-23
 
 - Gebündelte Integration 1.1.4 mit visuellem Karteneditor und sprachunabhängiger Entitätszuordnung.
