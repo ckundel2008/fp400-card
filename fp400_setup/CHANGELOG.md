@@ -1,3 +1,10 @@
+# 0.1.5 – 2026-10-23
+
+- Reguläre App-Ausgabe (`stage: stable`) nach bestätigtem Praxistest beim Kollegen.
+- Integration 1.1.6 und aktuelle Anleitung gebündelt. Karten- und Controller-Code unverändert.
+- App-Slug, Speicherpfade und Kopplungsdaten unverändert; bestehende App aktualisieren, nicht deinstallieren oder neu koppeln.
+- Repository-App über den HA-App-Store aktualisieren; lokale ZIP-App erhält keine Repository-Updates. HACS verwaltet nur Integration und Karte.
+
 # 0.1.4 – 2026-10-23
 
 - Integration 1.1.5 gebündelt; Karten- und Controller-Verhalten gegenüber 0.1.3 unverändert.

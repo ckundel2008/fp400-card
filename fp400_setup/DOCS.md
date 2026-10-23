@@ -36,7 +36,16 @@ Der Schreibzugriff auf den HA-Konfigurationsordner dient ausschließlich der FP4
 
 # Updates / Abschalten
 
-HACS-Updates der ursprünglichen FP400-Integration können diese angepasste Version überschreiben. Automatische Updates dafür ausschalten. Änderungen dieses Pakets vor Aktivierung sichern und prüfen.
+Aktuell: **FP400 Einrichtung 0.1.5**, reguläre App-Ausgabe, mit Integration 1.1.6.
+
+1. Vollständige HA-Sicherung einschließlich dieser App erstellen.
+2. Bei Installation über unser GitHub-App-Repository den App-Store aktualisieren, die bestehende **FP400 Einrichtung** öffnen und **Aktualisieren** wählen. Die App wird dabei neu gestartet. Nicht deinstallieren.
+3. Nach dem Start den vorhandenen FP400 prüfen. Den Kopplungsschritt überspringen: App-Slug und Kopplungsspeicher sind unverändert.
+4. Die Integration separat über HACS aktualisieren. Ohne HACS im aktualisierten Einrichtungsdialog **FP400-Integration installieren** ausführen und anschließend HA neu starten. Ein App-Update allein ersetzt die installierte Integration nicht.
+
+Eine als lokale App per ZIP installierte Ausgabe erhält keine Updates aus dem GitHub-App-Repository. Nicht einfach durch eine zweite Repository-App ersetzen: Diese hat einen anderen App-Bezeichner und übernimmt die Kopplungsdaten nicht automatisch. Für ein reines Kartenupdate die vorhandene App behalten und nur die Integration über HACS aktualisieren.
+
+Als HACS-Quelle **ckundel2008/fp400-card** verwenden; das Originalprojekt darf denselben Integrationsordner nicht parallel überschreiben.
 
 Zum Abschalten zuerst die Zusatzintegration deaktivieren, anschließend nur diese App stoppen. Die bisherigen Matter-Geräte und Fabrics bestehen weiter. Die privaten App-Daten sichern; sie enthalten die zusätzliche FP400-Kopplung.
 

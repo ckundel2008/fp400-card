@@ -1,5 +1,5 @@
 name: FP400 Einrichtung
-version: "0.1.4"
+version: "0.1.5"
 slug: fp400_setup
 description: FP400-Zonen und Live-Positionen mit zusätzlichem Controller einrichten
 url: https://github.com/ckundel2008/fp400-card
@@ -7,7 +7,7 @@ arch:
   - amd64
   - aarch64
 homeassistant: "2026.9.0"
-stage: experimental
+stage: stable
 startup: services
 boot: auto
 init: false

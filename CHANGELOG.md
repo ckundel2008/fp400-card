@@ -1,3 +1,9 @@
+# 1.1.6 – 23.10.2026
+
+- FP400 Einrichtung 0.1.5 als reguläre App mit `stage: stable` veröffentlicht.
+- Neues Startpaket mit konsistenter Anleitung, ergänztem Prüfstand und echten Bildern.
+- Integration und Karte funktional unverändert; Versionsanhebung für ein eindeutig zugeordnetes Gesamtpaket.
+
 # 1.1.5 – 23.10.2026
 
 - Visueller Karteneditor im echten HA erfolgreich geprüft: Katalogsuche, automatische Vorauswahl, Entitätenauswahl und Konfigurationsübernahme.

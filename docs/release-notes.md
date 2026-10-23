@@ -1,14 +1,13 @@
-Der FP400-Karteneditor wurde im echten Home Assistant erfolgreich geprüft. Version 1.1.5 ergänzt die Anleitung und den Prüfstand; die Kartenfunktion entspricht der live geprüften 1.1.4.
+FP400 Einrichtung **0.1.5** ist jetzt auch im HA-App-Katalog als reguläre App (`stable`) gekennzeichnet. Dieses Release bündelt Integration **1.1.6** und ein neu gebautes Startpaket mit aktueller Anleitung, Prüfstand und echten Bildern.
 
-**Reguläre Veröffentlichung:** Der Projektinhaber hat den erfolgreichen Praxistest des Pakets bei einem Kollegen bestätigt. Deshalb wurde 1.1.5 von einer Vorabversion zu einer regulären Veröffentlichung hochgestuft. HACS benötigt für diese Version keine aktivierte Vorabversionsanzeige. Das geprüfte ZIP und der ursprüngliche Tag bleiben unverändert; die darin enthaltenen Hinweise zur Vorabversion beschreiben den früheren Veröffentlichungsstand. Den ergänzten [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/main/PRUEFSTAND.md) findest du im Repository.
+- Karten- und Controller-Code unverändert; App-Slug und Kopplungsspeicher bleiben erhalten.
+- Der erfolgreiche Praxistest des Vorgängerpakets beim Kollegen ist als Rückmeldung des Projektinhabers dokumentiert.
+- Repository-App: HA-Sicherung einschließlich App erstellen, vorhandene App im HA-App-Store aktualisieren, nach dem Start den vorhandenen FP400 prüfen. Nicht deinstallieren oder neu koppeln.
+- HACS aktualisiert nur Integration und Karte. Ohne HACS den Integrations-Installationsschritt im aktualisierten App-Dialog ausführen, danach HA neu starten.
+- Lokale ZIP-App: keine Repository-Updates; nicht durch eine zweite Repository-App ersetzen, da deren Daten nicht automatisch übernommen werden. Für reine Kartenupdates die laufende App behalten und die Integration über HACS verwalten.
 
-- **Karte hinzufügen → Nach Karte → FP400**: Vorlage mit Auswahl für Zonen, verfolgte Personen und Bereiche, Titel und Sensorausrichtung.
-- Sieben Einrichtungsschritte ohne YAML und Hilfe bei fehlender Karte, altem Browser-Cache oder „Visueller Editor wird nicht unterstützt“.
-- Update-Anleitung für HACS, ZIP und Repository-App: Update-Informationen abrufen und die Installation selbst bestätigen. Bestehende Matter-Kopplungen bleiben erhalten.
-- README, Anleitung, App-Dokumentation, Prüfstand und das herunterladbare Startpaket enthalten den aktualisierten Stand.
-- Live geprüft: Kartenkatalog, automatische Vorauswahl, explizite Entitätenauswahl und Übernahme in den Konfigurationscode. Keine Sensorzonen geschrieben; Testentwürfe verworfen.
-- 25 Node-Tests und 16 Python-Tests bestanden; HACS- und Hassfest-Prüfung vor Veröffentlichung.
+**Downloads:** `FP400-Startpaket.zip` entpacken und `START-HIER.html` öffnen. Das Paket enthält den aktuellen Prüfstand und beide echten Sitztest-Bilder. `SHA256SUMS.json` enthält die Prüfsummen der Paketbestandteile.
 
-**Downloads:** `FP400-Startpaket.zip` entpacken und `START-HIER.html` öffnen. Das ZIP enthält die Anleitung, den Prüfstand und die vorhandenen echten Sitztest-Bilder. Die einzelne HTML-Datei ist die separat lesbare Anleitung. `SHA256SUMS.json` enthält die Prüfsummen der Paketbestandteile.
+Vor Veröffentlichung werden 25 Node-Tests, 16 Python-Tests sowie HACS und Hassfest ausgeführt. Diese Metadaten-/Dokumentationsausgabe wurde nicht erneut auf dem produktiven HA installiert. Keine offizielle HA-/Aqara-Ausgabe.
 
-**Bestehende Installation:** Integration 1.1.5 / Repository-App 0.1.4. Den passenden Updateweg in der [Anleitung](https://github.com/ckundel2008/fp400-card/blob/main/ANLEITUNG.md#update-einer-bestehenden-installation) befolgen. Bestehende Controller-App-Daten und Matter-Kopplungen behalten; nicht erneut anlernen. Keine offizielle HA-/Aqara-Ausgabe.
+[Update-Anleitung](https://github.com/ckundel2008/fp400-card/blob/v1.1.6/ANLEITUNG.md#update-einer-bestehenden-installation) · [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/v1.1.6/PRUEFSTAND.md)
