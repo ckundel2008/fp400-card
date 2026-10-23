@@ -82,6 +82,8 @@ Wenn HA beim Hinzufügen der Repository-Adresse einen Fehler wie `required key n
 
 ## Optional: Integration mit HACS verwalten
 
+**Spätere Updates:** HACS kann veröffentlichte Versionen dieses Repositorys als Update anbieten; die Installation bestätigst du selbst. Für Vorabversionen muss deren Anzeige aktiviert sein. ZIP-Installation und Controller-App haben eigene Updatewege. Die [Update-Anleitung](ANLEITUNG.md#update-einer-bestehenden-installation) erklärt die Schritte ohne erneutes Koppeln.
+
 Das Repository ist für **HACS → Benutzerdefinierte Repositories → Typ Integration** aufgebaut. Die Karte wird mit dieser Integration geliefert; nicht zusätzlich als Dashboard-Repository eintragen. Die Controller-App wird weiterhin über den HA-App-Store installiert: HACS installiert keine HA-Apps.
 
 1. HACS öffnen, oben im Menü **Benutzerdefinierte Repositories** wählen.

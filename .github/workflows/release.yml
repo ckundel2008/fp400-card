@@ -1,0 +1,69 @@
+name: Publish release
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/release.yml]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fp400-release
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python tools/build_package.py
+      - run: node --test tests/addon.test.mjs tests/package.test.mjs tests/file-preview.test.mjs tests/repository.test.mjs
+      - run: python tests/test_config_flow.py
+      - run: git diff --exit-code -- fp400_setup/integration
+      - uses: hacs/action@main
+        with:
+          category: integration
+      - uses: home-assistant/actions/hassfest@master
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-package
+          path: |
+            dist/FP400-Startpaket.zip
+            dist/START-HIER.html
+            dist/SHA256SUMS.json
+          if-no-files-found: error
+  publish:
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-package
+          path: dist
+      - name: Publish without replacing existing releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(python3 -c 'import json; print(json.load(open("custom_components/aqara_fp400/manifest.json"))["version"])')
+          tag="v${version}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag exists; leaving it unchanged."
+            exit 0
+          fi
+          gh release create "$tag" --target "$GITHUB_SHA" --prerelease \
+            --title "FP400 ${version} – geprüfter Karteneditor und Klickanleitung" \
+            --notes-file docs/release-notes.md \
+            dist/FP400-Startpaket.zip dist/START-HIER.html dist/SHA256SUMS.json

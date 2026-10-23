@@ -143,6 +143,18 @@ Erstelle anschließend eine neue vollständige Sicherung **einschließlich FP400
 
 ## Update einer bestehenden Installation
 
+### Wird das Update automatisch angeboten?
+
+Wenn **dieses Repository** bereits über HACS installiert ist, kann HACS neue GitHub-Releases nach seiner nächsten Aktualisierung als Update anbieten. Die Installation startest du selbst. Eine Änderung der GitHub-Anleitung allein ist noch kein Release.
+
+Version 1.1.5 ist als **Vorabversion** vorgesehen. Aktiviere für FP400 Card & Controller die Berücksichtigung von Vorabversionen, wenn du diese Ausgabe erhalten möchtest. Wird sie nach ihrer Veröffentlichung noch nicht angezeigt, öffne das Repository in HACS und wähle im Menü **Informationen aktualisieren**. Danach unter **Einstellungen → Updates** beziehungsweise direkt in HACS nachsehen. Die Beschriftung kann je nach HACS-Version abweichen.
+
+Eine reine ZIP-Installation erhält dadurch keine Update-Meldung. Dafür zuerst die Integration wie unten beschrieben in HACS übernehmen. Updates der Controller-App werden separat über den HA-App-Store verwaltet; sie aktualisieren die bereits installierte Integration nicht automatisch.
+
+Grundlage: [HACS-Update-Anleitung](https://github.com/hacs/documentation/blob/main/source/docs/use/update.md). Es ist kein erneutes Anlernen der Matter-Geräte erforderlich.
+
+### Passenden Updateweg wählen
+
 Vorher eine vollständige HA-Sicherung einschließlich der Controller-App erstellen. Aktuelle Ausgabe: **Integration 1.1.5**. Der neue Karteneditor ist ab 1.1.4 enthalten; ein erneutes Koppeln ist nicht erforderlich.
 
 - **Integration bereits in HACS verwaltet:** Dort FP400 Card & Controller auf 1.1.5 aktualisieren; falls nötig Vorabversionen anzeigen. Danach HA neu starten und die Browserseite vollständig neu laden.
@@ -179,7 +191,7 @@ Bleibt ein Fehler bestehen, notiere die genaue Meldung aus dem Assistenten bzw. 
 
 ## Updates und Rückweg
 
-Das ist eine angepasste Ausgabe der FP400-Integration. Falls HACS sie verwaltet, automatische Updates dafür ausschalten: Ein Download der Originalversion kann die Zusatzcontroller-Unterstützung überschreiben. Updates dieses Pakets zuerst prüfen und sichern.
+Das ist eine angepasste Ausgabe der FP400-Integration. Als Updatequelle muss **ckundel2008/fp400-card** verwendet werden. Das Originalprojekt darf denselben Integrationsordner nicht parallel aktualisieren, da es die Zusatzcontroller-Unterstützung überschreiben kann. Falls du eigene Automationen zum Installieren von Updates eingerichtet hast, diese Integration davon ausnehmen. Updates dieses Pakets zuerst prüfen und sichern.
 
 Zum Abschalten zuerst die FP400-Zusatzintegration deaktivieren und anschließend nur die App **FP400 Einrichtung** stoppen. Die bisherige Matter-Integration und ihre Geräte bleiben erhalten. Für diesen Rückweg müssen keine Fabrics oder Geräte gelöscht werden.
 
