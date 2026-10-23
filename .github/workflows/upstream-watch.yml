@@ -1,0 +1,30 @@
+name: Upstream watch
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 7 * * *'
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/upstream-watch.yml
+      - tools/watch_upstream.py
+permissions:
+  contents: read
+jobs:
+  observe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Read upstream releases, commits and pull requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python tools/watch_upstream.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: upstream-report
+          path: upstream-report.md
+          retention-days: 30
