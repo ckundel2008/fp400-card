@@ -1,6 +1,6 @@
 # Prüfstand – FP400 Einrichtung 0.1.2
 
-Stand: 22.10.2026. Experimentelle Ausgabe, kein offizielles HA-/Aqara-Paket. Technische Live-Prüfung einschließlich Sitztest bestanden; gezielter Gangtest noch offen.
+Stand: 23.10.2026. Experimentelle Ausgabe, kein offizielles HA-/Aqara-Paket. Technische Live-Prüfung einschließlich Sitztest bestanden; Gangtest laut Nutzerbestätigung vom 23.10.2026 bestanden.
 
 ## Am echten HA und FP400 geprüft
 
@@ -25,7 +25,11 @@ Am 22.10.2026 bestätigte der Nutzer eine auf dem Sofa sitzende Person. HA melde
 
 Die Ausschnitte stammen aus dem echten HA und enthalten keine simulierten Positionen. Prüfung ausschließlich lesend; keine Änderungen an Zonen, Automationen, Matter-Geräten oder Kopplungen. Private Rohmesswerte bleiben außerhalb dieses Repositories.
 
-Der Nutzer bestätigte vorheriges Gehen; während der begleiteten Prüfung war nur Sitzen möglich. Frühere Zonenereignisse sind im Verlauf vorhanden, die laufenden Einzelkoordinaten werden jedoch nicht im Recorder gespeichert. Damit ist die sitzende Erkennung mit echten Positionsmeldungen belegt, eine kontrollierte Gehstrecke nicht.
+Während der begleiteten Prüfung am 22.10.2026 war nur Sitzen möglich. Frühere Zonenereignisse sind im Verlauf vorhanden, die laufenden Einzelkoordinaten werden jedoch nicht im Recorder gespeichert.
+
+## Gangtest – vom Nutzer als bestanden bestätigt
+
+Am 23.10.2026 bestätigte der Nutzer den mittlerweile abgeschlossenen Gangtest. Er wird deshalb als bestanden laut Nutzerbestätigung geführt. Für diesen Nachtrag wurde kein eigener Live-Test durchgeführt; zusätzliche Messreihen oder eine Aufzeichnung der Gehstrecke liegen nicht vor. Die veröffentlichten Bilder zeigen den vorherigen Sitztest.
 
 ## Beim Live-Test behobene Fehler
 
@@ -40,7 +44,7 @@ Der Nutzer bestätigte vorheriges Gehen; während der begleiteten Prüfung war n
 
 ## Verbleibende Grenzen
 
-**Der gezielte Gangtest mit einer echten Person steht aus.** Beim Ersttest war niemand zu Hause; inzwischen ist der Sitztest mit echter Person und aktualisierten Positionsmeldungen bestanden. Die kleinen Positionsänderungen beim Sitzen ersetzen keine kontrollierte Gehstrecke. Erst nach einem begleiteten Gangtest vollständig als bewegungsgetestet bezeichnen.
+Sitztest durch begleitete Live-Prüfung belegt; Gangtest durch Nutzerbestätigung vom 23.10.2026. Daraus folgt keine zusätzliche Abnahme der unten genannten Plattformen oder Funktionen.
 
 Nicht live geprüft: ARM64-Hardware, reale Installation mit 32 Matter-Geräten, anderer Hauptserver als 1.5.2, erstmaliger Integrationseintrag auf einem frischen HA, Zonen schreiben/löschen, reale Ausführung aller bestehenden Automationen und Apple-/Aqara-App-Bedienung. Keine bestehenden Kopplungen gelöscht; deren Funktion in jeder Fremd-App nicht separat bedient. Zonenanzahl vor/nachher gleich; vollständige Zellmasken erst nach Kopplung erfasst.
 

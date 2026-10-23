@@ -4,7 +4,7 @@
 
 Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Kein offizielles Aqara-, Home-Assistant- oder HACS-Produkt.
 
-> **Teststand:** Auf HA OS 18.3 / Core 2026.10.2 (amd64) mit echtem FP400 1.2.0.0 zusätzlich gekoppelt. Vier Zonen, zwei Bereiche, frische Leermeldungen und Wiederverbindung nach App-Neustart geprüft. **Sitztest bestanden:** Eine tatsächlich sitzende Person wird mit Live-Position, Zustand „still“ und passender Sofa-Belegung erkannt. Alle 16 vorhandenen Matter-Geräteregister-IDs und 23 Radar-Entitäts-IDs blieben erhalten. **Der gezielte Gangtest bleibt offen.** ARM64 und eine reale Anlage mit 32 Geräten wurden nicht getestet. [Vollständiger Prüfstand](PRUEFSTAND.md).
+> **Teststand:** Auf HA OS 18.3 / Core 2026.10.2 (amd64) mit echtem FP400 1.2.0.0 zusätzlich gekoppelt. Vier Zonen, zwei Bereiche, frische Leermeldungen und Wiederverbindung nach App-Neustart geprüft. **Sitztest bestanden:** Eine tatsächlich sitzende Person wird mit Live-Position, Zustand „still“ und passender Sofa-Belegung erkannt. Alle 16 vorhandenen Matter-Geräteregister-IDs und 23 Radar-Entitäts-IDs blieben erhalten. **Gangtest bestanden laut Nutzerbestätigung vom 23.10.2026.** ARM64 und eine reale Anlage mit 32 Geräten wurden nicht getestet. [Vollständiger Prüfstand](PRUEFSTAND.md).
 
 ## Vorschau
 
@@ -18,7 +18,7 @@ Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqar
 
 ![Echte HA-Zustände: Live-Positionen eingeschaltet, eine Person und Sofa als belegt erkannt](docs/images/05-sofa-belegung-echt.jpg)
 
-*Der Sitztest ist bestanden. Die Bilder belegen keine kontrollierte Gehstrecke; dieser Test steht weiterhin aus. Die Ausschnitte enthalten keine HA-Adresse, Zugangsdaten oder persönlichen Profilangaben.*
+*Die Bilder stammen aus dem bestandenen Sitztest. Den später abgeschlossenen Gangtest bestätigte der Nutzer am 23.10.2026; die Bilder zeigen weiterhin den Sitztest. Die Ausschnitte enthalten keine HA-Adresse, Zugangsdaten oder persönlichen Profilangaben.*
 
 ## Was das Projekt macht
 
@@ -102,13 +102,29 @@ Dashboard bearbeiten → Karte hinzufügen → Manuell:
 ```yaml
 type: custom:aqara-fp400-zone-card
 entity: sensor.DEINE_FP400_RADAR_ZONES
+targets_entity: sensor.DEINE_VERFOLGTE_PERSONEN_ENTITAET
+regions_entity: sensor.DEINE_BEREICHE_ENTITAET
 title: FP400
 sensor_at: top
 ```
 
-Den Platzhalter durch die Zonen-Entität des eigenen Radar-Geräts ersetzen. Die Integration registriert die Kartenressource automatisch. Bei „Custom element doesn't exist“ den Browser vollständig neu laden. Nach einem vollständigen HA-Neustart den Schalter **Live-Positionen** prüfen und bei Bedarf einschalten.
+Alle drei Platzhalter durch die vollständigen Entitäts-IDs desselben FP400-Radar-Geräts ersetzen. Unter **Einstellungen → Geräte & Dienste → Entitäten** die jeweilige Entität öffnen und in ihren Einstellungen die **Entitäts-ID** mit dem Kopiersymbol kopieren. Keine Entitäten umbenennen oder neu anlegen.
+
+| Karten-Eintrag | Entität (Deutsch / Englisch) | Liefert |
+| --- | --- | --- |
+| `entity` | Zonen / Zones | Zonenkarte; erforderlich |
+| `targets_entity` | Verfolgte Personen / Tracked people | Personenpositionen und Live-Tracking-Zustand |
+| `regions_entity` | Bereiche / Regions | Entry/Exit, Monitoring und Interference gemeinsam |
+
+**Bei deutschen, umbenannten oder nummerierten Entitäts-IDs alle drei ausdrücklich angeben.** Ohne diese Angaben ersetzt die Karte die Endung `_zones` automatisch durch `_tracked_people` bzw. `_regions`. Das funktioniert nicht zuverlässig bei anderen Namen. Eine fehlende Personen-Entität kann deshalb irreführend „live tracking off“ anzeigen; eine fehlende Bereiche-Entität kann leere Bereiche anzeigen. „Personenanzahl“ ist kein Ersatz für „Verfolgte Personen“.
+
+Für Entry/Exit, Monitoring und Interference gibt es keine separaten YAML-Einträge. Bleiben sie nach korrekter Zuordnung leer, unter **Entwicklerwerkzeuge → Zustände** bei der Bereiche-Entität das Attribut `regions` prüfen. `title` setzt den Kartentitel; `sensor_at` erlaubt nur `top` oder `bottom`, keine Eckposition oder freie Drehung.
+
+Die Integration registriert die Kartenressource automatisch. Bei „Custom element doesn't exist“ den Browser vollständig neu laden. Nach einem vollständigen HA-Neustart den Schalter **Live-Positionen** prüfen und bei Bedarf einschalten.
 
 ## ZIP für die manuelle Installation
+
+Die Online-Anleitung und der Prüfstand enthalten den Nachtrag vom 23.10.2026 zu Entitätszuordnung und Gangtest. Die Download-Dateien der Version 1.1.3 enthalten noch den Dokumentationsstand vom 22.10.2026; für die Kartenkonfiguration die vollständige Vorlage oben verwenden.
 
 [Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.3/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads der Vorabversion](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.3)
 

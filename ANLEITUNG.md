@@ -102,11 +102,23 @@ Für die Karte: **Dashboard bearbeiten → Karte hinzufügen → Manuell**. Füg
 ```yaml
 type: custom:aqara-fp400-zone-card
 entity: sensor.DEINE_FP400_RADAR_ZONES
+targets_entity: sensor.DEINE_VERFOLGTE_PERSONEN_ENTITAET
+regions_entity: sensor.DEINE_BEREICHE_ENTITAET
 title: FP400
 sensor_at: top
 ```
 
-Ersetze `sensor.DEINE_FP400_RADAR_ZONES` durch die tatsächliche Zonen-Entität deines Radar-Geräts. Du findest ihren Namen, indem du die Zonen-Entität öffnest und deren Einstellungen ansiehst. Die Kartenressource wird von der Integration registriert. Bei „Custom element doesn't exist“ die Browserseite vollständig neu laden.
+Ersetze alle drei Platzhalter durch die vollständigen Entitäts-IDs desselben Radar-Geräts. Unter **Einstellungen → Geräte & Dienste → Entitäten** die jeweilige Entität öffnen, deren Einstellungen aufrufen und die **Entitäts-ID** mit dem Kopiersymbol kopieren.
+
+| Karten-Eintrag | Gesuchte Entität | Zweck |
+| --- | --- | --- |
+| `entity` | Zonen / Zones | Zonenkarte |
+| `targets_entity` | Verfolgte Personen / Tracked people | Personenpositionen und Live-Tracking-Anzeige |
+| `regions_entity` | Bereiche / Regions | Entry/Exit, Monitoring und Interference |
+
+Die automatische Zuordnung erwartet englische Endungen `_zones`, `_tracked_people` und `_regions`. Bei deutschen, umbenannten oder nummerierten IDs deshalb alle drei ausdrücklich angeben. Sonst kann die Karte trotz eingeschaltetem Tracking „live tracking off“ und leere Bereiche anzeigen. Keine Entitäten umbenennen; „Personenanzahl“ ersetzt nicht „Verfolgte Personen“. Für Entry/Exit, Monitoring und Interference gibt es keine eigenen Karten-Einträge. Bleiben Bereiche leer, bei ihrer Entität unter **Entwicklerwerkzeuge → Zustände** das Attribut `regions` prüfen.
+
+`sensor_at` erlaubt `top` oder `bottom`; Eckpositionen und freie Drehwinkel werden nicht unterstützt. Die Kartenressource wird von der Integration registriert. Bei „Custom element doesn't exist“ die Browserseite vollständig neu laden.
 
 ## 10. Abschluss prüfen und sichern
 
@@ -145,4 +157,4 @@ Eine vorher vorhandene FP400-Integration liegt unverändert unter `/config/fp400
 
 Paket 0.1.2, 22.10.2026. Eigene lokale App auf Basis des OHF Matter Servers 1.5.2 und einer angepassten Ausgabe von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Keine offizielle Home-Assistant- oder Aqara-App. Die bekannte Herstellerkennungs-Beschränkung des FP400 wird über einen zusätzlichen Controller umgangen, ohne den bisherigen Server umzustellen.
 
-Dieses Paket wurde auf HA OS 18.3 / Core 2026.10.2 (Intel/AMD 64 Bit) installiert und mit einem echten FP400 (Firmware 1.2.0.0) zusätzlich gekoppelt. Zonen, Bereiche und Wiederverbindung nach App-Neustart wurden geprüft. Alle 16 dort vorhandenen Matter-Geräteregistereinträge und die 23 Radar-Entitäts-IDs blieben erhalten. Der Sitztest mit einer echten Person, aktuellen Positionsmeldungen und passender Sofa-Belegung ist bestanden. Der gezielte Gangtest bleibt offen. ARM64, eine reale Anlage mit 32 Geräten und ein anderer Hauptserver als Matter Server 1.5.2 wurden nicht live getestet. Details siehe `PRUEFSTAND.md`.
+Dieses Paket wurde auf HA OS 18.3 / Core 2026.10.2 (Intel/AMD 64 Bit) installiert und mit einem echten FP400 (Firmware 1.2.0.0) zusätzlich gekoppelt. Zonen, Bereiche und Wiederverbindung nach App-Neustart wurden geprüft. Alle 16 dort vorhandenen Matter-Geräteregistereinträge und die 23 Radar-Entitäts-IDs blieben erhalten. Der Sitztest mit einer echten Person, aktuellen Positionsmeldungen und passender Sofa-Belegung ist bestanden. Den abgeschlossenen Gangtest bestätigte der Nutzer am 23.10.2026 als bestanden; dazu wurde kein weiterer eigener Live-Test durchgeführt. ARM64, eine reale Anlage mit 32 Geräten und ein anderer Hauptserver als Matter Server 1.5.2 wurden nicht live getestet. Details siehe `PRUEFSTAND.md`.
