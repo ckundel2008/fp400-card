@@ -95,7 +95,7 @@ Das Repository ist für **HACS → Benutzerdefinierte Repositories → Typ Integ
 
 Die Aufnahme in den allgemeinen HACS-Katalog wurde mit [Antrag #12425](https://github.com/hacs/default/pull/12425) eingereicht. Sie ist noch nicht angenommen; bis dahin erfolgt die Installation als benutzerdefinierte Quelle. [Offizielle Anforderungen](https://www.hacs.xyz/docs/publish/integration/), [benutzerdefinierte Quellen](https://www.hacs.xyz/docs/faq/custom_repositories/).
 
-**Zusätzlich geprüft:** Das echte HA akzeptiert die Quelle als benutzerdefinierte HACS-Integration und erkennt die Controller-App im App-Katalog. GitHub Actions hat Paketbau, 36 Tests und die offizielle HACS-Strukturprüfung erfolgreich ausgeführt. Das Hinzufügen wurde geprüft; eine HACS-Neuinstallation auf einem leeren HA nicht. Bei der experimentellen Vorabversion gegebenenfalls die Anzeige von Vorabversionen einschalten oder beim Download den Standardzweig wählen.
+**Zusätzlich geprüft:** Das echte HA akzeptiert die Quelle als benutzerdefinierte HACS-Integration und erkennt die Controller-App im App-Katalog. Für 1.1.5 sind Paketbau, 41 Tests, HACS und Hassfest bestanden. Der Projektinhaber bestätigt außerdem einen erfolgreichen Praxistest des Pakets bei einem Kollegen. 1.1.5 ist damit eine reguläre Veröffentlichung; Vorabversionen müssen dafür nicht aktiviert werden. Einzelheiten und Grenzen stehen im [Prüfstand](PRUEFSTAND.md).
 
 ## Karte anzeigen
 
@@ -134,7 +134,9 @@ Die Integration registriert die Kartenressource automatisch. Bei „Custom eleme
 
 Version 1.1.5 enthält die Schritt-für-Schritt-Anleitung für den Kartenkatalog und Entitäten-Dialog, den aktualisierten Prüfstand und beide echten Bilder. Der Karteneditor aus 1.1.4 wurde am 23.10.2026 im echten HA erfolgreich geprüft: Katalogsuche, automatische Vorauswahl, manuelle Entitätenauswahl und Übernahme in den Konfigurationscode. Die Kartenfunktion ist in 1.1.5 unverändert.
 
-[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.5/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads der Vorabversion](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.5)
+[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.1.5/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads](https://github.com/ckundel2008/fp400-card/releases/tag/v1.1.5)
+
+Das geprüfte ZIP bleibt bei der Freigabe zur regulären Veröffentlichung unverändert. Seine Hinweise zur Vorabversion und der darin enthaltene Prüfstand stammen von vor dem bestätigten Test beim Kollegen; die hier verlinkten Texte enthalten die Ergänzung.
 
 Dieser alternative Ablauf nutzt File editor und Terminal & SSH, prüft die ZIP-Prüfsumme und legt eine lokale App an. Das ist dieselbe Controller-Lösung, aber ein anderer Installationsweg. Für eine neue Installation nur einen der beiden App-Wege wählen.
 

@@ -1,5 +1,11 @@
 # Prüfstand – Integration 1.1.5 / FP400 Einrichtung 0.1.4
 
+## Ergänzung: Praxistest bei einem weiteren Nutzer
+
+Der Projektinhaber bestätigt nach Veröffentlichung von 1.1.5, das Paket bei einem Kollegen erfolgreich getestet zu haben. Auf Grundlage dieser Rückmeldung wird 1.1.5 als reguläre Veröffentlichung freigegeben. Dies ist ein vom Nutzer bestätigter Praxistest, kein zusätzlich durch Codex beobachteter Test. Details zu Hardware, Installationsweg und Anzahl der Matter-Geräte wurden nicht gesondert dokumentiert; daraus werden keine weiteren Einzelprüfungen abgeleitet.
+
+Die folgenden Testprotokolle und das unveränderte ZIP dokumentieren den Stand vor dieser Rückmeldung. Die bisherigen Einschränkungen der durch Codex beobachteten Prüfungen bleiben nachvollziehbar.
+
 Stand: 23.10.2026. Experimentelle Ausgabe, kein offizielles HA-/Aqara-Paket. Technische Live-Prüfung einschließlich Sitztest bestanden; Gangtest laut Nutzerbestätigung vom 23.10.2026 bestanden.
 
 ## Am echten HA und FP400 geprüft

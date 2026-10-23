@@ -147,7 +147,7 @@ Erstelle anschließend eine neue vollständige Sicherung **einschließlich FP400
 
 Wenn **dieses Repository** bereits über HACS installiert ist, kann HACS neue GitHub-Releases nach seiner nächsten Aktualisierung als Update anbieten. Die Installation startest du selbst. Eine Änderung der GitHub-Anleitung allein ist noch kein Release.
 
-Version 1.1.5 ist als **Vorabversion** vorgesehen. Aktiviere für FP400 Card & Controller die Berücksichtigung von Vorabversionen, wenn du diese Ausgabe erhalten möchtest. Wird sie nach ihrer Veröffentlichung noch nicht angezeigt, öffne das Repository in HACS und wähle im Menü **Informationen aktualisieren**. Danach unter **Einstellungen → Updates** beziehungsweise direkt in HACS nachsehen. Die Beschriftung kann je nach HACS-Version abweichen.
+Version 1.1.5 ist nach dem vom Projektinhaber bestätigten Praxistest bei einem Kollegen eine **reguläre Veröffentlichung**. Vorabversionen müssen dafür nicht aktiviert werden. Wird sie noch nicht angezeigt, öffne das Repository in HACS und wähle im Menü **Informationen aktualisieren**. Danach unter **Einstellungen → Updates** beziehungsweise direkt in HACS nachsehen. Die Beschriftung kann je nach HACS-Version abweichen.
 
 Eine reine ZIP-Installation erhält dadurch keine Update-Meldung. Dafür zuerst die Integration wie unten beschrieben in HACS übernehmen. Updates der Controller-App werden separat über den HA-App-Store verwaltet; sie aktualisieren die bereits installierte Integration nicht automatisch.
 

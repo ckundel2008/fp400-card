@@ -51,7 +51,7 @@ jobs:
         with:
           name: release-package
           path: dist
-      - name: Publish without replacing existing releases
+      - name: Publish or promote release without replacing assets
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -60,10 +60,11 @@ jobs:
           version=$(python3 -c 'import json; print(json.load(open("custom_components/aqara_fp400/manifest.json"))["version"])')
           tag="v${version}"
           if gh release view "$tag" >/dev/null 2>&1; then
-            echo "Release $tag exists; leaving it unchanged."
+            gh release edit "$tag" --prerelease=false --latest --notes-file docs/release-notes.md
+            echo "Release $tag promoted; existing tag and assets unchanged."
             exit 0
           fi
-          gh release create "$tag" --target "$GITHUB_SHA" --prerelease \
+          gh release create "$tag" --target "$GITHUB_SHA" --latest \
             --title "FP400 ${version} – geprüfter Karteneditor und Klickanleitung" \
             --notes-file docs/release-notes.md \
             dist/FP400-Startpaket.zip dist/START-HIER.html dist/SHA256SUMS.json
