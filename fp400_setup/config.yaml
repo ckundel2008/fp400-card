@@ -1,5 +1,5 @@
 name: FP400 Einrichtung
-version: "0.1.6"
+version: "0.1.7"
 slug: fp400_setup
 description: FP400-Zonen und Live-Positionen mit zusätzlichem Controller einrichten
 url: https://github.com/ckundel2008/fp400-card
@@ -23,5 +23,7 @@ map:
     read_only: false
 options:
   network_interface: ""
+  migration_mode: none
 schema:
   network_interface: str
+  migration_mode: list(none|export|import)

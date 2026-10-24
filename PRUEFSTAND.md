@@ -1,3 +1,9 @@
+# Prüfstand – Integration 1.2.1 / FP400 Einrichtung 0.1.7
+
+## Migration zur Repository-App
+
+17 zusätzliche automatisierte Tests prüfen Export, Import, wiederholten Import, Prüfsummenfehler, Pfadmanipulation, Symlinks, bestehende Zieldaten und unterbrochene Kopiervorgänge. Startintegration führt die Migration vor dem Matter-Prozess aus; Export wartet ohne Controller. Ein Live-Migrationsnachweis wird erst nach tatsächlicher Durchführung ergänzt. Die vorherigen Prüfungen bleiben unten erhalten.
+
 # Prüfstand – Integration 1.2.0 / FP400 Einrichtung 0.1.6
 
 ## Neue Funktionen 1.2.0

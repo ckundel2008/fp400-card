@@ -1,3 +1,10 @@
+# 0.1.7 – 2026-10-24
+
+- Optionaler Migrationsmodus `export`/`import` für lokale Kopplungsdaten; Standard `none`.
+- Export startet keinen Controller. Import nur vor Controllerstart in ein leeres oder identisches Ziel, mit Prüfsummen und Symlink-Schutz.
+- Alte Daten werden erhalten; keine neue FP400-Kopplung erforderlich. Anleitung unter DOCS.md beachten.
+- Integration 1.2.1 gebündelt, funktional wie 1.2.0.
+
 # 0.1.6 – 2026-10-23
 
 - Integration 1.2.0 mit korrigierten Live-Meldungen und bestätigtem Verwerfen einzelner Erkennungen gebündelt.

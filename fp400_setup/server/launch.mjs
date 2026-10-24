@@ -5,6 +5,7 @@ import { Installer } from './install.mjs';
 import { Pairer } from './pair.mjs';
 import { rpc } from './rpc.mjs';
 import { createWizard } from './http.mjs';
+import { runMigration } from './migrate.mjs';
 
 async function freePort(port) {
   const probe = net.createServer();
@@ -24,6 +25,17 @@ try {
     throw new Error('Kein gültiger Einrichtungs-Port.');
   await freePort(5581);
   const options = JSON.parse(await fs.readFile('/data/options.json', 'utf8'));
+  await fs.rm('/data/migration-export-ready', { force: true });
+  const migration = await runMigration({ mode: options.migration_mode || 'none' });
+  if (migration.exported) {
+    await fs.writeFile('/data/migration-export-ready', 'ready', { mode: 0o600 });
+    console.log('FP400-Migration: Export vollständig geprüft. Controller bleibt angehalten. Diese App vor dem Import stoppen.');
+    setInterval(() => {}, 60000);
+    process.on('SIGTERM', () => process.exit(0));
+    process.on('SIGINT', () => process.exit(0));
+    await new Promise(() => {});
+  }
+  if (migration.imported || migration.alreadyImported) console.log('FP400-Migration: Kopplungsdaten geprüft übernommen.');
   const network = options.network_interface || '';
   if (network && !/^[a-zA-Z0-9_.:-]{1,40}$/.test(network)) throw new Error('Ungültige Netzwerkschnittstelle.');
   await fs.mkdir('/data/matter', { recursive: true, mode: 0o700 });

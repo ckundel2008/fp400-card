@@ -24,7 +24,7 @@ jobs:
         with:
           python-version: '3.13'
       - run: python tools/build_package.py
-      - run: node --test tests/addon.test.mjs tests/package.test.mjs tests/file-preview.test.mjs tests/repository.test.mjs
+      - run: node --test tests/addon.test.mjs tests/package.test.mjs tests/file-preview.test.mjs tests/repository.test.mjs tests/migrate.test.mjs
       - run: python tests/test_config_flow.py
       - run: python tests/test_node_updates.py
       - run: git diff --exit-code -- fp400_setup/integration
@@ -66,6 +66,6 @@ jobs:
             exit 0
           fi
           gh release create "$tag" --target "$GITHUB_SHA" --latest \
-            --title "FP400 ${version} – Live-Updates und einzelne Erkennungen verwerfen" \
+            --title "FP400 ${version} – Repository-Wechsel mit Kopplungsdaten" \
             --notes-file docs/release-notes.md \
             dist/FP400-Startpaket.zip dist/START-HIER.html dist/SHA256SUMS.json

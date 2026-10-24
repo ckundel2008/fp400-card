@@ -1,3 +1,9 @@
+# 1.2.1 – 24.10.2026
+
+- App 0.1.7 mit geprüftem Export/Import der FP400-Kopplungsdaten für den Wechsel von einer lokalen zur Repository-App.
+- Expliziter Migrationsmodus, Prüfsummen, private Dateirechte, Überschreibschutz und Tests für Fehlerfälle.
+- Integration und Karte funktional unverändert gegenüber 1.2.0.
+
 # 1.2.0 – 23.10.2026
 
 - Upstream-Fix für skalare Attributmeldungen übernommen; gezielte Abonnements erhalten Live-Zustand und Zonenaktualisierungen.

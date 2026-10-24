@@ -50,3 +50,19 @@ Als HACS-Quelle **ckundel2008/fp400-card** verwenden; das Originalprojekt darf d
 Zum Abschalten zuerst die Zusatzintegration deaktivieren, anschließend nur diese App stoppen. Die bisherigen Matter-Geräte und Fabrics bestehen weiter. Die privaten App-Daten sichern; sie enthalten die zusätzliche FP400-Kopplung.
 
 Lizenz: MIT für Integration und neue Dialog-/Installationsdateien; Basis-Image OHF Matter Server unter Apache-2.0. Hinweise in LICENSE und THIRD-PARTY.md. Unterstützung erfolgt über denjenigen, der dieses individuelle Paket bereitstellt; Upstream unterstützt die unveränderte Originalintegration.
+
+## Wechsel der lokalen App zur GitHub-App (ab 0.1.7)
+
+Die App-Daten gehören zur jeweiligen Installation. Der Wechsel erfolgt daher mit geprüfter Datenübernahme, nicht durch erneutes Koppeln.
+
+1. HA einschließlich der lokalen FP400-App sichern. Die bisherige App nicht deinstallieren.
+2. Die lokale App aus diesem Paket auf 0.1.7 aktualisieren. Vorher ihre Quelldateien sichern. Dieser Schritt erfordert einen administrativen Dateizugriff; der Erstinstallationshelfer überschreibt absichtlich keine vorhandene lokale App.
+3. In der lokalen App `migration_mode: export` einstellen, Watchdog ausschalten und neu starten. Der Export läuft vor dem Controllerstart; der Controller bleibt angehalten. Im Protokoll muss „Export vollständig geprüft“ stehen.
+4. Die lokale App stoppen und ihren automatischen Start ausschalten. Ihre Daten bleiben als Rückweg erhalten.
+5. Die Repository-App aus `https://github.com/ckundel2008/fp400-card` installieren. Vor ihrem ersten Start `migration_mode: import` setzen und die bisherige Einstellung `network_interface` übernehmen. Nur starten, wenn die lokale App gestoppt ist.
+6. Nach der Meldung „Kopplungsdaten geprüft übernommen“ und erfolgreicher Verbindung `migration_mode` auf `none` zurückstellen. Bestehenden FP400, Zonen und Live-Tracking prüfen. Nicht neu koppeln.
+7. Die Integration über HACS aus **ckundel2008/fp400-card** aktualisieren; den vorhandenen Integrationseintrag erhalten. Danach HA neu starten.
+
+Die Übertragung liegt ausschließlich lokal unter `/config/fp400-migration` (in der App `/homeassistant/fp400-migration`). Sie enthält vertrauliche Matter-Kopplungsdaten und darf nicht auf GitHub oder in Support-Anhänge gelangen. Dateirechte sind auf den Eigentümer beschränkt. Prüfsummen und Pfadprüfung schützen vor beschädigten Dateien; eine bereits gefüllte, abweichende Zielinstallation wird nicht überschrieben. Nach erfolgreicher Umstellung den Transfer zusammen mit dem Rückweg bewusst verwalten; er wird nicht automatisch gelöscht.
+
+Rückweg: Repository-App stoppen, lokale App auf `migration_mode: none` stellen und starten. Niemals beide Controller gleichzeitig starten. Ein erneut angeforderter Export überschreibt keine vorhandenen Transferdaten.

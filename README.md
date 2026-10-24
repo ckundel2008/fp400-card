@@ -134,7 +134,7 @@ Die Integration registriert die Kartenressource automatisch. Bei „Custom eleme
 
 Version 1.2.0 enthält die Schritt-für-Schritt-Anleitung für den Kartenkatalog und Entitäten-Dialog, den aktualisierten Prüfstand und beide echten Bilder. Der Karteneditor aus 1.1.4 wurde am 23.10.2026 im echten HA erfolgreich geprüft: Katalogsuche, automatische Vorauswahl, manuelle Entitätenauswahl und Übernahme in den Konfigurationscode. Version 1.2.0 ergänzt das bestätigte Verwerfen einzelner Erkennungen und korrigiert Live-Attributmeldungen.
 
-[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.2.0/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads](https://github.com/ckundel2008/fp400-card/releases/tag/v1.2.0)
+[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.2.1/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads](https://github.com/ckundel2008/fp400-card/releases/tag/v1.2.1)
 
 Das Startpaket wurde für App 0.1.6 und Integration 1.2.0 neu gebaut. Es enthält die aktuelle Anleitung, den ergänzten Prüfstand und beide echten Bilder. Die App bleibt eine reguläre Ausgabe (`stable`) und bündelt die neue Integration. Der Controller und seine Kopplungsdaten bleiben unverändert.
 
@@ -166,3 +166,7 @@ MIT-Lizenz; ursprüngliche Integration und Karte © 2026 Andrew Rankin. OHF Matt
 ## Neu in 1.2.0
 
 Live-Attributmeldungen aktualisieren den Zustand zuverlässig auch bei einzelnen Zahlenwerten. Falsche Personenpunkte lassen sich nach Anklicken und ausdrücklicher Bestätigung verwerfen. Die Vorschau bleibt schreibgeschützt. [Bedienung und Update](ANLEITUNG.md). Die neuen Funktionen wurden automatisiert geprüft; die bisherigen echten Sitz- und Gangtests sind im Prüfstand separat dokumentiert.
+
+## Aktuelles Paket 1.2.1 / App 0.1.7
+
+Der Wechsel einer lokalen App zur GitHub-App kann jetzt ihre Kopplungsdaten mit geprüftem Export/Import erhalten. [Migrationsanleitung](ANLEITUNG.md#wechsel-der-lokalen-app-zur-github-app-ab-017). Die Übernahme wird ausdrücklich aktiviert; normale Updates verändern keine Kopplungsdaten. HACS verwaltet Integration und Karte, der HA-App-Katalog die Repository-App.
