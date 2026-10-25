@@ -4,11 +4,13 @@
 
 Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Kein offizielles Aqara-, Home-Assistant- oder HACS-Produkt.
 
-> **Teststand:** Auf HA OS 18.3 / Core 2026.10.2 (amd64) mit echtem FP400 1.2.0.0 zusätzlich gekoppelt. Vier Zonen, zwei Bereiche, frische Leermeldungen und Wiederverbindung nach App-Neustart geprüft. **Sitztest bestanden:** Eine tatsächlich sitzende Person wird mit Live-Position, Zustand „still“ und passender Sofa-Belegung erkannt. Alle 16 vorhandenen Matter-Geräteregister-IDs und 23 Radar-Entitäts-IDs blieben erhalten. **Gangtest bestanden laut Nutzerbestätigung vom 23.10.2026.** ARM64 und eine reale Anlage mit 32 Geräten wurden nicht getestet. [Vollständiger Prüfstand](PRUEFSTAND.md).
+> **Prüfstand:** Historische Sitz- und Gangtests mit einem echten FP400 sind abgeschlossen. Die Raumrasterkorrektur ist durch automatisierte Tests und eine Browser-Simulation geprüft; eine physische Eckmontage, mehrere reale FP400 und ARM64-Hardware sind noch nicht abgenommen. [Testergebnisse und Grenzen](PRUEFSTAND.md).
 
 ## Vorschau
 
-**Neu in 1.4.0:** Grundrisskarte mit mehreren FP400, Bild-Upload, Kalibrierung und Spiegelung. Die bisherige Radar-Karte bietet einen einstellbaren Raumausschnitt und eine freie Sensorposition. Beide Karten stehen nach demselben Update unter „Karte hinzufügen“ bereit. [Grundriss einrichten](docs/grundriss.md) · [Raumausschnitt und Montagebeispiele](docs/radar-raumausschnitt.md).
+**Neu in 1.4.1:** Im Raumausschnitt bleiben Raumraster und Meterangaben gerade. **Sensordrehung im Raum** richtet den Sensor und seine Zonen/Personen unabhängig davon aus. Beim ausdrücklichen Bearbeiten werden die tatsächlichen Sensorzellen eingeblendet. Bestehende Konfigurationen und Kopplungen bleiben erhalten.
+
+**Seit 1.4.0:** Grundrisskarte mit mehreren FP400, Bild-Upload, Kalibrierung und Spiegelung. Die bisherige Radar-Karte bietet einen einstellbaren Raumausschnitt und eine freie Sensorposition. Beide Karten stehen nach demselben Update unter „Karte hinzufügen“ bereit. [Grundriss einrichten](docs/grundriss.md) · [Raumausschnitt und Montagebeispiele](docs/radar-raumausschnitt.md).
 
 ### Echte Radar-Karte
 
@@ -28,12 +30,12 @@ Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqar
 - **Bereiche bearbeiten** aktiviert Änderungen an Zonen, Ein-/Ausgängen, Monitoring und Interferenzflächen. Entwürfe werden bewusst gespeichert oder verworfen.
 - **Zonen benennen:** Namen wie „Sofa“ zentral für alle unsere Karten speichern. HA-Anzeigenamen bleiben standardmäßig erhalten; Administratoren können sie pro Speicherung ausdrücklich mitändern. Entitäts-IDs bleiben unverändert.
 - **Geistererkennung auswählen:** deutliche Markierung mit Kennung, Position und Zonen vor dem Verwerfen.
-- **Kartendrehung:** im visuellen Editor oder mit `map_rotation` von −180° bis 180° drehen. Das verändert nur die Darstellung.
+- **Ausrichtung:** Im Raumausschnitt bleibt das Raumraster gerade; **Sensordrehung im Raum** richtet Sensor, Zonen und Personen aus. In der vollständigen Radaransicht dreht **Kartendrehung** weiterhin die gesamte Radaransicht. Beide nutzen `map_rotation` von −180° bis 180° und verändern keine gespeicherten Sensorflächen.
 - **Störfläche vorbereiten:** **Stelle als Interferenz markieren** erstellt einen Entwurf um eine aktuelle Erkennung. Erst **Speichern** überträgt ihn an den Sensor.
 - **Aktualität erkennen:** fehlende oder veraltete Positionsmeldungen werden von ausgeschaltetem Live-Tracking und einer unterbrochenen Verbindung unterschieden.
 - **Controller-App:** **Übersicht** zeigt Kopplungs- und Versionsstand; **Einrichtung** enthält die bewusst auszuführenden Installationsschritte. Neuere Integrationsdateien werden nicht durch eine ältere mitgelieferte Version ersetzt.
 
-Die [Bedienanleitung](ANLEITUNG.md#zonen-und-bereiche-bewusst-bearbeiten-ab-130) beschreibt die Schritte. Version 1.4.0 enthält Integration 1.4.0 / App 0.2.1; Downloads stehen unter [Releases](https://github.com/ckundel2008/fp400-card/releases). Der [Prüfstand](PRUEFSTAND.md) trennt neue Prüfungen von historischen Hardwaretests. Die Bilder oben zeigen den historischen Sitztest, nicht die Grundrisskarte.
+Die [Bedienanleitung](ANLEITUNG.md#zonen-und-bereiche-bewusst-bearbeiten-ab-130) beschreibt die Schritte. Version 1.4.1 enthält Integration 1.4.1 / App 0.2.2; Downloads stehen unter [Releases](https://github.com/ckundel2008/fp400-card/releases). Der [Prüfstand](PRUEFSTAND.md) trennt neue Prüfungen von historischen Hardwaretests. Die Bilder oben zeigen den historischen Sitztest, nicht die Grundrisskarte.
 
 ## Was das Projekt macht
 
@@ -149,11 +151,11 @@ Die Integration registriert die Kartenressource automatisch. Bei „Custom eleme
 
 ## ZIP für die manuelle Installation
 
-Das Paket 1.4.0 enthält die aktuelle Schritt-für-Schritt-Anleitung, die Grundriss- und Ausschnittanleitung, den Prüfstand und beide echten Bilder des historischen Sitztests. Diese Bilder sind keine Grundriss- oder Mehrsensor-Abnahme.
+Das Paket 1.4.1 enthält die aktuelle Schritt-für-Schritt-Anleitung, die Grundriss- und Ausschnittanleitung, den Prüfstand und beide echten Bilder des historischen Sitztests. Diese Bilder sind keine Grundriss- oder Mehrsensor-Abnahme.
 
 [Zuletzt veröffentlichtes Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/latest/download/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads und Versionsstände](https://github.com/ckundel2008/fp400-card/releases)
 
-Das Startpaket 1.4.0 bündelt FP400 Controller 0.2.1 und Integration 1.4.0. Die Versionsnummer steht auf der Release-Seite. App-Slug, Ports und Kopplungsdaten bleiben unverändert.
+Das Startpaket 1.4.1 bündelt FP400 Controller 0.2.2 und Integration 1.4.1. Die Versionsnummer steht auf der Release-Seite. App-Slug, Ports und Kopplungsdaten bleiben unverändert.
 
 Dieser alternative Ablauf nutzt File editor und Terminal & SSH, prüft die ZIP-Prüfsumme und legt eine lokale App an. Das ist dieselbe Controller-Lösung, aber ein anderer Installationsweg. Für eine neue Installation nur einen der beiden App-Wege wählen.
 

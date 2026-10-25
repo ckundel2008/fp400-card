@@ -1,5 +1,5 @@
 name: FP400 Controller
-version: "0.2.1"
+version: "0.2.2"
 slug: fp400_setup
 description: Dauerhafter Zusatzcontroller für FP400-Zonen und Live-Positionen
 url: https://github.com/ckundel2008/fp400-card

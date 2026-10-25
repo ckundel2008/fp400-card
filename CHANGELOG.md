@@ -1,3 +1,10 @@
+# 1.4.1 – 25.10.2026
+
+- Raumausschnitt: Raumraster und Meterangaben bleiben gerade, während Position und Drehung Sensor, Zonen und Personen im Raum ausrichten.
+- Das sichtbare Radarraster wird in der Raum-Liveansicht ausgeblendet und erscheint beim ausdrücklichen Bearbeiten wieder. Sensorzellen, Trefferprüfung und gespeicherte Flächen bleiben unverändert.
+- Der visuelle Editor nennt die Ausrichtung im Raummodus „Sensordrehung im Raum“. Vollständige Radaransicht und vorhandene Konfigurationen bleiben kompatibel.
+- App 0.2.2 bündelt Integration 1.4.1. Keine neue Kopplung erforderlich.
+
 # 1.4.0 – 25.10.2026
 
 - Zweite Karte „FP400 Grundriss“ mit eigenem Bild, mehreren Sensoren, Kalibrierung, Montagepunkt, Blickrichtung und gemeinsamer Spiegelung für Zonen/Ziele.

@@ -1,23 +1,15 @@
-Integration **1.4.0** / App **0.2.1**: Grundriss, Raumausschnitt und freie Sensorposition.
+Integration **1.4.1** / FP400 Controller **0.2.2**: Gerader Raum und unabhängige Sensorausrichtung.
 
-- **FP400 Grundriss** als zweite Karte direkt in der Kartenauswahl: eigener Plan, mehrere Sensoren, visueller Editor, Kalibrierung und Spiegelung. Liest vorhandene Entitäten; keine erneute Kopplung.
-- **Raumausschnitt** und **Sensor-X/Y** in der bisherigen Radar-Karte. Vollansicht bleibt Standard. Zonen und Ziele drehen sich gemeinsam um den Montagepunkt.
-- **Randkorrektur:** Ziehen über den Ausschnittrand verändert keine unsichtbaren neuen Zellen. Speichern vorhandener Zonen erhält deren ursprüngliche unsichtbare Zellen.
-- Kompatibilitätsnamen erhalten bestehende Test-Grundrisskarten. Nur die eigene frühere Lab-Ressource entfernen, die gemeinsame FP400-Ressource behalten und HA vollständig neu öffnen.
-- Grundriss- und Raumausschnittanleitungen sind im Startpaket enthalten. Mehrere physische FP400, räumliche Genauigkeit jeder Montage und vollständige iPhone-Touchabnahme bleiben offen; historische Sitzbilder belegen diese Punkte nicht.
+- **Raum bleibt gerade:** Raumraster und Meterangaben drehen sich im Raumausschnitt nicht mehr mit dem Sensor.
+- **Sensor getrennt ausrichten:** Sensor-X/Y bestimmen den Montageort; **Sensordrehung im Raum** richtet Sensor, Zonen, Bereiche und Personen im Raum aus. Die bestehende Einstellung `map_rotation` bleibt kompatibel.
+- **Bewusst bearbeiten:** Das tatsächliche Sensorzellenraster erscheint beim Start von **Bereiche bearbeiten**. Bei schräger Montage können diese Sensorzellen diagonal im geraden Raum liegen. Gespeicherte Flächen, Koordinaten und Zellzuordnungen werden nicht geändert.
+- Die vollständige Radaransicht und die Grundrisskarte mit mehreren FP400 bleiben verfügbar. Sensorzonen werden durch ein Update nicht neu gezeichnet; bestehende Kopplungen bleiben erhalten.
+- App **0.2.2** liefert Integration **1.4.1** mit. Controller, Ports, App-Slug und Kopplungsspeicher bleiben unverändert.
 
-- Die Karte startet als Live-Ansicht. „Bereiche bearbeiten“ schaltet Zeichnen und Zonenänderungen ausdrücklich frei.
-- Zonennamen werden zentral in Home Assistant gespeichert und in allen unseren Karten angezeigt. HA-Anzeigenamen bleiben standardmäßig unverändert. Administratoren können pro Speicherung **Auch den HA-Anwesenheitssensor umbenennen (nur diesmal)** aktivieren; die Vorschau und ein erneuter Konfliktcheck schützen vor einer falschen Zuordnung. Entitäts-IDs bleiben erhalten.
-- Eine ausgewählte Erkennung wird deutlich markiert; Position, Kennung und Zonen helfen bei der Kontrolle vor dem Verwerfen.
-- **Kartendrehung** im visuellen Editor und `map_rotation` erlauben −180° bis 180° (positiv im Uhrzeigersinn). Sensorzellen und Zonen werden dadurch nicht verändert.
-- **Stelle als Interferenz markieren** bereitet bis zu vier Zellen um eine aktuelle Erkennung vor und erhält vorhandene Interferenzflächen. Erst bewusstes Speichern überträgt den Entwurf.
-- Die Karte zeigt das Alter der letzten echten Positionsmeldung und unterscheidet fehlende oder veraltete Daten, ausgeschaltetes Tracking, Verbindungsfehler und Uhrabweichung. Veraltete Erkennungen können nicht als Grundlage für Targetaktionen dienen.
-- Ungespeicherte Änderungen, konkurrierende Änderungen und ausstehende Sensorbestätigungen werden sichtbar behandelt. Smartphone-Scrollen funktioniert im Ansichtsmodus.
-- Die App heißt **FP400 Controller**. **Übersicht** zeigt Verbindung, Kopplung und Versionsstände; **Einrichtung** enthält die ausdrücklich auszuführenden Schritte. Neuere oder nicht sicher vergleichbare Integrationsversionen werden nicht durch die mitgelieferte Ausgabe überschrieben. Verfügbare Integrationsupdates sind weiterhin in HACS zu prüfen.
-- Controller, App-Slug, Ports und Kopplungsspeicher bleiben unverändert. Keine erneute Kopplung.
+**Einrichten:** Raumausschnitt wählen, tatsächliche Raummaße und Sensor-X/Y ab linkem/oberem Rand eintragen. Die Blickrichtung separat einstellen. Ein eingezeichneter Pfeil, der nur den Montageort markiert, legt keinen Drehwinkel fest. Für einen Sensor oben links mit bestätigtem diagonalen Blick nach rechts unten gelten X/Y = 0 und bei „Oben“ −45°. Ohne bestätigte Blickrichtung keinen Winkel raten.
 
-[Schritt-für-Schritt-Anleitung](https://github.com/ckundel2008/fp400-card/blob/v1.4.0/ANLEITUNG.md) · [Grundriss](https://github.com/ckundel2008/fp400-card/blob/v1.4.0/docs/grundriss.md) · [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/v1.4.0/PRUEFSTAND.md)
+**Update:** Über HACS auf 1.4.1 aktualisieren, Home Assistant neu starten und die Browserseite beziehungsweise Companion-App vollständig neu öffnen. Ohne HACS in der bestehenden Controller-App unter **Einrichtung → Mitgelieferte Integration installieren** die gebündelte Ausgabe ausdrücklich installieren. Ein App-Update allein ersetzt die Integration nicht. Den Kopplungsschritt überspringen; keine Geräte neu anlernen.
 
-Integration über HACS aktualisieren oder unter **Einrichtung → Mitgelieferte Integration installieren** die gebündelte Ausgabe ausdrücklich installieren, dann HA neu starten und Browser neu laden. Nur ein App-Update ersetzt die installierte Integration nicht. Eine gespeicherte FP400-Kopplung weiterverwenden; den Kopplungsschritt bei einem Update überspringen.
+**Prüfung:** 150 JavaScript- und 44 Python-Tests bestanden, einschließlich des neuen Regressionstests für das gerade Raumraster. Die lokale Chrome-Simulation bestätigt die Eckmontage, die neue Editorbeschriftung sowie Bearbeitungsstart und Abbrechen ohne Sensor-Schreibaufrufe. Diese Korrektur wurde vor Veröffentlichung nicht mit einer physischen Eckmontage auf HA abgenommen. Mehrere echte FP400, räumliche Kalibrierung und vollständige iPhone-Touchabnahme bleiben offen. Historische Sitz- und Gangtests ersetzen diese Prüfungen nicht.
 
-149 JavaScript- und 44 Python-Tests bestanden. Die Tests prüfen Koordinaten, Entwürfe, Kompatibilität, sichere Eingabegrenzen und Paketinhalte. Die Randkorrektur wurde zusätzlich mit echter Mausbedienung im lokalen Chrome geprüft und als Frontend-Vorschau im eigenen HA installiert. Originalzonen und beide Dashboard-Konfigurationen blieben unverändert. Die Grenzen der realen Hardware-Abnahme stehen im Prüfstand. Die Veröffentlichung erfolgt erst nach den Paket-, HACS- und Hassfest-Prüfungen der Release-Automatisierung.
+[Schritt-für-Schritt-Anleitung](https://github.com/ckundel2008/fp400-card/blob/v1.4.1/ANLEITUNG.md) · [Raumausschnitt](https://github.com/ckundel2008/fp400-card/blob/v1.4.1/docs/radar-raumausschnitt.md) · [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/v1.4.1/PRUEFSTAND.md)

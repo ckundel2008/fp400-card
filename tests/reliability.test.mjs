@@ -179,6 +179,25 @@ test('room viewport fixes dimensions and translates the sensor and every layer t
   assert.equal(calls.length,0);assert.equal(card._editing,false);
 });
 
+test('room grid stays aligned to the room while sensor overlays rotate independently',async t=>{
+  const {card,calls}=await fixture(t);const shadow=card.shadowRoot;
+  for(const angle of [-45,0,45,90]){
+    card.shadowRoot=null;card.setConfig({entity:'sensor.zones',view_mode:'room',room_width:8,room_height:10,sensor_x:0,sensor_y:0,map_rotation:angle});card.shadowRoot=shadow;
+    card._svg=new Element();card._buildGrid();
+    const roomGrid=card._svg.children.find(el=>el.attrs.class==='room-guides');
+    assert.ok(roomGrid,'room needs its own fixed grid outside the sensor transform');
+    assert.equal(roomGrid.attrs.transform,undefined);
+    assert.ok(roomGrid.children.filter(el=>el.attrs.class==='room-gridline').every(el=>el.attrs.x1===el.attrs.x2||el.attrs.y1===el.attrs.y2));
+    assert.ok(roomGrid.children.some(el=>el.attrs.x1===16&&el.attrs.x2===16));
+    assert.ok(roomGrid.children.some(el=>el.attrs.y1===20&&el.attrs.y2===20));
+    assert.ok(card._mapLayer.attrs.transform.includes(`rotate(${angle} 8 0)`));
+    assert.equal(card._mapLayer.children.some(el=>el.attrs.class==='radar-guides'),false);
+    assert.ok(card._mapLayer.children.includes(card._regionLayer));
+    assert.ok(card._mapLayer.children.includes(card._targetLayer));
+  }
+  assert.equal(calls.length,0);
+});
+
 test('room hit testing retains original sensor cells for off-centre mounting, rotations and both orientations',async t=>{
   const {card}=await fixture(t);
   for(const top of [true,false])for(const angle of [-180,-90,-45,-17,0,33,45,90,180]){

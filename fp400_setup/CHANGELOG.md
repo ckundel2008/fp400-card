@@ -1,3 +1,8 @@
+# 0.2.2 – 2026-10-25
+
+- Integration 1.4.1 mit geradem Raumraster und unabhängiger Sensorausrichtung gebündelt.
+- Bestehende Kopplungen, App-Slug und Controller bleiben unverändert. Die Integration über HACS oder ausdrücklich im Einrichtungsdialog aktualisieren; ein App-Update allein ersetzt sie nicht.
+
 # 0.2.1 – 2026-10-25
 
 - Integration 1.4.0 mit Grundrisskarte, Raumausschnitt, freier Sensorposition und geprüfter Randkorrektur gebündelt.

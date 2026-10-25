@@ -1,5 +1,5 @@
 // Standalone read-only display model. No Home Assistant service calls.
-export const VERSION = '1.4.0';
+export const VERSION = '1.4.1';
 export const CARD_TAG = 'aqara-fp400-floorplan-card';
 export const EDITOR_TAG = 'aqara-fp400-floorplan-card-editor';
 export const TYPE = `custom:${CARD_TAG}`;

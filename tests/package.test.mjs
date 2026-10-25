@@ -45,8 +45,8 @@ test('1.4 release archive includes both cards, current manifests and the complet
   const frontend=get(zip,'fp400_setup/integration/aqara_fp400/www/aqara-fp400-zone-card.js');
   assert.equal(frontend,await fs.readFile('custom_components/aqara_fp400/www/aqara-fp400-zone-card.js','utf8'));
   assert.match(frontend,/aqara-fp400-floorplan-card/);assert.match(frontend,/fp400-floorplan-test-v5/);
-  assert.equal(JSON.parse(get(zip,'fp400_setup/integration/aqara_fp400/manifest.json')).version,'1.4.0');
-  assert.match(get(zip,'fp400_setup/config.yaml'),/version: "0\.2\.1"/);
+  assert.equal(JSON.parse(get(zip,'fp400_setup/integration/aqara_fp400/manifest.json')).version,'1.4.1');
+  assert.match(get(zip,'fp400_setup/config.yaml'),/version: "0\.2\.2"/);
   for(const name of ['docs/grundriss.md','docs/radar-raumausschnitt.md'])assert.equal(get(outer,name),await fs.readFile(name,'utf8'));
   assert.match(get(outer,'ANLEITUNG.md'),/Grundriss und Raumausschnitt/);
 });

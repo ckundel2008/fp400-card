@@ -6,7 +6,7 @@ Ab Integration 1.4.0 / FP400 Controller 0.2.1. Die Optionen ergänzen die bisher
 2. Im visuellen Editor unter **Sichtbarer Ausschnitt** die Option **Raumausschnitt und freie Sensorposition** wählen.
 3. **Ausschnittbreite** und **Ausschnitttiefe** in Metern eintragen. Gemeint ist der gewünschte rechteckige sichtbare Bereich, nicht die Kartenbreite auf dem Bildschirm. Erlaubt sind 0,5 bis 30 Meter pro Seite. Das Verhältnis bestimmt die Form der Karte.
 4. **Sensor-X** vom linken Rand und **Sensor-Y** vom oberen Rand dieses Ausschnitts messen. Beide Werte dürfen null sein; der Montagepunkt muss innerhalb oder auf dem Rand des Ausschnitts liegen. Zuerst bei Bedarf die Sensorwerte verkleinern, bevor der Ausschnitt kleiner eingestellt wird.
-5. **Sensor in der Darstellung** und **Kartendrehung** einstellen. „Oben“ blickt bei 0° nach unten; „Unten“ blickt bei 0° nach oben. Positive Winkel drehen im Uhrzeigersinn. Im Raumausschnitt dreht die Darstellung um den Montagepunkt, der selbst stehen bleibt. Die Pfeilspitze zeigt die Richtung.
+5. **Sensor in der Darstellung** und **Sensordrehung im Raum** einstellen. „Oben“ blickt bei 0° nach unten; „Unten“ blickt bei 0° nach oben. Positive Winkel drehen im Uhrzeigersinn. Das Raumrechteck mit seinem Raster und den Meterangaben bleibt gerade. Nur der Sensor mit seinen Zonen, Bereichen und Personen wird um seinen Montagepunkt ausgerichtet. Die Pfeilspitze zeigt die Richtung. In der vollständigen Radaransicht heißt die gleiche Option weiterhin **Kartendrehung**.
 6. Vorschau prüfen und im HA-Kartendialog speichern. Die normale Live-Ansicht bleibt gegen versehentliches Malen gesperrt. Zonenänderungen benötigen weiterhin **Bereiche bearbeiten**.
 
 Beispiel: Sensor einen Meter vom linken Rand an der oberen Wand, Blick nach unten; sichtbarer Bereich 5 × 4 Meter:
@@ -31,5 +31,7 @@ Die Karte verschiebt und dreht Sensorzeichen, Zonen, Bereiche und Live-Ziele gem
 Der Hinweis über der Karte erklärt, dass außerhalb liegende Zellen und Ziele ausgeblendet sind. Die Live-Anzahl im Kopf gilt weiterhin für das gesamte Radar. Versteckte Zellen und Ziele erhalten keinen Tastaturfokus. Die Anzahl ist kein Beleg dafür, wie viele Personen gerade im gewählten Ausschnitt stehen.
 
 Zum Zurückstellen **Vollständiges Radar (Standard)** wählen beziehungsweise `view_mode: radar` setzen. Vorhandene Karten ohne die neuen Optionen behalten ihre bisherigen Abmessungen und ihre bisherige Drehung um die Rastermitte. Maße und Sensorposition bleiben im Editor deaktiviert erhalten, sodass sie beim erneuten Umschalten wieder verfügbar sind. Ungültige Werte werden zurückgewiesen; der Editor übernimmt sie nicht.
+
+Beim ausdrücklichen Start von **Bereiche bearbeiten** erscheinen zusätzlich die tatsächlichen Sensorzellen. Sie können bei schräger Montage diagonal im Raum liegen: Jede Zelle gehört weiterhin zu derselben gespeicherten Radarfläche. Die gerade Raumdarstellung ist keine Umrechnung oder Neuzeichnung dieser Flächen.
 
 Die Grundrisskarte bleibt eine zusätzliche, davon unabhängige Ansicht für ein Hintergrundbild und mehrere FP400. Diese Erweiterung überträgt ausschließlich Ausschnitt und Montagepunkt auf die Einzel-Radarkarte.

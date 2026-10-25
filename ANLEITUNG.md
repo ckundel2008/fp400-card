@@ -99,7 +99,7 @@ Ein Freigabecode ist nur kurz gültig. Der Assistent speichert ihn nicht dauerha
 
 Öffne das FP400-Radar-Gerät. Schalte **Live-Tracking / Live-Positionen** ein und bewege dich vor dem Sensor. Die Personenanzahl und Positionen sollen sich ändern. Vorhandene Zonen werden eingelesen; bei der Einrichtung werden keine Zonen überschrieben. Nach einem vollständigen HA-Neustart den Schalter prüfen und gegebenenfalls wieder einschalten. Ein leerer Raum mit null Personen bestätigt noch keinen erfolgreichen Bewegungstest.
 
-Die Karte lässt sich ab Version 1.1.4 ohne YAML einrichten. Dieses Paket enthält Integration 1.4.0 und App 0.2.1.
+Die Karte lässt sich ab Version 1.1.4 ohne YAML einrichten. Dieses Paket enthält Integration 1.4.1 und App 0.2.2.
 
 1. Öffne dein gewünschtes Dashboard und wähle oben rechts **Dashboard bearbeiten**.
 2. Klicke im gewünschten Abschnitt auf **Karte hinzufügen**.
@@ -159,11 +159,11 @@ Grundlage: [HACS-Update-Anleitung](https://github.com/hacs/documentation/blob/ma
 
 ### Passenden Updateweg wählen
 
-Vorher eine vollständige HA-Sicherung einschließlich der Controller-App erstellen. Dieses Paket: **Integration 1.4.0 / App 0.2.1**. Ein erneutes Koppeln ist nicht erforderlich. Integration über HACS aktualisieren, HA neu starten und den Browser beziehungsweise die Companion-App vollständig neu öffnen. Bei App-Updates ohne HACS zusätzlich die mitgelieferte Integration ausdrücklich installieren.
+Vorher eine vollständige HA-Sicherung einschließlich der Controller-App erstellen. Dieses Paket: **Integration 1.4.1 / App 0.2.2**. Ein erneutes Koppeln ist nicht erforderlich. Integration über HACS aktualisieren, HA neu starten und den Browser beziehungsweise die Companion-App vollständig neu öffnen. Bei App-Updates ohne HACS zusätzlich die mitgelieferte Integration ausdrücklich installieren.
 
-- **Integration bereits in HACS verwaltet:** Dort FP400 Card & Controller auf 1.4.0 aktualisieren. Danach HA neu starten und die Browserseite vollständig neu laden.
-- **Bisher nur per ZIP/Einrichtungsdialog installiert:** Die bereits laufende Controller-App beibehalten. In HACS dieses Repository als benutzerdefinierte Quelle vom Typ **Integration** hinzufügen und Version 1.4.0 herunterladen. Danach HA neu starten und den Browser neu laden. Den vorhandenen Integrationseintrag weiterverwenden. Nicht zusätzlich eine zweite Controller-App starten. Falls noch das Original RAR in HACS verwaltet wird, den Wechselhinweis in der README beachten.
-- **Repository-App über den App-Store aktualisiert:** App 0.2.1 liefert die neue Integration mit. Unter **Einrichtung** ausdrücklich **Mitgelieferte Integration installieren** wählen, danach HA neu starten und den Browser neu laden. Den Kopplungsschritt überspringen. Bei HACS-Verwaltung stattdessen den ersten Weg verwenden.
+- **Integration bereits in HACS verwaltet:** Dort FP400 Card & Controller auf 1.4.1 aktualisieren. Danach HA neu starten und die Browserseite vollständig neu laden.
+- **Bisher nur per ZIP/Einrichtungsdialog installiert:** Die bereits laufende Controller-App beibehalten. In HACS dieses Repository als benutzerdefinierte Quelle vom Typ **Integration** hinzufügen und Version 1.4.1 herunterladen. Danach HA neu starten und den Browser neu laden. Den vorhandenen Integrationseintrag weiterverwenden. Nicht zusätzlich eine zweite Controller-App starten. Falls noch das Original RAR in HACS verwaltet wird, den Wechselhinweis in der README beachten.
+- **Repository-App über den App-Store aktualisiert:** App 0.2.2 liefert die neue Integration mit. Unter **Einrichtung** ausdrücklich **Mitgelieferte Integration installieren** wählen, danach HA neu starten und den Browser neu laden. Den Kopplungsschritt überspringen. Bei HACS-Verwaltung stattdessen den ersten Weg verwenden.
 
 Die **Übersicht** unterscheidet installierte und mitgelieferte Version. Eine neuere installierte Integration wird nicht durch die ältere mitgelieferte Ausgabe ersetzt. Bei unbekannter oder nicht sicher vergleichbarer Versionsnummer ist diese Installation gesperrt; Herkunft und Update in HACS prüfen. Gleiche Versionsnummern mit unterschiedlichen Dateien werden gesondert angezeigt und nicht automatisch ersetzt. Die Übersicht zeigt den Dateistand; bereits ausgeführter HA-Code kann bis zum Neustart noch aus der vorherigen Version stammen.
 
@@ -175,7 +175,7 @@ Das ZIP-Installationsskript überschreibt eine vorhandene lokale App absichtlich
 
 1. Prüfe zuerst, ob tatsächlich die aktuelle Integration installiert ist. Ein neuer Download auf dem Computer aktualisiert die laufende HA-Installation noch nicht.
 2. Folge dem passenden Updateweg oben. Eine alte lokale Einrichtungs-App kann weiterhin die alte Karte installieren; ihren Installationsschritt nach einem HACS-Update nicht erneut ausführen.
-3. Öffne **Einstellungen → Dashboards → Ressourcen**. Dort darf die FP400-Karte nur einmal als **JavaScript-Modul** eingetragen sein. Bei automatischer Verwaltung zeigt der Eintrag nach dem vollständigen Update auf `/aqara_fp400/aqara-fp400-zone-card.js?v=1.4.0`. Bei YAML-Verwaltung den dortigen bestehenden Eintrag aktualisieren. Die Ressource bietet beide FP400-Karten.
+3. Öffne **Einstellungen → Dashboards → Ressourcen**. Dort darf die FP400-Karte nur einmal als **JavaScript-Modul** eingetragen sein. Bei automatischer Verwaltung zeigt der Eintrag nach dem vollständigen Update auf `/aqara_fp400/aqara-fp400-zone-card.js?v=1.4.1`. Bei YAML-Verwaltung den dortigen bestehenden Eintrag aktualisieren. Die Ressource bietet beide FP400-Karten.
 4. Eine Versionsnummer in der URL allein ersetzt keine alte Datei. Ist die richtige Datei bereits installiert, erzwingt eine geänderte Versionskennung das Neuladen. Im Desktop-Browser vollständig neu laden; in der HA-App gegebenenfalls den Frontend-Cache zurücksetzen.
 5. Erneut **Dashboard bearbeiten → Karte hinzufügen → Nach Karte → FP400** öffnen. Jetzt müssen die Auswahlfelder für Zonen, verfolgte Personen und Bereiche erscheinen.
 
@@ -205,9 +205,9 @@ Eine vorher vorhandene FP400-Integration liegt unverändert unter `/config/fp400
 
 ## Stand und Herkunft
 
-Integration 1.4.0 / App 0.2.1, 25.10.2026. Eigene lokale App auf Basis des OHF Matter Servers 1.5.2 und einer angepassten Ausgabe von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Keine offizielle Home-Assistant- oder Aqara-App. Der zusätzliche Controller bleibt unverändert. Version 1.4.0 ergänzt Grundriss, Raumausschnitt und freie Sensorposition; die Bedienfunktionen aus 1.3.0 bleiben erhalten. Die tatsächlich abgeschlossenen Prüfungen und verbleibenden Grenzen stehen in `PRUEFSTAND.md`; ältere Hardwaretests sind keine erneute Abnahme dieser Funktionen.
+Integration 1.4.1 / App 0.2.2, 25.10.2026. Eigene lokale App auf Basis des OHF Matter Servers 1.5.2 und einer angepassten Ausgabe von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Keine offizielle Home-Assistant- oder Aqara-App. Der zusätzliche Controller bleibt unverändert. Version 1.4.1 enthält Grundriss, Raumausschnitt und freie Sensorposition; die Bedienfunktionen aus 1.3.0 bleiben erhalten. Die tatsächlich abgeschlossenen Prüfungen und verbleibenden Grenzen stehen in `PRUEFSTAND.md`; ältere Hardwaretests sind keine erneute Abnahme dieser Funktionen.
 
-Die Vorgängerausgabe wurde auf HA OS 18.3 / Core 2026.10.2 (Intel/AMD 64 Bit) installiert und mit einem echten FP400 (Firmware 1.2.0.0) zusätzlich gekoppelt. Zonen, Bereiche und Wiederverbindung nach App-Neustart wurden geprüft. Alle 16 dort vorhandenen Matter-Geräteregistereinträge und die 23 Radar-Entitäts-IDs blieben erhalten. Der Sitztest mit einer echten Person, aktuellen Positionsmeldungen und passender Sofa-Belegung ist bestanden. Den abgeschlossenen Gangtest bestätigte der Nutzer am 23.10.2026 als bestanden; dazu wurde kein weiterer eigener Live-Test durchgeführt. ARM64, eine reale Anlage mit 32 Geräten und ein anderer Hauptserver als Matter Server 1.5.2 wurden nicht live getestet. Details siehe `PRUEFSTAND.md`.
+Frühere reale Prüfungen bestätigten zusätzliche Kopplung, Zonen, Bereiche und Wiederverbindung mit einem FP400 sowie den Erhalt vorhandener Geräte und Entitäten. Historische Sitz- und Gangtests sind abgeschlossen. Die Raumrasterkorrektur 1.4.1 wurde vor Veröffentlichung automatisiert und in einer Browser-Simulation geprüft, noch nicht mit einer physischen Eckmontage auf HA. Mehrere reale FP400 und ARM64-Hardware sind nicht abgenommen. Details siehe `PRUEFSTAND.md`.
 
 ## Grundriss und Raumausschnitt (ab 1.4.0)
 
@@ -217,7 +217,7 @@ Die Vorgängerausgabe wurde auf HA OS 18.3 / Core 2026.10.2 (Intel/AMD 64 Bit) i
 4. **FP400 hinzufügen**, dessen **Verfolgte Personen** und optional **Zonen desselben Geräts** auswählen.
 5. Den Montagepunkt im Plan anklicken. X läuft vom linken Rand nach rechts, Y vom oberen Rand nach unten. Blickrichtung: 0° oben, 90° rechts, 180° unten, −90° links. Wenn die Zonen seitenverkehrt erscheinen, **Links/rechts spiegeln (Zonen und Ziele)** aktivieren.
 6. Weitere Sensoren einzeln hinzufügen. Pro Etage eine eigene Karte verwenden. **Entwurf übernehmen**, anschließend im HA-Dialog **Speichern**. **Abbrechen** verwirft den Entwurf. Die Grundrisskarte verändert keine Zonen im Sensor.
-7. Für einen Ausschnitt ohne Grundrissbild die bisherige **FP400 Radar**-Karte öffnen. **Sichtbarer Ausschnitt → Raumausschnitt und freie Sensorposition** wählen. Breite/Tiefe sowie Sensor-X/Y ab linkem/oberem Ausschnittrand in Metern eintragen. Hier blickt „Oben“ bei 0° nach unten und „Unten“ nach oben; die Kartendrehung richtet den Pfeil aus. Diese historische Radar-Konvention unterscheidet sich von der oben beschriebenen Grundriss-Blickrichtung.
+7. Für einen Ausschnitt ohne Grundrissbild die bisherige **FP400 Radar**-Karte öffnen. **Sichtbarer Ausschnitt → Raumausschnitt und freie Sensorposition** wählen. Breite/Tiefe sowie Sensor-X/Y ab linkem/oberem Ausschnittrand in Metern eintragen. Das Raumraster bleibt gerade; **Sensordrehung im Raum** richtet den Sensor mit seinen Zonen und Personen aus. Hier blickt „Oben“ bei 0° nach unten und „Unten“ nach oben. Diese historische Radar-Konvention unterscheidet sich von der oben beschriebenen Grundriss-Blickrichtung. Beim ausdrücklichen Bearbeiten erscheinen zusätzlich die tatsächlichen Sensorzellen; bei schräger Montage können diese diagonal im geraden Raum liegen.
 8. **Vollständiges Radar (Standard)** stellt die bisherige Vollansicht wieder her. Ausschnitt und Position ändern nur die Darstellung; sie erweitern nicht die Radarreichweite. Die Live-Anzahl gilt weiterhin für das gesamte Radar.
 
 Ausführliche Beispiele stehen in den enthaltenen Dateien `docs/grundriss.md` und `docs/radar-raumausschnitt.md`. Alte Grundriss-Testtypen bleiben kompatibel. Nach Umstieg die ausschließlich eigene zusätzliche Lab-Ressource entfernen und die gemeinsame FP400-Ressource behalten. Nicht zwei FP400-Module parallel eintragen. Keine neue Kopplung oder zweite Controller-App anlegen. Mehrere reale Sensoren und vollständige iPhone-Touchbedienung sind noch nicht abschließend abgenommen.
@@ -264,7 +264,7 @@ Es wird nur diese Erkennung verworfen, kein Matter-Gerät und keine Kopplung gel
 Die App-Daten gehören zur jeweiligen Installation. Der Wechsel erfolgt daher mit geprüfter Datenübernahme, nicht durch erneutes Koppeln.
 
 1. HA einschließlich der lokalen FP400-App sichern. Die bisherige App nicht deinstallieren.
-2. Die lokale App auf eine Version mit Migrationsmodus aktualisieren: mindestens 0.1.7, in diesem Paket 0.2.1. Vorher ihre Quelldateien sichern. Dieser Schritt erfordert einen administrativen Dateizugriff; der Erstinstallationshelfer überschreibt absichtlich keine vorhandene lokale App.
+2. Die lokale App auf eine Version mit Migrationsmodus aktualisieren: mindestens 0.1.7, in diesem Paket 0.2.2. Vorher ihre Quelldateien sichern. Dieser Schritt erfordert einen administrativen Dateizugriff; der Erstinstallationshelfer überschreibt absichtlich keine vorhandene lokale App.
 3. In der lokalen App `migration_mode: export` einstellen, Watchdog ausschalten und neu starten. Der Export läuft vor dem Controllerstart; der Controller bleibt angehalten. Im Protokoll muss „Export vollständig geprüft“ stehen.
 4. Die lokale App stoppen und ihren automatischen Start ausschalten. Ihre Daten bleiben als Rückweg erhalten.
 5. Die Repository-App aus `https://github.com/ckundel2008/fp400-card` installieren. Vor ihrem ersten Start `migration_mode: import` setzen und die bisherige Einstellung `network_interface` übernehmen. Nur starten, wenn die lokale App gestoppt ist.

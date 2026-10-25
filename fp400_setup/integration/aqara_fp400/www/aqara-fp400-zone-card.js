@@ -127,16 +127,19 @@ class AqaraFp400ZoneCardEditor extends HTMLElement {
         if(['room_width','room_height','sensor_x','sensor_y'].includes(key)){field.type='number';field.min=key.startsWith('room_')?'.5':'0';field.max='30';field.step='any';}
         field.addEventListener("change", event => this._change(key, event.target.value));
         root.append(labelEl, field);
-        this._fields[key] = { field, kind };
+        this._fields[key] = { field, kind, labelEl };
       }
       const presets=document.createElement('div');
       for(const angle of [-45,0,45]){const b=document.createElement('button');b.textContent=`${angle>0?'+':''}${angle}°`;b.addEventListener('click',()=>this._change('map_rotation',angle));presets.appendChild(b);}
       root.append(presets);
       const note = document.createElement("small");
-      note.textContent = this._t('Alle Entitäten müssen zum selben FP400 gehören. Der Raumausschnitt blendet nur die Anzeige außerhalb aus; er verändert keine Sensorflächen oder Live-Daten. Im Raumausschnitt dreht die Karte um den Sensor: „Oben“ blickt bei 0° nach unten, „Unten“ nach oben. Positive Winkel drehen im Uhrzeigersinn. X/Y ab linkem/oberem Ausschnittrand; die Vorschau zeigt Montagepunkt und Richtung.', 'All entities must belong to the same FP400. The room viewport only clips the display; sensor areas and live data stay unchanged. Room view rotates around the sensor: Top faces down at 0°, Bottom faces up. Positive angles rotate clockwise. X/Y are measured from the left/top viewport edge; the preview shows position and direction.');
+      note.textContent = this._t('Alle Entitäten müssen zum selben FP400 gehören. Im Raumausschnitt bleibt das Raumraster gerade. Position und Drehung richten den Sensor mit seinen Zonen und Personen im Raum aus; gespeicherte Sensorflächen bleiben unverändert. „Oben“ blickt bei 0° nach unten, „Unten“ nach oben. Positive Winkel drehen im Uhrzeigersinn. X/Y ab linkem/oberem Raumausschnittrand. Beim Bearbeiten werden zusätzlich die tatsächlichen, gegebenenfalls schrägen Sensorzellen eingeblendet.', 'All entities must belong to the same FP400. In room view the room grid stays straight. Position and rotation place the sensor, its zones and people in the room; stored sensor areas stay unchanged. Top faces down at 0°, Bottom faces up. Positive angles rotate clockwise. X/Y are measured from the left/top room edge. Editing additionally shows the actual, possibly angled sensor cells.');
       root.append(note);
     }
-    for (const [key, { field, kind }] of Object.entries(this._fields)) {
+    for (const [key, { field, kind, labelEl }] of Object.entries(this._fields)) {
+      if(key==='map_rotation'&&labelEl)labelEl.textContent=this._config.view_mode==='room'
+        ?this._t('Sensordrehung im Raum (−180° bis 180°)','Sensor rotation in the room (−180° to 180°)')
+        :this._t('Kartendrehung (−180° bis 180°)','Map rotation (−180° to 180°)');
       if (!kind) {
         const defaults={map_rotation:0,room_width:8,room_height:10,sensor_x:Number(this._config.room_width??8)/2,sensor_y:this._config.sensor_at==='bottom'?Number(this._config.room_height??10):0};
         const value=String(this._config[key]??defaults[key]??'');
@@ -349,6 +352,11 @@ class AqaraFp400ZoneCard extends HTMLElement {
         .cell.painted.disabled { fill-opacity: 0.18; }
         .cell.region-tint { fill-opacity: 0.16; }
         .cell.region-fill { fill-opacity: 0.45; }
+        .grid.room:not(.editing) .cell { stroke: none; }
+        .grid.room:not(.editing) .cell.outside { fill-opacity: 0; }
+        .room-guides,.room-labels { pointer-events:none; }
+        .room-gridline { stroke:var(--divider-color,rgba(127,127,127,.3));stroke-width:.025; }
+        .room-label {paint-order:stroke;stroke:var(--secondary-background-color);stroke-width:.12;stroke-linejoin:round;}
         .cell.hover-zone:hover { fill-opacity: 0.35; }
         .gridline { stroke: var(--primary-text-color); stroke-opacity: 0.12; stroke-width: 0.04; }
         .ahead { stroke: var(--primary-text-color); stroke-opacity: 0.12; stroke-width: 0.04; stroke-dasharray: 0.3 0.3; }
@@ -508,11 +516,20 @@ class AqaraFp400ZoneCard extends HTMLElement {
     this._svg.setAttribute('viewBox',`${bounds.left} ${bounds.top} ${bounds.width} ${bounds.height}`);
     this._svg.style.overflow='hidden';
     this.shadowRoot.querySelector('.grid').style.aspectRatio=`${bounds.width} / ${bounds.height}`;
+    this.shadowRoot.querySelector('.grid').classList.toggle('room',!!this._room);
+    if(this._room){
+      const roomGuides=this._el('g',{},'room-guides');
+      // Half-metre room coordinates never inherit the sensor's transform.
+      for(let x=0;x<=bounds.width;x++)roomGuides.appendChild(this._el('line',{x1:x,y1:0,x2:x,y2:bounds.height},'room-gridline'));
+      for(let y=0;y<=bounds.height;y++)roomGuides.appendChild(this._el('line',{x1:0,y1:y,x2:bounds.width,y2:y},'room-gridline'));
+      this._svg.appendChild(roomGuides);
+    }
     this._mapLayer=this._el('g',{transform:this._mapTransform()});
     this._svg.appendChild(this._mapLayer);
 
     // distance labels + guide lines every metre (2 rows), and the straight-ahead line
-    const guides = this._el("g");
+    if(!this._room){
+    const guides = this._el("g",{},'radar-guides');
     for (let r = 2; r < ROWS; r += 2) {
       const y = this._distY(r * CELL_CM);
       guides.appendChild(this._el("line", { x1: 0, y1: y, x2: COLS, y2: y }, "gridline"));
@@ -523,6 +540,7 @@ class AqaraFp400ZoneCard extends HTMLElement {
     }
     guides.appendChild(this._el("line", { x1: AHEAD_COL, y1: 0, x2: AHEAD_COL, y2: ROWS }, "ahead"));
     this._mapLayer.appendChild(guides);
+    }
 
     this._cells = [];
     const cellLayer = this._el("g");
@@ -557,6 +575,13 @@ class AqaraFp400ZoneCard extends HTMLElement {
 
     this._targetLayer = this._el("g");
     this._mapLayer.appendChild(this._targetLayer);
+    if(this._room){
+      const labels=this._el('g',{},'room-labels');
+      for(let y=2;y<bounds.height;y+=2){
+        const label=this._el('text',{x:.12,y:y-.12},'label room-label');label.textContent=`${y/2} m`;labels.appendChild(label);
+      }
+      this._svg.appendChild(labels);
+    }
   }
 
   // ---------------------------------------------------------------- state (zones)
@@ -1228,7 +1253,7 @@ window.customCards.push({
 
 ;(()=>{
 // Standalone read-only display model. No Home Assistant service calls.
-const VERSION = '1.4.0';
+const VERSION = '1.4.1';
 const CARD_TAG = 'aqara-fp400-floorplan-card';
 const EDITOR_TAG = 'aqara-fp400-floorplan-card-editor';
 const TYPE = `custom:${CARD_TAG}`;
