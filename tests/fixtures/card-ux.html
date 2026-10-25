@@ -4,6 +4,7 @@
 body{margin:0;padding:16px;font:16px system-ui;background:#f4f5f7;color:#20242a;--primary-color:#007fa8;--primary-text-color:#20242a;--secondary-text-color:#52616c;--secondary-background-color:#e9edf1;--card-background-color:#fff;--divider-color:#b8c4cb;--text-primary-color:#fff;--error-color:#b3261e}main{max-width:560px;margin:auto}ha-card{background:#fff;border-radius:16px}header{padding:12px;background:#fff3cd;margin-bottom:12px}button,select{padding:10px;margin:3px;font:inherit}pre{white-space:pre-wrap;font-size:12px}footer{height:400px}
 </style><main><header><strong>SIMULATION – kein echter Sensor</strong><p>Lokale Bedienprüfung. Alle Dienste ändern ausschließlich diese Beispieldaten.</p></header>
 <div><button id="move">Person bewegen</button><button id="gone">Person entfernen/anzeigen</button><button id="external">Externe Zonenänderung</button><button id="offline">Verbindung an/aus</button><button id="lang">Deutsch / English</button><button id="preview">Vorschau an/aus</button><button id="old">Namensdienst an/aus</button><label>Speichern <select id="result"><option value="ok">Bestätigen nach 1 s</option><option value="error">Sensorfehler</option><option value="timeout">Keine Bestätigung</option></select></label></div>
+<div><button id="room">Raumausschnitt / Vollansicht</button><button id="mobile">Mobilbreite / Desktop</button></div>
 <aqara-fp400-zone-card></aqara-fp400-zone-card><p>Dienstaufrufe (Simulation):</p><pre id="log">Keine</pre><footer>Scrollbereich für Mobilprüfung</footer></main>
 <script type="module">
 import '../../custom_components/aqara_fp400/www/aqara-fp400-zone-card.js';
@@ -32,6 +33,8 @@ const hass={language:'de',user:{is_admin:true},services:{aqara_fp400:{set_zone_n
  setTimeout(()=>{if(service==='set_zones'){a.pending=false;if(result==='error')a.error='Simulierter Sensorfehler';else a.zones=data.zones;}else{a.pending[data.region]=false;if(result==='error')a.error[data.region]='Simulierter Sensorfehler';else a.regions[data.region]=data.cells;}render();},1000);
 }};
 let config={entity:z,regions_entity:r,targets_entity:t,title:'Wohnzimmer · Simulation'};
+document.querySelector('#room').onclick=()=>{config={...config,view_mode:config.view_mode==='room'?'radar':'room',room_width:5,room_height:4,sensor_x:1,sensor_y:0,map_rotation:0};editor.setConfig(config);card.setConfig(config);render();};
+document.querySelector('#mobile').onclick=()=>{const main=document.querySelector('main');main.style.maxWidth=main.style.maxWidth==='390px'?'560px':'390px';};
 const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Visueller Karteneditor (Simulation)';details.appendChild(summary);
 const editor=document.createElement('aqara-fp400-zone-card-editor');details.appendChild(editor);card.before(details);
 editor.setConfig(config);editor.addEventListener('config-changed',event=>{config=event.detail.config;card.setConfig(config);render();});

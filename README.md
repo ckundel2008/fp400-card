@@ -8,6 +8,8 @@ Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqar
 
 ## Vorschau
 
+**Neu in 1.4.0:** Grundrisskarte mit mehreren FP400, Bild-Upload, Kalibrierung und Spiegelung. Die bisherige Radar-Karte bietet einen einstellbaren Raumausschnitt und eine freie Sensorposition. Beide Karten stehen nach demselben Update unter „Karte hinzufügen“ bereit. [Grundriss einrichten](docs/grundriss.md) · [Raumausschnitt und Montagebeispiele](docs/radar-raumausschnitt.md).
+
 ### Echte Radar-Karte
 
 ![Echte Home-Assistant-Radarkarte: vier Zonen und eine tatsächlich sitzende Person mit aktiver Live-Position](docs/images/04-radar-sitztest-echt.jpg)
@@ -31,7 +33,7 @@ Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqar
 - **Aktualität erkennen:** fehlende oder veraltete Positionsmeldungen werden von ausgeschaltetem Live-Tracking und einer unterbrochenen Verbindung unterschieden.
 - **Controller-App:** **Übersicht** zeigt Kopplungs- und Versionsstand; **Einrichtung** enthält die bewusst auszuführenden Installationsschritte. Neuere Integrationsdateien werden nicht durch eine ältere mitgelieferte Version ersetzt.
 
-Die [Bedienanleitung](ANLEITUNG.md#zonen-und-bereiche-bewusst-bearbeiten-ab-130) beschreibt die Schritte. Version 1.3.0 enthält Integration 1.3.0 / App 0.2.0; Downloads stehen unter [Releases](https://github.com/ckundel2008/fp400-card/releases). Der [Prüfstand](PRUEFSTAND.md) trennt neue Prüfungen von historischen Hardwaretests. Die Bilder oben zeigen den historischen Sitztest, nicht die neue Bedienoberfläche.
+Die [Bedienanleitung](ANLEITUNG.md#zonen-und-bereiche-bewusst-bearbeiten-ab-130) beschreibt die Schritte. Version 1.4.0 enthält Integration 1.4.0 / App 0.2.1; Downloads stehen unter [Releases](https://github.com/ckundel2008/fp400-card/releases). Der [Prüfstand](PRUEFSTAND.md) trennt neue Prüfungen von historischen Hardwaretests. Die Bilder oben zeigen den historischen Sitztest, nicht die Grundrisskarte.
 
 ## Was das Projekt macht
 
@@ -147,11 +149,11 @@ Die Integration registriert die Kartenressource automatisch. Bei „Custom eleme
 
 ## ZIP für die manuelle Installation
 
-Das Paket 1.3.0 enthält die Schritt-für-Schritt-Anleitung für Kartenkatalog, Entitäten-Dialog und neue Bedienung, den Prüfstand und beide echten Bilder des historischen Sitztests. Der Karteneditor aus 1.1.4 wurde am 23.10.2026 im echten HA erfolgreich geprüft; dieser ältere Test ersetzt keine Abnahme neuer Funktionen.
+Das Paket 1.4.0 enthält die aktuelle Schritt-für-Schritt-Anleitung, die Grundriss- und Ausschnittanleitung, den Prüfstand und beide echten Bilder des historischen Sitztests. Diese Bilder sind keine Grundriss- oder Mehrsensor-Abnahme.
 
 [Zuletzt veröffentlichtes Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/latest/download/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads und Versionsstände](https://github.com/ckundel2008/fp400-card/releases)
 
-Das Startpaket 1.3.0 bündelt FP400 Controller 0.2.0 und Integration 1.3.0. Die Versionsnummer steht auf der Release-Seite. App-Slug, Ports und Kopplungsdaten bleiben unverändert.
+Das Startpaket 1.4.0 bündelt FP400 Controller 0.2.1 und Integration 1.4.0. Die Versionsnummer steht auf der Release-Seite. App-Slug, Ports und Kopplungsdaten bleiben unverändert.
 
 Dieser alternative Ablauf nutzt File editor und Terminal & SSH, prüft die ZIP-Prüfsumme und legt eine lokale App an. Das ist dieselbe Controller-Lösung, aber ein anderer Installationsweg. Für eine neue Installation nur einen der beiden App-Wege wählen.
 

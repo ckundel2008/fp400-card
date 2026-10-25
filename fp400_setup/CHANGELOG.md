@@ -1,3 +1,8 @@
+# 0.2.1 – 2026-10-25
+
+- Integration 1.4.0 mit Grundrisskarte, Raumausschnitt, freier Sensorposition und geprüfter Randkorrektur gebündelt.
+- Controller und gespeicherte Kopplungen unverändert. Integration über HACS aktualisieren oder im Dialog ausdrücklich installieren; anschließend HA neu starten und Browser neu öffnen.
+
 # 0.2.0 – 2026-10-25
 
 - Anzeigename FP400 Controller; Übersicht mit Verbindungs- und Versionsstatus sowie separat erreichbarer Einrichtungsdialog.

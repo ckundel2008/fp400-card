@@ -68,7 +68,7 @@ Lizenz: MIT für Integration und neue Dialog-/Installationsdateien; Basis-Image 
 Die App-Daten gehören zur jeweiligen Installation. Der Wechsel erfolgt daher mit geprüfter Datenübernahme, nicht durch erneutes Koppeln.
 
 1. HA einschließlich der lokalen FP400-App sichern. Die bisherige App nicht deinstallieren.
-2. Die lokale App auf eine Version mit Migrationsmodus aktualisieren: mindestens 0.1.7, in diesem Paket 0.2.0. Vorher ihre Quelldateien sichern. Dieser Schritt erfordert einen administrativen Dateizugriff; der Erstinstallationshelfer überschreibt absichtlich keine vorhandene lokale App.
+2. Die lokale App auf eine Version mit Migrationsmodus aktualisieren: mindestens 0.1.7, in diesem Paket 0.2.1. Vorher ihre Quelldateien sichern. Dieser Schritt erfordert einen administrativen Dateizugriff; der Erstinstallationshelfer überschreibt absichtlich keine vorhandene lokale App.
 3. In der lokalen App `migration_mode: export` einstellen, Watchdog ausschalten und neu starten. Der Export läuft vor dem Controllerstart; der Controller bleibt angehalten. Im Protokoll muss „Export vollständig geprüft“ stehen.
 4. Die lokale App stoppen und ihren automatischen Start ausschalten. Ihre Daten bleiben als Rückweg erhalten.
 5. Die Repository-App aus `https://github.com/ckundel2008/fp400-card` installieren. Vor ihrem ersten Start `migration_mode: import` setzen und die bisherige Einstellung `network_interface` übernehmen. Nur starten, wenn die lokale App gestoppt ist.

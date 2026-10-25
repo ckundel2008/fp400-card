@@ -13,7 +13,7 @@ class Element {
   set innerHTML(value){this.children=[];this.html=value;}
 }
 async function fixture(t){
-  const classes=new Map();const context={HTMLElement:class{},customElements:{define:(name,cls)=>classes.set(name,cls)},window:{},
+  const classes=new Map();const context={HTMLElement:class{},customElements:{get:name=>classes.get(name),define:(name,cls)=>classes.set(name,cls)},window:{},
     document:{createElement:()=>new Element(),createElementNS:()=>new Element()},setTimeout,clearTimeout,setInterval,clearInterval};
   vm.runInNewContext(await fs.readFile('custom_components/aqara_fp400/www/aqara-fp400-zone-card.js','utf8'),context);
   const Card=classes.get('aqara-fp400-zone-card');const card=new Card();card._build=()=>{};card.setConfig({entity:'sensor.zones',regions_entity:'sensor.regions',targets_entity:'sensor.people'});
@@ -166,6 +166,105 @@ test('rotation is configuration only and rejects nonfinite or out of range value
   const label=new Element();card._upright(label,2,4);assert.equal(label.attrs.transform,'rotate(-45 2 4)');
   card._top=true;card._rotation=90;assert.equal(card._keyboardCell(85,'ArrowUp'),84);
   card._rotation=0;assert.equal(card._keyboardCell(16,'ArrowLeft'),16,'left edge must not wrap to previous row');
+});
+
+test('room viewport fixes dimensions and translates the sensor and every layer together',async t=>{
+  const {card,calls}=await fixture(t);const shadow=card.shadowRoot;card.shadowRoot=null;
+  card.setConfig({entity:'sensor.zones',view_mode:'room',room_width:5,room_height:4,sensor_x:0,sensor_y:1,map_rotation:-45});
+  card.shadowRoot=shadow;card._svg=new Element();card._buildGrid();
+  assert.equal(card._svg.attrs.viewBox,'0 0 10 8');
+  assert.equal(card._mapLayer.attrs.transform,'translate(-8 2) rotate(-45 8 0)');
+  assert.ok(card._mapLayer.children.includes(card._regionLayer));assert.ok(card._mapLayer.children.includes(card._targetLayer));
+  assert.equal(card._cells[0].dataset.index,0);assert.equal(card._cells[319].dataset.index,319);
+  assert.equal(calls.length,0);assert.equal(card._editing,false);
+});
+
+test('room hit testing retains original sensor cells for off-centre mounting, rotations and both orientations',async t=>{
+  const {card}=await fixture(t);
+  for(const top of [true,false])for(const angle of [-180,-90,-45,-17,0,33,45,90,180]){
+    const shadow=card.shadowRoot;card.shadowRoot=null;card.setConfig({entity:'sensor.zones',view_mode:'room',room_width:20,room_height:20,sensor_x:6,sensor_y:7,sensor_at:top?'top':'bottom',map_rotation:angle});card.shadowRoot=shadow;
+    const a=angle*Math.PI/180,c=Math.cos(a),s=Math.sin(a),sy=top?0:20;
+    card._mapLayer={getScreenCTM:()=>({inverse:()=>({apply:(x,y)=>{const dx=(x-100)/10-12,dy=(y-50)/10-14;return {x:8+dx*c+dy*s,y:sy-dx*s+dy*c};}})})};
+    card._svg={createSVGPoint:()=>({x:0,y:0,matrixTransform(m){return m.apply(this.x,this.y);}})};
+    for(let row=0;row<20;row++)for(let col=0;col<16;col++){
+      const x=col+.5,y=(top?row:19-row)+.5,wx=12+(x-8)*c-(y-sy)*s,wy=14+(x-8)*s+(y-sy)*c;
+      assert.equal(card._cellAtPointer({clientX:100+10*wx,clientY:50+10*wy}),wx>=0&&wy>=0&&wx<=40&&wy<=40?row*16+col:null);
+      assert.equal(card._inViewport(x,y),wx>=0&&wy>=0&&wx<=40&&wy<=40);
+    }
+  }
+});
+
+test('invalid room settings fail before changing an active card and standard view remains compatible',async t=>{
+  const {card,calls}=await fixture(t);const shadow=card.shadowRoot;card.shadowRoot=null;
+  const base={entity:'sensor.zones',view_mode:'room',room_width:5,room_height:4,sensor_x:2,sensor_y:1};
+  card.setConfig(base);
+  for(const invalid of [{room_width:0},{room_height:Infinity},{sensor_x:6},{sensor_y:-1},{sensor_x:null},{sensor_y:true},{room_width:''},{view_mode:'auto'}]){
+    assert.throws(()=>card.setConfig({...base,...invalid}));assert.equal(card._config,base);
+  }
+  card.setConfig({entity:'sensor.zones'});assert.equal(card._room,null);assert.equal(card._mapTransform(),'rotate(0 8 10)');
+  card.shadowRoot=shadow;assert.equal(calls.length,0);
+});
+
+test('editing a cropped zone preserves all original offscreen cells in the sensor payload',async t=>{
+  const {card,attrs,calls}=await fixture(t);attrs.zones[0].cells.push([19,15]);
+  const shadow=card.shadowRoot;card.shadowRoot=null;
+  card.setConfig({entity:'sensor.zones',regions_entity:'sensor.regions',targets_entity:'sensor.people',view_mode:'room',room_width:5,room_height:4,sensor_x:1,sensor_y:0});card.shadowRoot=shadow;
+  assert.equal(card._inViewport(15.5,19.5),false);
+  card._beginEditing();card._paintZone(40,true);assert.equal(calls.length,0);
+  await card._save();assert.equal(calls.length,1);assert.equal(calls[0].service,'set_zones');
+  const cells=calls[0].data.zones.find(z=>z.id===1).cells;
+  assert.ok(cells.some(([r,c])=>r===19&&c===15));assert.ok(cells.some(([r,c])=>r===2&&c===8));
+});
+
+async function roomPointerFixture(t,mode='zones'){
+  const f=await fixture(t),{card}=f;const shadow=card.shadowRoot;card.shadowRoot=null;
+  card.setConfig({entity:'sensor.zones',regions_entity:'sensor.regions',targets_entity:'sensor.people',view_mode:'room',room_width:5,room_height:4,sensor_x:1,sensor_y:0});card.shadowRoot=shadow;
+  card._mapLayer={getScreenCTM:()=>({inverse:()=>({apply:(x,y)=>({x:x+6,y})})})};
+  card._svg={createSVGPoint:()=>({x:0,y:0,matrixTransform(m){return m.apply(this.x,this.y);}})};
+  card._mode=mode;return f;
+}
+
+for(const mode of ['zones','entry_exit','interference','monitoring'])test(`${mode}: captured drag rejects offscreen cells, resumes on reentry and saves only intended changes`,async t=>{
+  const {card,calls,attrs}=await roomPointerFixture(t,mode);
+  attrs.zones[0].cells.push([19,15]);
+  card._beginEditing();let captures=0;
+  const move=(x,y,down=false)=>card._onPointer({clientX:x,clientY:y,target:{setPointerCapture(){captures++;}},pointerId:1},down);
+  move(2.5,1.5,true);move(2.5,10.5);move(2.5,2.5);
+  const cells=mode==='zones'?card._zones().get(1).cells:card._regionEdit.cells;
+  assert.ok(cells.has(24));assert.ok(cells.has(40));assert.equal(cells.has(168),false);
+  assert.equal(captures,1);assert.equal(calls.length,0);
+  if(mode==='zones')await card._save();else await card._saveRegion();
+  assert.equal(calls.length,1);
+  const saved=mode==='zones'?calls[0].data.zones.find(z=>z.id===1).cells:calls[0].data.cells;
+  assert.equal(saved.some(([r,c])=>r===10&&c===8),false);
+  assert.ok(saved.some(([r,c])=>r===2&&c===8));
+  if(mode==='zones')assert.ok(saved.some(([r,c])=>r===19&&c===15),'existing offscreen zone cells must remain intact');
+});
+
+test('invalid pointer start cannot capture or resume with an old brush value',async t=>{
+  const {card,calls}=await roomPointerFixture(t);card._beginEditing();card._paintValue=true;
+  const before=card._snapshot();let captures=0;
+  card._onPointer({clientX:2.5,clientY:10.5,target:{setPointerCapture(){captures++;}},pointerId:1},true);
+  assert.equal(card._pointerDown,false);
+  card._onPointer({clientX:2.5,clientY:2.5,target:{},pointerId:1},false);
+  assert.equal(captures,0);assert.equal(card._dirty(),false);assert.equal(card._snapshot(),before);assert.equal(calls.length,0);
+});
+
+test('clipped pointer mapping rejects missing, singular, throwing and nonfinite matrices instead of trusting a captured target',async t=>{
+  const {card}=await roomPointerFixture(t);const event={clientX:2.5,clientY:1.5,target:{dataset:{index:'24'}}};
+  for(const get of [()=>null,()=>{throw new Error('detached');},()=>({inverse(){throw new Error('singular');}}),()=>({inverse:()=>({apply:()=>({x:NaN,y:1})})}),()=>({inverse:()=>({apply:()=>({x:8,y:Infinity})})})]){
+    card._mapLayer={getScreenCTM:get};assert.equal(card._cellAtPointer(event),null);
+  }
+  card._mapLayer=null;assert.equal(card._cellAtPointer(event),null);
+});
+
+test('all viewport edges reject actual outside points under rotations and both sensor orientations',async t=>{
+  const {card}=await roomPointerFixture(t);
+  for(const top of [true,false])for(const angle of [-180,-90,-45,-17,0,33,45,90,180]){
+    card._top=top;card._rotation=angle;const sy=top?0:20,a=angle*Math.PI/180,c=Math.cos(a),s=Math.sin(a);
+    card._mapLayer={getScreenCTM:()=>({inverse:()=>({apply:(x,y)=>({x:8+(x-2)*c+y*s,y:sy-(x-2)*s+y*c})})})};
+    for(const [x,y] of [[-.01,4],[10.01,4],[5,-.01],[5,8.01]])assert.equal(card._cellAtPointer({clientX:x,clientY:y}),null,`${top}/${angle}/${x}/${y}`);
+  }
 });
 
 test('interference shortcut unions a four-cell sensor-space draft without a write until Save',async t=>{

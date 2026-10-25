@@ -1,4 +1,10 @@
-Integration **1.3.0** / App **0.2.0**: Zonen benennen und bewusst bearbeiten.
+Integration **1.4.0** / App **0.2.1**: Grundriss, Raumausschnitt und freie Sensorposition.
+
+- **FP400 Grundriss** als zweite Karte direkt in der Kartenauswahl: eigener Plan, mehrere Sensoren, visueller Editor, Kalibrierung und Spiegelung. Liest vorhandene Entitäten; keine erneute Kopplung.
+- **Raumausschnitt** und **Sensor-X/Y** in der bisherigen Radar-Karte. Vollansicht bleibt Standard. Zonen und Ziele drehen sich gemeinsam um den Montagepunkt.
+- **Randkorrektur:** Ziehen über den Ausschnittrand verändert keine unsichtbaren neuen Zellen. Speichern vorhandener Zonen erhält deren ursprüngliche unsichtbare Zellen.
+- Kompatibilitätsnamen erhalten bestehende Test-Grundrisskarten. Nur die eigene frühere Lab-Ressource entfernen, die gemeinsame FP400-Ressource behalten und HA vollständig neu öffnen.
+- Grundriss- und Raumausschnittanleitungen sind im Startpaket enthalten. Mehrere physische FP400, räumliche Genauigkeit jeder Montage und vollständige iPhone-Touchabnahme bleiben offen; historische Sitzbilder belegen diese Punkte nicht.
 
 - Die Karte startet als Live-Ansicht. „Bereiche bearbeiten“ schaltet Zeichnen und Zonenänderungen ausdrücklich frei.
 - Zonennamen werden zentral in Home Assistant gespeichert und in allen unseren Karten angezeigt. HA-Anzeigenamen bleiben standardmäßig unverändert. Administratoren können pro Speicherung **Auch den HA-Anwesenheitssensor umbenennen (nur diesmal)** aktivieren; die Vorschau und ein erneuter Konfliktcheck schützen vor einer falschen Zuordnung. Entitäts-IDs bleiben erhalten.
@@ -10,8 +16,8 @@ Integration **1.3.0** / App **0.2.0**: Zonen benennen und bewusst bearbeiten.
 - Die App heißt **FP400 Controller**. **Übersicht** zeigt Verbindung, Kopplung und Versionsstände; **Einrichtung** enthält die ausdrücklich auszuführenden Schritte. Neuere oder nicht sicher vergleichbare Integrationsversionen werden nicht durch die mitgelieferte Ausgabe überschrieben. Verfügbare Integrationsupdates sind weiterhin in HACS zu prüfen.
 - Controller, App-Slug, Ports und Kopplungsspeicher bleiben unverändert. Keine erneute Kopplung.
 
-[Schritt-für-Schritt-Anleitung](https://github.com/ckundel2008/fp400-card/blob/v1.3.0/ANLEITUNG.md) · [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/v1.3.0/PRUEFSTAND.md)
+[Schritt-für-Schritt-Anleitung](https://github.com/ckundel2008/fp400-card/blob/v1.4.0/ANLEITUNG.md) · [Grundriss](https://github.com/ckundel2008/fp400-card/blob/v1.4.0/docs/grundriss.md) · [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/v1.4.0/PRUEFSTAND.md)
 
 Integration über HACS aktualisieren oder unter **Einrichtung → Mitgelieferte Integration installieren** die gebündelte Ausgabe ausdrücklich installieren, dann HA neu starten und Browser neu laden. Nur ein App-Update ersetzt die installierte Integration nicht. Eine gespeicherte FP400-Kopplung weiterverwenden; den Kopplungsschritt bei einem Update überspringen.
 
-86 Node- und 44 Python-Tests bestanden; Paket-, HACS- und Hassfest-Prüfung erfolgreich. Auf dem eigenen HA wurden die neue Integration, eine temporäre Änderung von Karten- und HA-Anzeigenamen mit exakter Wiederherstellung sowie das Repository-Update auf FP400 Controller 0.2.0 geprüft. Alle 16 bestehenden Matter-Geräte-IDs und sämtliche Zonen-/Bereichszellen blieben erhalten. Die App zeigt die gespeicherte Kopplung und den Sensor online. Einzelheiten und Grenzen, insbesondere simulierte Störflächenprüfungen und weiterhin historische Bilder, stehen im Prüfstand.
+149 JavaScript- und 44 Python-Tests bestanden. Die Tests prüfen Koordinaten, Entwürfe, Kompatibilität, sichere Eingabegrenzen und Paketinhalte. Die Randkorrektur wurde zusätzlich mit echter Mausbedienung im lokalen Chrome geprüft und als Frontend-Vorschau im eigenen HA installiert. Originalzonen und beide Dashboard-Konfigurationen blieben unverändert. Die Grenzen der realen Hardware-Abnahme stehen im Prüfstand. Die Veröffentlichung erfolgt erst nach den Paket-, HACS- und Hassfest-Prüfungen der Release-Automatisierung.

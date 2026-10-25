@@ -1,3 +1,12 @@
+# 1.4.0 – 25.10.2026
+
+- Zweite Karte „FP400 Grundriss“ mit eigenem Bild, mehreren Sensoren, Kalibrierung, Montagepunkt, Blickrichtung und gemeinsamer Spiegelung für Zonen/Ziele.
+- Visueller Grundrisseditor mit getrenntem Entwurf, ausdrücklichem Übernehmen und Abbrechen. Liest ausschließlich vorhandene Entitäten; keine Änderung der Sensorzonen.
+- Raumausschnitt und frei wählbare Sensorposition in der bisherigen Radar-Karte; Vollansicht bleibt Standard.
+- Ziehen über Ausschnittränder kann keine unsichtbaren neuen Zellen verändern. Sichere Rückrechnung bei fehlenden oder ungültigen SVG-Transformationen; Regression für alle vier Ebenen.
+- Beide Karten aus derselben automatisch registrierten Ressource. Alte Testkartentypen und deren Konfigurationen bleiben kompatibel.
+- App 0.2.1 bündelt Integration 1.4.0, ohne Controller- oder Kopplungsdaten zu ändern. Aktuelle Anleitungen und Prüfgrenzen im Paket.
+
 # 1.3.0 – 25.10.2026
 
 - Karte startet als Live-Ansicht; Zonen und Bereiche erst nach „Bereiche bearbeiten“ verändern.

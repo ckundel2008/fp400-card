@@ -5,6 +5,7 @@ import html
 import json
 import shutil
 import zipfile
+from build_frontend import build as build_frontend
 
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
@@ -13,6 +14,7 @@ PACKAGE_FILES = (
     "ANLEITUNG.md", "LICENSE", "THIRD-PARTY.md", "PRUEFSTAND.md",
     "docs/images/04-radar-sitztest-echt.jpg",
     "docs/images/05-sofa-belegung-echt.jpg",
+    "docs/grundriss.md", "docs/radar-raumausschnitt.md",
 )
 
 
@@ -25,6 +27,7 @@ def add_tree(archive, source, prefix):
 
 
 def build():
+    build_frontend()
     shutil.copytree(ROOT / "custom_components", ROOT / "fp400_setup/integration", dirs_exist_ok=True, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     DIST.mkdir(exist_ok=True)
     app = DIST / "fp400-app.zip"
@@ -36,7 +39,7 @@ def build():
     for name in ("ANLEITUNG.md", "LICENSE", "THIRD-PARTY.md", "PRUEFSTAND.md"):
         shutil.copy2(ROOT / name, DIST / name)
     for name in PACKAGE_FILES:
-        if name.startswith("docs/images/"):
+        if name.startswith("docs/"):
             (DIST / name).parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(ROOT / name, DIST / name)
     guide = (ROOT / "ANLEITUNG.md").read_text()

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FP400 Wohnung – isolierte Simulation</title>
+<style>
+body{margin:0;padding:20px;font:15px system-ui;background:#eaf0f4;color:#172635}main{max-width:1120px;margin:auto}header{padding:18px;background:#fff;border-radius:14px;margin-bottom:14px}h1{font-size:24px;margin:0}button{padding:10px 13px;margin:4px;border:1px solid #afc1ce;background:#fff;border-radius:8px;font:inherit;cursor:pointer}.warning{color:#805200}details{margin:16px 0}summary{padding:12px;background:#fff;border-radius:10px;cursor:pointer}#view.mobile{max-width:390px;margin:auto}#log{white-space:pre-wrap;overflow-wrap:anywhere;background:#fff;padding:12px;border-radius:10px}#errors{color:#b3261e}footer{line-height:1.6;margin:18px 0}
+</style>
+<main><header><h1>Wohnung mit drei FP400</h1><p class="warning"><strong>SIMULATION · TESTVERSION 1.4.0</strong> – kein Zugriff auf Home Assistant oder echte Sensoren.</p>
+<div><button id="mobile">Mobilansicht 390 px</button><button id="desktop">Desktopansicht</button><button id="stale">Flur: Daten veraltet</button><button id="offline">Küche: offline / online</button><button id="fresh">Alle Meldungen auffrischen</button><button id="move">Ziel im Wohnzimmer bewegen</button><button id="external">Externe Konfigurationsänderung</button><button id="upload">PNG-Testbild decodieren (Entwurf)</button></div></header>
+<div id="view"><aqara-fp400-floorplan-card id="card"></aqara-fp400-floorplan-card><details id="edit"><summary>Visuellen Karteneditor öffnen (Simulation)</summary><aqara-fp400-floorplan-card-editor id="editor"></aqara-fp400-floorplan-card-editor></details></div>
+<p id="errors">Browserfehler: keine</p><pre id="log">Noch kein Entwurf übernommen. Sensor-Dienstaufrufe sind in dieser Simulation verboten.</pre><footer>Beispielgrundriss und Positionen sind frei erfunden. Die Personenmarker zeigen weder Körpergröße noch eine Tier- oder Babyklassifizierung. Doppelte Ziel-IDs in verschiedenen Räumen sind beabsichtigt.</footer></main>
+<script type="module">
+import '../../custom_components/aqara_fp400/www/aqara-fp400-zone-card.js';
+const card=document.querySelector('#card'),editor=document.querySelector('#editor');
+window.addEventListener('error',e=>document.querySelector('#errors').textContent=`Browserfehler: ${e.message}`);
+window.addEventListener('unhandledrejection',e=>document.querySelector('#errors').textContent=`Browserfehler: ${e.reason}`);
+const canvas=document.createElement('canvas');canvas.width=1200;canvas.height=800;const ctx=canvas.getContext('2d');
+ctx.fillStyle='#fffdf7';ctx.fillRect(0,0,1200,800);ctx.lineWidth=10;ctx.strokeStyle='#5b6a73';ctx.strokeRect(20,20,1160,760);
+for(const [x1,y1,x2,y2] of [[700,20,700,300],[700,420,700,780],[700,400,890,400],[1000,400,1180,400]]){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+ctx.fillStyle='#d7e4e9';ctx.fillRect(80,70,240,100);ctx.fillRect(80,70,70,250);ctx.fillStyle='#dfd8c9';ctx.fillRect(850,90,210,120);ctx.fillStyle='#e6e0d6';ctx.fillRect(840,570,250,120);
+ctx.fillStyle='#80919c';ctx.font='26px system-ui';ctx.fillText('WOHNZIMMER',350,690);ctx.fillText('KÜCHE',880,320);ctx.fillText('FLUR',875,730);
+let config={title:'Unsere Wohnung · Simulation',plan:{width_m:12,height_m:8,image:canvas.toDataURL('image/png')},sensors:[
+ {entity:'sensor.wohnzimmer_personen',zones_entity:'sensor.wohnzimmer_zonen',name:'Wohnzimmer',x:.7,y:.7,yaw:135,color:'#007fa8'},
+ {entity:'sensor.kueche_personen',zones_entity:'sensor.kueche_zonen',name:'Küche',x:11.3,y:.7,yaw:-135,color:'#a34bc8'},
+ {entity:'sensor.flur_personen',zones_entity:'sensor.flur_zonen',name:'Flur',x:11.3,y:7.3,yaw:-45,color:'#d67815'}]};
+const states={},entities={};
+for(const [i,s] of config.sensors.entries()){
+ states[s.entity]={state:'1',attributes:{friendly_name:`${s.name} · Verfolgte Personen`,targets:[{id:1,x:0,y:i===0?250:180,activity:i===0?'still':'active'}],live_tracking:true,position_received:new Date().toISOString()}};
+ states[s.zones_entity]={state:'1',attributes:{grid_cols:16,grid_rows:20,zones:[{id:1,enabled:true,cells:[[2,7],[2,8],[3,7],[3,8]]}],zone_names:{1:i===0?'Sofa':i===1?'Tisch':'Eingang'}}};
+ entities[s.entity]={device_id:`device${i}`};entities[s.zones_entity]={device_id:`device${i}`};
+}
+const hass={states,entities,callService(){throw new Error('Verbotener Sensor-Dienstaufruf');}};
+function render(){card.hass={...hass};editor.hass={...hass};}
+function apply(){card.setConfig(config);editor.setConfig(config);render();}
+editor.addEventListener('config-changed',e=>{config=e.detail.config;card.setConfig(config);editor.setConfig(config);render();document.querySelector('#log').textContent=`Explizit übernommener Kartenentwurf: ${config.sensors.length} FP400. Keine Sensor-Dienstaufrufe.`;});
+apply();let stale=false;
+document.querySelector('#mobile').onclick=()=>document.querySelector('#view').className='mobile';
+document.querySelector('#desktop').onclick=()=>document.querySelector('#view').className='';
+document.querySelector('#stale').onclick=()=>{stale=true;states['sensor.flur_personen'].attributes.position_received=new Date(Date.now()-30000).toISOString();render();};
+document.querySelector('#offline').onclick=()=>{const s=states['sensor.kueche_personen'];s.state=s.state==='unavailable'?'1':'unavailable';render();};
+document.querySelector('#fresh').onclick=()=>{stale=false;for(const s of Object.values(states))if(s.attributes.targets)s.attributes.position_received=new Date().toISOString();render();};
+document.querySelector('#move').onclick=()=>{const s=states['sensor.wohnzimmer_personen'];s.attributes.targets[0].x=s.attributes.targets[0].x===0?100:0;s.attributes.position_received=new Date().toISOString();render();};
+document.querySelector('#external').onclick=()=>{config={...config,title:'Wohnung · extern geändert'};apply();};
+document.querySelector('#upload').onclick=async()=>{
+ try{
+  if(!editor.session.draft)throw new Error('Zuerst im visuellen Editor „Grundriss bearbeiten“ öffnen.');
+  const before=config.plan.image;
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+  await editor._upload(new File([blob],'simulation-grundriss.png',{type:'image/png'}));
+  if(!editor.session.draft?.plan.image.startsWith('data:image/jpeg;base64,'))throw new Error('PNG-Decodierung / JPEG-Normalisierung nicht bestätigt.');
+  if(config.plan.image!==before)throw new Error('Upload hat ohne Übernehmen die gespeicherte Konfiguration verändert.');
+  document.querySelector('#log').textContent='PNG im Browser als echte File-Datei decodiert und als JPEG im Entwurf gespeichert. Gespeicherte Karte unverändert; keine Sensor-Dienstaufrufe.';
+ }catch(error){document.querySelector('#errors').textContent=`Upload-Test: ${error.message}`;}
+};
+setInterval(()=>{for(const [id,s] of Object.entries(states))if(s.attributes.targets&&!(stale&&id==='sensor.flur_personen'))s.attributes.position_received=new Date().toISOString();render();},2000);
+</script></html>

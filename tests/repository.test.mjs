@@ -8,7 +8,7 @@ async function cardClasses() {
   const classes = new Map();
   const context = { HTMLElement: class { dispatchEvent(e) { this.event = e; } },
     CustomEvent: class { constructor(type, options) { this.type = type; Object.assign(this, options); } },
-    customElements: { define: (name, cls) => classes.set(name, cls) }, window: {}, setTimeout, clearTimeout, setInterval, clearInterval,
+    customElements: { get: name => classes.get(name), define: (name, cls) => classes.set(name, cls) }, window: {}, setTimeout, clearTimeout, setInterval, clearInterval,
     document: { createElement: name => new (classes.get(name))() } };
   vm.runInNewContext(await fs.readFile('custom_components/aqara_fp400/www/aqara-fp400-zone-card.js', 'utf8'), context);
   return { Card: classes.get('aqara-fp400-zone-card'), Editor: classes.get('aqara-fp400-zone-card-editor'), context };
@@ -82,6 +82,16 @@ test('existing cards resolve companion sensors by device while explicit selectio
   assert.equal(card._targetsEntity(), 'sensor.manual');
   card._config = {};
   assert.equal(card._targetsEntity(), undefined);
+});
+
+test('visual room editor preserves zero sensor coordinates and refuses invalid geometry without an event',async()=>{
+  const {Editor}=await cardClasses();const editor=new Editor();editor._render=()=>{};
+  editor.setConfig({entity:'sensor.zones',title:'Room',view_mode:'room',sensor_x:4});
+  editor._change('sensor_x','0');assert.equal(editor.event.detail.config.sensor_x,0);
+  editor._change('sensor_y','0');assert.equal(editor.event.detail.config.sensor_y,0);
+  const accepted=editor.event;editor._change('sensor_x','9');assert.equal(editor.event,accepted);assert.equal(editor._config.sensor_x,0);
+  editor._change('room_width','5');assert.equal(editor.event.detail.config.room_width,5);assert.equal(editor.event.detail.config.title,'Room');
+  editor._change('view_mode','radar');assert.equal(editor.event.detail.config.sensor_x,0);
 });
 
 async function files(root) {
