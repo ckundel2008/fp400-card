@@ -1,6 +1,6 @@
 # Prüfstand – Integration 1.3.0 / FP400 Controller 0.2.0
 
-Stand: 25.10.2026. Erweiterter Stand lokal gebaut; noch nicht veröffentlicht. Der unten dokumentierte Live-Test betrifft den früheren Entwicklungsstand 1.3.0 mit Zonennamen und Bearbeitungsmodus. Die anschließend ergänzten Funktionen sind separat aufgeführt. Die laufende Controller-App bleibt bei 0.1.7; App 0.2.0 ist noch nicht live installiert.
+Stand: 25.10.2026. Erweiterter Integrationsstand lokal gebaut und auf HA geprüft; Veröffentlichung vorbereitet. Die neu ergänzten Funktionen und der frühere Entwicklungsstand sind getrennt aufgeführt. Die laufende Controller-App bleibt bei 0.1.7; App 0.2.0 ist noch nicht live installiert.
 
 ## Ergänzende Prüfung: Controller, Anzeigenamen, Drehung und Aktualität
 
@@ -12,7 +12,9 @@ Stand: 25.10.2026. Erweiterter Stand lokal gebaut; noch nicht veröffentlicht. D
 - App-Prüfung in Chrome bei 1280 × 900 und 390 × 844: Übersicht für gespeicherte, auch offline befindliche Sensoren, Navigation zur Einrichtung, Downgrade-Sperre, keine beobachteten Browserfehler oder horizontalen Überläufe. Simulierte Zustände, keine echte Kopplung.
 - Unabhängiger Gegencheck fand zwei reproduzierbare Randfälle, beide korrigiert und nachgeprüft: paralleles HACS-Update während der Installationsjournal-Schreibung; Positionszeitstempel weit in der Zukunft. Das tatsächlich verschobene Installationsbackup wird vor dem Commit erneut geprüft. Zeitstempel mehr als fünf Sekunden in der Zukunft sperren Personenaktionen und zeigen eine Zeitabweichung.
 
-**Noch offen für diesen erweiterten Stand:** Live-Installation, temporäre Anzeigenamenänderung mit exakter Wiederherstellung, neue echte Bilder, Live-Abnahme der App 0.2.0 sowie GitHub-HACS/Hassfest-Lauf und Veröffentlichung. Die unten beschriebenen älteren Live- und Sitz-/Gangtests werden dafür nicht als Ersatz gezählt. Ein Testpaket wurde in den HA-Konfigurationsordner hochgeladen; allein dieser Upload aktiviert keine Änderung.
+**Live-Prüfung des erweiterten Integrationsstands:** Vorherige Dateien separat gesichert, Paket-Prüfsumme auf HA bestätigt, installierte Karte mit der lokalen SHA-256 verglichen. HA-Konfigurationsprüfung erfolgreich; nach einmaligem Neustart neue Karte und Positionszeitstempel sichtbar. Zone 1 und deren eindeutig zugeordneter HA-Anzeigename vorübergehend gemeinsam umbenannt; die Rückvorschau bestätigte den geänderten Registry-Namen. Beide anschließend exakt zurückgesetzt. Der HA-MCP bestätigte danach identische vollständige Registereinträge aller vier Belegungsentitäten, dieselben 16 Matter-Geräte-IDs und unveränderte Zellen, Typen und Aktivierungsflags sämtlicher Zonen und Bereiche. Keine Sensorflächen geschrieben und keine Erkennung verworfen. Im abgefragten neuen Startprotokoll nur die allgemeine Warnung für eine Custom Integration, keine bisherige Registry-Deprecation und kein FP400-Fehler.
+
+GitHub-Prüfungen des vorbereiteten Quellstands: Pakettests, HACS und Hassfest erfolgreich ([Lauf 40168850671](https://github.com/ckundel2008/fp400-card/actions/runs/40168850671)). **Noch offen:** neue echte Bilder, Live-Abnahme der App 0.2.0 und Veröffentlichung. Ein aktueller Störflächenentwurf konnte mangels aktueller Personenerkennung nicht erneut am echten Sensor vorbereitet werden; die oben genannten simulierten Browser- und Regressionstests sind dafür separat ausgewiesen. Die historischen Sitz-/Gangtests werden nicht als Ersatz gezählt.
 
 ## Neue Bedienung und Namensspeicherung
 
@@ -40,7 +42,7 @@ Die isolierte Browserprüfung verwendet ausdrücklich simulierte Zustände und D
 
 ### Im erweiterten Quellstand behobener Wartungspunkt
 
-Der frühere Live-Test auf HA 2026.10.2 protokollierte eine Deprecation-Warnung zu `device_registry.async_get_device`. Im erweiterten Quellstand ist diese Abfrage durch die eindeutig auf den Konfigurationseintrag bezogene API ersetzt und automatisiert geprüft. Die erneute Live-Prüfung steht aus; daraus folgt keine Freigabe für zukünftige HA-Versionen.
+Der frühere Live-Test auf HA 2026.10.2 protokollierte eine Deprecation-Warnung zu `device_registry.async_get_device`. Im erweiterten Quellstand ist diese Abfrage durch die eindeutig auf den Konfigurationseintrag bezogene API ersetzt und automatisiert sowie auf HA 2026.10.2 geprüft. Daraus folgt keine Freigabe für zukünftige HA-Versionen.
 
 ## Reproduktion dieser Version
 

@@ -43,7 +43,7 @@ jobs:
           if-no-files-found: error
   publish:
     needs: validate
-    if: github.ref == 'refs/heads/main'
+    if: ${{ false }} # Hold publication until controller live acceptance
     runs-on: ubuntu-latest
     permissions:
       contents: write
