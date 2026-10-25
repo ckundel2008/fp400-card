@@ -1,10 +1,17 @@
-Integration **1.2.1** / App **0.1.7**: Kopplungsdaten beim Wechsel einer lokalen App zur GitHub-App erhalten.
+Integration **1.3.0** / App **0.2.0**: Zonen benennen und bewusst bearbeiten.
 
-- Expliziter Export/Import vor dem Controllerstart; normale Starts bleiben unverändert.
-- Prüfsummen, private Dateirechte, Symlink- und Überschreibschutz. Die alte App und der Transfer werden als Rückweg erhalten.
-- HACS und App-Katalog bleiben getrennte Updatewege. Integration und Karte funktional unverändert gegenüber 1.2.0.
-- 17 zusätzliche Migrationstests; insgesamt 66 Tests sowie Paketbau, HACS und Hassfest als Release-Prüfungen.
+- Die Karte startet als Live-Ansicht. „Bereiche bearbeiten“ schaltet Zeichnen und Zonenänderungen ausdrücklich frei.
+- Zonennamen werden zentral in Home Assistant gespeichert und in allen unseren Karten angezeigt. HA-Anzeigenamen bleiben standardmäßig unverändert. Administratoren können pro Speicherung **Auch den HA-Anwesenheitssensor umbenennen (nur diesmal)** aktivieren; die Vorschau und ein erneuter Konfliktcheck schützen vor einer falschen Zuordnung. Entitäts-IDs bleiben erhalten.
+- Eine ausgewählte Erkennung wird deutlich markiert; Position, Kennung und Zonen helfen bei der Kontrolle vor dem Verwerfen.
+- **Kartendrehung** im visuellen Editor und `map_rotation` erlauben −180° bis 180° (positiv im Uhrzeigersinn). Sensorzellen und Zonen werden dadurch nicht verändert.
+- **Stelle als Interferenz markieren** bereitet bis zu vier Zellen um eine aktuelle Erkennung vor und erhält vorhandene Interferenzflächen. Erst bewusstes Speichern überträgt den Entwurf.
+- Die Karte zeigt das Alter der letzten echten Positionsmeldung und unterscheidet fehlende oder veraltete Daten, ausgeschaltetes Tracking, Verbindungsfehler und Uhrabweichung. Veraltete Erkennungen können nicht als Grundlage für Targetaktionen dienen.
+- Ungespeicherte Änderungen, konkurrierende Änderungen und ausstehende Sensorbestätigungen werden sichtbar behandelt. Smartphone-Scrollen funktioniert im Ansichtsmodus.
+- Die App heißt **FP400 Controller**. **Übersicht** zeigt Verbindung, Kopplung und Versionsstände; **Einrichtung** enthält die ausdrücklich auszuführenden Schritte. Neuere oder nicht sicher vergleichbare Integrationsversionen werden nicht durch die mitgelieferte Ausgabe überschrieben. Verfügbare Integrationsupdates sind weiterhin in HACS zu prüfen.
+- Controller, App-Slug, Ports und Kopplungsspeicher bleiben unverändert. Keine erneute Kopplung.
 
-[Schritt-für-Schritt-Anleitung](https://github.com/ckundel2008/fp400-card/blob/v1.2.1/ANLEITUNG.md) · [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/v1.2.1/PRUEFSTAND.md)
+[Schritt-für-Schritt-Anleitung](https://github.com/ckundel2008/fp400-card/blob/v1.3.0/ANLEITUNG.md) · [Prüfstand](https://github.com/ckundel2008/fp400-card/blob/v1.3.0/PRUEFSTAND.md)
 
-Der Migrationsweg ist automatisiert geprüft; ein Live-Nachweis wird nach tatsächlicher Durchführung ergänzt. Keine erneute Kopplung und kein Reset.
+Integration über HACS aktualisieren oder unter **Einrichtung → Mitgelieferte Integration installieren** die gebündelte Ausgabe ausdrücklich installieren, dann HA neu starten und Browser neu laden. Nur ein App-Update ersetzt die installierte Integration nicht. Eine gespeicherte FP400-Kopplung weiterverwenden; den Kopplungsschritt bei einem Update überspringen.
+
+Veröffentlichung vorbereitet; neue Bedienung und Namensspeicherung sind getrennt von den historischen Sitz-/Gangtests zu bewerten. Maßgeblich ist der Prüfstand dieser Version.

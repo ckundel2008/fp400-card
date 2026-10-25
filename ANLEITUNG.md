@@ -60,12 +60,12 @@ fi
 
 Die Hilfe prüft die ZIP-Datei, legt ausschließlich die neue lokale App an und liest den App-Katalog neu ein. Sie verändert weder deinen bestehenden Matter-Server noch dessen gespeicherte Kopplungen. Bei einem bereits vorhandenen gleichnamigen App-Ordner ersetzt sie keine Dateien.
 
-Erwartete Abschlussmeldung: **„Fertig. Im App-Store unter Lokale Apps: FP400 Einrichtung installieren.“**
+Erwartete Abschlussmeldung: **„Fertig. Im App-Store unter Lokale Apps: FP400 Controller installieren.“**
 
 ## 6. Die neue App installieren und öffnen
 
 1. Öffne wieder **Einstellungen → Apps → App-Store** und lade die Browserseite neu.
-2. Suche unter **Lokale Apps** nach **FP400 Einrichtung**.
+2. Suche unter **Lokale Apps** nach **FP400 Controller**.
 3. Klicke **Installieren**. HA baut das Paket auf deinem Rechner; das kann mehrere Minuten dauern.
 4. Aktiviere **Beim Booten starten** und starte die App.
 5. Öffne **Weboberfläche öffnen**. Den Schutzmodus eingeschaltet lassen.
@@ -76,10 +76,12 @@ Die App benötigt das Host-Netzwerk für die lokale Matter-Kommunikation und Sch
 
 ## 7. Dem Einrichtungsdialog folgen
 
-Im Dialog sind die Schritte durchnummeriert:
+Die App bietet **Übersicht** und **Einrichtung**. Bei einer gespeicherten Kopplung startet sie in **Übersicht**. Dort siehst du, ob Controller und Sensor erreichbar sind, sowie installierte und mitgelieferte Integrationsversionen. „Hier nicht geprüft“ ist keine Aussage darüber, ob ein Update verfügbar ist; dafür in HACS beziehungsweise im HA-App-Store nachsehen. Ein gespeicherter, aber momentan nicht erreichbarer FP400 muss nicht neu gekoppelt werden.
+
+Öffne für eine Erstinstallation **Einrichtung**. Dort sind die Schritte durchnummeriert:
 
 1. **Sicherung bestätigen.** Bestätige die bereits abgeschlossene vollständige HA-Sicherung.
-2. **FP400-Integration installieren.** Eine vorhandene FP400-Integration wird vorher gesichert. Danach Home Assistant einmal über das HA-Menü neu starten und den Assistenten wieder öffnen. Nicht den vorhandenen Matter-Server austauschen.
+2. **Mitgelieferte Integration installieren.** Alternativ die Integration über HACS installieren. Eine ersetzte FP400-Version wird vorher gesichert. Neuere oder nicht sicher vergleichbare Versionen werden nicht überschrieben; ist die mitgelieferte Ausgabe bereits installiert, diesen Schritt überspringen. Nach einer Installation Home Assistant einmal über das HA-Menü neu starten und die App wieder öffnen. Nicht den vorhandenen Matter-Server austauschen.
 3. **Nur den FP400 zusätzlich verbinden.** In HA das vorhandene FP400-Matter-Gerät öffnen und **Gerät teilen / Mit anderem Ökosystem verbinden** wählen. Je nach HA-Version liegt die Funktion im Menü des Geräts oder der Matter-Geräteansicht. Alternativ die Teilen-Funktion in der Aqara- oder Apple-Home-App für diesen FP400 benutzen. Einen frischen Freigabecode erzeugen, im Assistenten einfügen und bestätigen, dass der Code zu deinem FP400 gehört. Dann **FP400 zusätzlich verbinden** klicken.
 4. **Warten.** Die Kopplung kann einige Minuten dauern. Der Assistent meldet, wenn der FP400 zusätzlich verbunden ist. Nicht den Code vom Aufkleber benutzen und keinen Werksreset durchführen.
 
@@ -97,14 +99,14 @@ Ein Freigabecode ist nur kurz gültig. Der Assistent speichert ihn nicht dauerha
 
 Öffne das FP400-Radar-Gerät. Schalte **Live-Tracking / Live-Positionen** ein und bewege dich vor dem Sensor. Die Personenanzahl und Positionen sollen sich ändern. Vorhandene Zonen werden eingelesen; bei der Einrichtung werden keine Zonen überschrieben. Nach einem vollständigen HA-Neustart den Schalter prüfen und gegebenenfalls wieder einschalten. Ein leerer Raum mit null Personen bestätigt noch keinen erfolgreichen Bewegungstest.
 
-Die Karte lässt sich ab Version 1.1.4 ohne YAML einrichten. Aktuelles Paket: 1.2.0.
+Die Karte lässt sich ab Version 1.1.4 ohne YAML einrichten. Dieses Paket enthält Integration 1.3.0 und App 0.2.0.
 
 1. Öffne dein gewünschtes Dashboard und wähle oben rechts **Dashboard bearbeiten**.
 2. Klicke im gewünschten Abschnitt auf **Karte hinzufügen**.
 3. Wechsle auf **Nach Karte**, gib **FP400** in die Suche ein und wähle **FP400 Radar – Zonen und Personen**.
 4. Wähle bei **Zonen** den Zonen-Sensor deines FP400. Ist genau ein passendes Gerät vorhanden, ist es bereits vorausgewählt.
 5. Prüfe **Verfolgte Personen** und **Bereiche (Entry/Exit, Monitoring, Interference)**. Eindeutig zugehörige Sensoren werden vorausgewählt. Du kannst sie auch ausdrücklich aus den Listen wählen. Alle drei Sensoren müssen zum selben FP400 gehören; **Personenanzahl** ist kein Ersatz für **Verfolgte Personen**.
-6. Vergib bei Bedarf einen **Titel**. Unter **Sensor in der Darstellung** wählst du **Oben** oder **Unten**. Eckpositionen und freie Drehwinkel werden nicht unterstützt.
+6. Vergib bei Bedarf einen **Titel**. Unter **Sensor in der Darstellung** wählst du **Oben** oder **Unten**. Mit **Kartendrehung** lässt sich die Darstellung zwischen −180° und 180° drehen, beispielsweise um 45° für einen Sensor in einer Ecke. Die tatsächlichen Sensorflächen bleiben dabei unverändert.
 7. Prüfe die Vorschau, klicke auf **Speichern** und anschließend auf **Fertig**. Die Auswahl konfiguriert nur die Dashboard-Karte; vorhandene Sensorzonen und Kopplungen bleiben erhalten. Die Vorschau schreibt keine Zonenänderungen an den Sensor.
 
 Bei mehreren FP400 zuerst die Zonen des gewünschten Geräts wählen und die beiden anderen Sensoren prüfen. Dieser Ablauf einschließlich Katalogsuche und Entitätenauswahl wurde am 23.10.2026 im echten HA getestet; beim Test wurden die Entwürfe verworfen und keine zusätzlichen Karten angelegt.
@@ -128,18 +130,18 @@ Ersetze alle drei Platzhalter durch die vollständigen Entitäts-IDs desselben R
 | `targets_entity` | Verfolgte Personen / Tracked people | Personenpositionen und Live-Tracking-Anzeige |
 | `regions_entity` | Bereiche / Regions | Entry/Exit, Monitoring und Interference |
 
-Ab 1.1.4 erkennt die automatische Zuordnung Sensorattribute und die HA-Gerätezuordnung; deutsche und umbenannte IDs werden unterstützt. Bei mehrdeutiger Zuordnung alle drei ausdrücklich auswählen. Ältere Kartenversionen erwarten englische Endungen `_zones`, `_tracked_people` und `_regions`; dort alle drei IDs in YAML eintragen. Keine Entitäten umbenennen; „Personenanzahl“ ersetzt nicht „Verfolgte Personen“. Für Entry/Exit, Monitoring und Interference gibt es keine eigenen Karten-Einträge. Bleiben Bereiche leer, bei ihrer Entität unter **Entwicklerwerkzeuge → Zustände** das Attribut `regions` prüfen.
+Ab 1.1.4 erkennt die automatische Zuordnung Sensorattribute und die HA-Gerätezuordnung; deutsche und umbenannte IDs werden unterstützt. Bei mehrdeutiger Zuordnung alle drei ausdrücklich auswählen. Ältere Kartenversionen erwarten englische Endungen `_zones`, `_tracked_people` und `_regions`; dort alle drei IDs in YAML eintragen. Dafür keine Entitäts-IDs ändern; „Personenanzahl“ ersetzt nicht „Verfolgte Personen“. Für Entry/Exit, Monitoring und Interference gibt es keine eigenen Karten-Einträge. Bleiben Bereiche leer, bei ihrer Entität unter **Entwicklerwerkzeuge → Zustände** das Attribut `regions` prüfen.
 
-`sensor_at` erlaubt `top` oder `bottom`; Eckpositionen und freie Drehwinkel werden nicht unterstützt. Die Kartenressource wird von der Integration registriert. Bei „Custom element doesn't exist“ die Browserseite vollständig neu laden.
+`sensor_at` erlaubt `top` oder `bottom`; `map_rotation` ergänzt einen Darstellungswinkel von −180 bis 180 Grad (Standard 0). Positive Winkel drehen im Uhrzeigersinn. Beispielsweise dreht `map_rotation: 45` nur die Kartenansicht um 45°, ohne Zonen, Bereiche oder Sensorkoordinaten zu ändern. Die Kartenressource wird von der Integration registriert. Bei „Custom element doesn't exist“ die Browserseite vollständig neu laden.
 
 ## 10. Abschluss prüfen und sichern
 
 - Die bisherigen Matter-Geräte sind weiterhin vorhanden und einige davon lassen sich wie zuvor bedienen.
 - Eine vorhandene Matter-Automation funktioniert weiterhin.
 - Zonen und aktuelle Personenpositionen des FP400 werden angezeigt.
-- Ein Neustart ausschließlich der App **FP400 Einrichtung** führt nach kurzer Wartezeit wieder zu aktuellen Radar-Daten.
+- Ein Neustart ausschließlich der App **FP400 Controller** führt nach kurzer Wartezeit wieder zu aktuellen Radar-Daten.
 
-Erstelle anschließend eine neue vollständige Sicherung **einschließlich FP400 Einrichtung**. Die App muss für die Zusatzfunktionen weiterlaufen. Ihre privaten Daten enthalten die zusätzliche FP400-Kopplung.
+Erstelle anschließend eine neue vollständige Sicherung **einschließlich FP400 Controller**. Die App muss für die Zusatzfunktionen weiterlaufen. Ihre privaten Daten enthalten die zusätzliche FP400-Kopplung.
 
 ## Update einer bestehenden Installation
 
@@ -147,7 +149,7 @@ Erstelle anschließend eine neue vollständige Sicherung **einschließlich FP400
 
 Wenn **dieses Repository** bereits über HACS installiert ist, kann HACS neue GitHub-Releases nach seiner nächsten Aktualisierung als Update anbieten. Die Installation startest du selbst. Eine Änderung der GitHub-Anleitung allein ist noch kein Release.
 
-Version 1.2.0 ist wie die beim Kollegen getestete Vorgängerversion eine **reguläre Veröffentlichung**. Vorabversionen müssen dafür nicht aktiviert werden. Wird sie noch nicht angezeigt, öffne das Repository in HACS und wähle im Menü **Informationen aktualisieren**. Danach unter **Einstellungen → Updates** beziehungsweise direkt in HACS nachsehen. Die Beschriftung kann je nach HACS-Version abweichen.
+Nach Veröffentlichung einer regulären Version muss die Anzeige von Vorabversionen nicht aktiviert werden. Wird ein bereits veröffentlichtes Update noch nicht angezeigt, öffne das Repository in HACS und wähle im Menü **Informationen aktualisieren**. Danach unter **Einstellungen → Updates** beziehungsweise direkt in HACS nachsehen. Die Beschriftung kann je nach HACS-Version abweichen. Ein lokal vorbereitetes Paket erscheint erst nach seiner Veröffentlichung als Update.
 
 Eine reine ZIP-Installation erhält dadurch keine Update-Meldung. Dafür zuerst die Integration wie unten beschrieben in HACS übernehmen. Updates der Controller-App werden separat über den HA-App-Store verwaltet; sie aktualisieren die bereits installierte Integration nicht automatisch.
 
@@ -155,11 +157,13 @@ Grundlage: [HACS-Update-Anleitung](https://github.com/hacs/documentation/blob/ma
 
 ### Passenden Updateweg wählen
 
-Vorher eine vollständige HA-Sicherung einschließlich der Controller-App erstellen. Aktuelle Ausgabe: **Integration 1.2.0**. Der neue Karteneditor ist ab 1.1.4 enthalten; ein erneutes Koppeln ist nicht erforderlich.
+Vorher eine vollständige HA-Sicherung einschließlich der Controller-App erstellen. Dieses Paket: **Integration 1.3.0**. Der neue Karteneditor ist ab 1.1.4 enthalten; ein erneutes Koppeln ist nicht erforderlich.
 
-- **Integration bereits in HACS verwaltet:** Dort FP400 Card & Controller auf 1.2.0 aktualisieren. Danach HA neu starten und die Browserseite vollständig neu laden.
-- **Bisher nur per ZIP/Einrichtungsdialog installiert:** Die bereits laufende Controller-App beibehalten. In HACS dieses Repository als benutzerdefinierte Quelle vom Typ **Integration** hinzufügen und Version 1.2.0 herunterladen. Danach HA neu starten und den Browser neu laden. Den vorhandenen Integrationseintrag weiterverwenden. Nicht zusätzlich eine zweite Controller-App starten. Falls noch das Original RAR in HACS verwaltet wird, den Wechselhinweis in der README beachten.
-- **Repository-App über den App-Store aktualisiert:** App 0.1.6 liefert die neue Integration mit. Im aktualisierten Einrichtungsdialog den Schritt **FP400-Integration installieren** ausführen, danach HA neu starten und den Browser neu laden. Den Kopplungsschritt überspringen. Bei HACS-Verwaltung stattdessen den ersten Weg verwenden.
+- **Integration bereits in HACS verwaltet:** Dort FP400 Card & Controller nach Veröffentlichung auf 1.3.0 aktualisieren. Danach HA neu starten und die Browserseite vollständig neu laden.
+- **Bisher nur per ZIP/Einrichtungsdialog installiert:** Die bereits laufende Controller-App beibehalten. In HACS dieses Repository als benutzerdefinierte Quelle vom Typ **Integration** hinzufügen und nach Veröffentlichung Version 1.3.0 herunterladen. Danach HA neu starten und den Browser neu laden. Den vorhandenen Integrationseintrag weiterverwenden. Nicht zusätzlich eine zweite Controller-App starten. Falls noch das Original RAR in HACS verwaltet wird, den Wechselhinweis in der README beachten.
+- **Repository-App über den App-Store aktualisiert:** App 0.2.0 liefert die neue Integration mit. Unter **Einrichtung** ausdrücklich **Mitgelieferte Integration installieren** wählen, danach HA neu starten und den Browser neu laden. Den Kopplungsschritt überspringen. Bei HACS-Verwaltung stattdessen den ersten Weg verwenden.
+
+Die **Übersicht** unterscheidet installierte und mitgelieferte Version. Eine neuere installierte Integration wird nicht durch die ältere mitgelieferte Ausgabe ersetzt. Bei unbekannter oder nicht sicher vergleichbarer Versionsnummer ist diese Installation gesperrt; Herkunft und Update in HACS prüfen. Gleiche Versionsnummern mit unterschiedlichen Dateien werden gesondert angezeigt und nicht automatisch ersetzt. Die Übersicht zeigt den Dateistand; bereits ausgeführter HA-Code kann bis zum Neustart noch aus der vorherigen Version stammen.
 
 Das ZIP-Installationsskript überschreibt eine vorhandene lokale App absichtlich nicht. Eine alte lokale App kann deshalb weiter die alte Integration mitliefern: Nach dem HACS-Update deren Installationsschritt nicht erneut ausführen. App-Daten und bestehende Kopplungen behalten.
 
@@ -169,7 +173,7 @@ Das ZIP-Installationsskript überschreibt eine vorhandene lokale App absichtlich
 
 1. Prüfe zuerst, ob tatsächlich die aktuelle Integration installiert ist. Ein neuer Download auf dem Computer aktualisiert die laufende HA-Installation noch nicht.
 2. Folge dem passenden Updateweg oben. Eine alte lokale Einrichtungs-App kann weiterhin die alte Karte installieren; ihren Installationsschritt nach einem HACS-Update nicht erneut ausführen.
-3. Öffne **Einstellungen → Dashboards → Ressourcen**. Dort darf die FP400-Karte nur einmal als **JavaScript-Modul** eingetragen sein. Bei automatischer Verwaltung zeigt der Eintrag nach dem vollständigen Update auf `/aqara_fp400/aqara-fp400-zone-card.js?v=1.2.0`. Bei YAML-Verwaltung den dortigen bestehenden Eintrag aktualisieren.
+3. Öffne **Einstellungen → Dashboards → Ressourcen**. Dort darf die FP400-Karte nur einmal als **JavaScript-Modul** eingetragen sein. Bei automatischer Verwaltung zeigt der Eintrag nach dem vollständigen Update auf `/aqara_fp400/aqara-fp400-zone-card.js?v=1.3.0`. Bei YAML-Verwaltung den dortigen bestehenden Eintrag aktualisieren.
 4. Eine Versionsnummer in der URL allein ersetzt keine alte Datei. Ist die richtige Datei bereits installiert, erzwingt eine geänderte Versionskennung das Neuladen. Im Desktop-Browser vollständig neu laden; in der HA-App gegebenenfalls den Frontend-Cache zurücksetzen.
 5. Erneut **Dashboard bearbeiten → Karte hinzufügen → Nach Karte → FP400** öffnen. Jetzt müssen die Auswahlfelder für Zonen, verfolgte Personen und Bereiche erscheinen.
 
@@ -182,7 +186,7 @@ Ein gezielter Austausch nur der Kartendatei mit Sicherung und neuer Ressourcenke
 | „Lokale Apps“ fehlt | Abschlussmeldung der Installationshilfe prüfen, dann App-Store neu laden. Das Paket benötigt HA OS. |
 | App startet nicht / Port 5581 belegt | Es läuft möglicherweise bereits ein anderer Zusatzcontroller. Keine vorhandenen Matter-Server stoppen oder umstellen. Erst feststellen, welcher Zusatzcontroller den Anschluss nutzt. |
 | Kein FP400 gefunden | Neues Freigabefenster für genau den FP400 öffnen und frischen Code verwenden. Netzwerkerreichbarkeit und IPv6 prüfen. Nicht zurücksetzen. |
-| Kopplung unklar abgeschlossen | Eine Minute warten. Falls er nicht als verbunden erscheint, ausschließlich **FP400 Einrichtung** stoppen und wieder starten. Danach bei Bedarf einen neuen Freigabecode verwenden. |
+| Kopplung unklar abgeschlossen | Eine Minute warten. Falls er nicht als verbunden erscheint, ausschließlich **FP400 Controller** stoppen und wieder starten. Danach bei Bedarf einen neuen Freigabecode verwenden. |
 | FP400 gespeichert, aber nicht erreichbar | Kein erneutes Anlernen starten. Stromversorgung, Netzwerk und vorhandenen Thread-Border-Router prüfen. |
 | Die Integration findet keinen passenden ursprünglichen FP400 | Prüfen, ob derselbe Sensor direkt in der HA-Matter-Integration vorhanden ist. Eine reine Aqara-Bridge-Anzeige genügt nicht. |
 | Mehrere Netzwerkkarten / VLANs | Im Konfigurationsreiter der App kann `network_interface` auf die HA-Netzwerkschnittstelle zum FP400 gesetzt werden; standardmäßig automatische Auswahl. Anschließend nur diese App neu starten. |
@@ -193,21 +197,49 @@ Bleibt ein Fehler bestehen, notiere die genaue Meldung aus dem Assistenten bzw. 
 
 Das ist eine angepasste Ausgabe der FP400-Integration. Als Updatequelle muss **ckundel2008/fp400-card** verwendet werden. Das Originalprojekt darf denselben Integrationsordner nicht parallel aktualisieren, da es die Zusatzcontroller-Unterstützung überschreiben kann. Falls du eigene Automationen zum Installieren von Updates eingerichtet hast, diese Integration davon ausnehmen. Updates dieses Pakets zuerst prüfen und sichern.
 
-Zum Abschalten zuerst die FP400-Zusatzintegration deaktivieren und anschließend nur die App **FP400 Einrichtung** stoppen. Die bisherige Matter-Integration und ihre Geräte bleiben erhalten. Für diesen Rückweg müssen keine Fabrics oder Geräte gelöscht werden.
+Zum Abschalten zuerst die FP400-Zusatzintegration deaktivieren und anschließend nur die App **FP400 Controller** stoppen. Die bisherige Matter-Integration und ihre Geräte bleiben erhalten. Für diesen Rückweg müssen keine Fabrics oder Geräte gelöscht werden.
 
 Eine vorher vorhandene FP400-Integration liegt unverändert unter `/config/fp400-sicherungen/<Sicherungs-ID>/aqara_fp400`. Die Sicherung betrifft nur diese Integration, nicht die vollständige HA-Installation. Für eine vollständige Wiederherstellung das zuvor erstellte HA-Backup verwenden.
 
 ## Stand und Herkunft
 
-Integration 1.2.0 / App 0.1.6, 23.10.2026. Eigene lokale App auf Basis des OHF Matter Servers 1.5.2 und einer angepassten Ausgabe von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Keine offizielle Home-Assistant- oder Aqara-App. Die bekannte Herstellerkennungs-Beschränkung des FP400 wird über einen zusätzlichen Controller umgangen, ohne den bisherigen Server umzustellen. Der Karteneditor aus 1.1.4 wurde automatisiert und im echten HA geprüft. Version 1.2.0 korrigiert Live-Meldungen und ergänzt das Verwerfen einzelner Erkennungen. Der Praxistest des Vorgängerpakets beim Kollegen ist vom Projektinhaber bestätigt; die neuen Funktionen sind automatisiert geprüft; ein neuer Hardwaretest dieser Funktionen ist noch offen.
+Integration 1.3.0 / App 0.2.0, 25.10.2026. Eigene lokale App auf Basis des OHF Matter Servers 1.5.2 und einer angepassten Ausgabe von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqara-fp400). Keine offizielle Home-Assistant- oder Aqara-App. Der zusätzliche Controller bleibt unverändert. Version 1.3.0 ergänzt zentrale Zonennamen, optionale HA-Anzeigenamen, ausdrückliche Flächenbearbeitung, Kartendrehung, Interferenzentwürfe und eine deutlichere Erkennungsauswahl. Die tatsächlich abgeschlossenen Prüfungen und verbleibenden Grenzen stehen in `PRUEFSTAND.md`; ältere Hardwaretests sind keine erneute Abnahme dieser neuen Bedienung.
 
-Dieses Paket wurde auf HA OS 18.3 / Core 2026.10.2 (Intel/AMD 64 Bit) installiert und mit einem echten FP400 (Firmware 1.2.0.0) zusätzlich gekoppelt. Zonen, Bereiche und Wiederverbindung nach App-Neustart wurden geprüft. Alle 16 dort vorhandenen Matter-Geräteregistereinträge und die 23 Radar-Entitäts-IDs blieben erhalten. Der Sitztest mit einer echten Person, aktuellen Positionsmeldungen und passender Sofa-Belegung ist bestanden. Den abgeschlossenen Gangtest bestätigte der Nutzer am 23.10.2026 als bestanden; dazu wurde kein weiterer eigener Live-Test durchgeführt. ARM64, eine reale Anlage mit 32 Geräten und ein anderer Hauptserver als Matter Server 1.5.2 wurden nicht live getestet. Details siehe `PRUEFSTAND.md`.
+Die Vorgängerausgabe wurde auf HA OS 18.3 / Core 2026.10.2 (Intel/AMD 64 Bit) installiert und mit einem echten FP400 (Firmware 1.2.0.0) zusätzlich gekoppelt. Zonen, Bereiche und Wiederverbindung nach App-Neustart wurden geprüft. Alle 16 dort vorhandenen Matter-Geräteregistereinträge und die 23 Radar-Entitäts-IDs blieben erhalten. Der Sitztest mit einer echten Person, aktuellen Positionsmeldungen und passender Sofa-Belegung ist bestanden. Den abgeschlossenen Gangtest bestätigte der Nutzer am 23.10.2026 als bestanden; dazu wurde kein weiterer eigener Live-Test durchgeführt. ARM64, eine reale Anlage mit 32 Geräten und ein anderer Hauptserver als Matter Server 1.5.2 wurden nicht live getestet. Details siehe `PRUEFSTAND.md`.
 
-## Einzelne falsche Erkennung verwerfen (ab 1.2.0)
+## Zonen und Bereiche bewusst bearbeiten (ab 1.3.0)
+
+1. Die Karte startet in der Live-Ansicht. Berühren oder Scrollen verändert keine Flächen.
+2. Wähle **Bereiche bearbeiten**. Erst jetzt sind Zeichnen, Radieren, Hinzufügen, Aktivieren/Deaktivieren und Löschen verfügbar.
+3. Wähle die Zone oder den Bereich und ändere die gewünschten Zellen. Die Änderungen sind zunächst nur ein Entwurf.
+4. Wähle **Speichern** und warte auf die Rückbestätigung. Bei einem Fehler bleibt der Entwurf erhalten. **Abbrechen** öffnet bei ungespeicherten Änderungen eine Rückfrage; erst **Verwerfen** entfernt den Entwurf.
+5. Beim Wechsel mit ungespeicherten Änderungen kannst du speichern, verwerfen oder weiterbearbeiten. Bei gleichzeitigen Änderungen von anderer Stelle zuerst den aktuellen Stand neu laden.
+
+### Zonen benennen
+
+Im Bearbeitungsmodus eine vorhandene Zone auswählen, beispielsweise **Sofa** als Namen eingeben und **Name speichern** wählen. Eine neue Zone zuerst als Fläche speichern, danach benennen. Ein leerer Name setzt die Anzeige auf **Zone N** zurück.
+
+Der Name wird zentral in Home Assistant gespeichert und erscheint in allen unseren FP400-Karten desselben Geräts. Namen dürfen bis zu 80 Zeichen lang sein. Fehlt der Namensdienst, Integration aktualisieren und HA neu starten; nur die App zu aktualisieren reicht nicht.
+
+Administratoren können vor jedem Speichern zusätzlich **Auch den HA-Anwesenheitssensor umbenennen (nur diesmal)** auswählen. Die Option ist zunächst aus und gilt nur für diese Speicherung. Prüfe die Vorschau der eindeutig zugeordneten Belegungsentität und ihres bisherigen/neuen Anzeigenamens. Entitäts-ID und bestehende Automationen bleiben erhalten; Namen in Aqara/Apple werden nicht geändert. Ein leerer Name setzt ausschließlich den Kartennamen zurück und kann nicht zusammen mit dieser Option gespeichert werden. Bei fehlender oder mehrdeutiger Zuordnung lässt sich weiterhin der Kartenname speichern. Bei zwischenzeitlichen Änderungen zuerst die Vorschau aktualisieren. Meldet HA einen Teilfehler, kann der Kartenname bereits gespeichert sein, obwohl der Anzeigename unverändert bleibt.
+
+### Eine Störfläche vorbereiten
+
+Eine aktuelle Erkennung auswählen und **Stelle als Interferenz markieren** wählen. Die Karte wechselt zur Interferenzfläche und erstellt einen Entwurf um diesen Punkt mit bis zu vier Rasterzellen (zusammen etwa 1 × 1 Meter); am Rand wird die Fläche begrenzt. Vorhandene Interferenzflächen bleiben enthalten. Prüfe die markierten Zellen und wähle ausdrücklich **Speichern**. Mit **Abbrechen → Verwerfen** entfernst du nur den Entwurf. Eine veraltete oder verschwundene Erkennung kann nicht verwendet werden. Die Kartendrehung ändert die zugeordneten Sensorzellen nicht.
+
+### Aktualität der Positionen
+
+Die Karte unterscheidet eine unterbrochene Verbindung, ausgeschaltete Live-Positionen, fehlende Positionsmeldungen und das Alter der letzten Meldung. Nach 15 Sekunden ohne neue Positionsmeldung erscheint ein Hinweis. Das bedeutet nicht, dass der Raum leer oder der Sensor offline ist. Ein mehr als fünf Sekunden in der Zukunft liegender Zeitstempel wird als Uhrabweichung behandelt. Aus veralteten oder zeitlich unplausiblen Daten lassen sich weder eine Erkennung verwerfen noch Interferenzentwürfe anlegen. Lokales Verwerfen einer Erkennung gilt nicht als neue Sensormeldung.
+
+**Bisherige Namen übernehmen:** Ausdrücklich in HA vergebene Namen der bisherigen Matter-Belegungssensoren werden automatisch übernommen, wenn Gerät und Zonen-Endpunkt eindeutig passen. Bereits in unserer Karte gespeicherte Namen haben Vorrang. Bei fehlender oder mehrdeutiger Zuordnung bleibt „Zone N“ stehen; trage den gewünschten Namen dort selbst ein. Namen, die ausschließlich in Aqara/Apple existieren, sind damit nicht abrufbar. Absichtlich geleerte Namen werden nicht erneut importiert. Der erste Import kann bis zum nächsten erfolgreichen Einlesen der Zonen dauern.
+
+## Einzelne falsche Erkennung verwerfen
 
 1. Öffne die gespeicherte Radar-Karte im Dashboard. Live-Positionen müssen eingeschaltet und „Verfolgte Personen“ zugeordnet sein.
 2. Tippe den Punkt der falschen Erkennung an, etwa einen dauerhaft als Person erkannten Vorhang.
-3. Prüfe die angezeigte Erkennungsnummer und bestätige **Erkennung verwerfen**. **Abbrechen** sendet keinen Befehl.
+3. Prüfe den markierten Punkt mit Doppelring sowie die angezeigte Erkennungsnummer, Position und Zonen. Bestätige **Diese Erkennung verwerfen**. **Abbrechen** sendet keinen Befehl.
+
+Ab 1.3.0 verschwindet die Auswahl, wenn die Spur nicht mehr vorhanden oder die Verbindung unterbrochen ist. Während der Flächenbearbeitung ist das Verwerfen gesperrt; zuerst die Bearbeitung beenden. Die Anzeige beweist nicht, dass es eine Geisterperson ist: Eine tatsächlich anwesende Person kann erneut erkannt werden.
 4. Bei einem Fehler bleibt die Auswahl erhalten. Prüfe dann die Verbindung zum Zusatzcontroller. In der Kartenvorschau sind schreibende Aktionen gesperrt.
 
 Es wird nur diese Erkennung verworfen, kein Matter-Gerät und keine Kopplung gelöscht. Tatsächlich anwesende Personen können erneut erkannt werden. Zonen und Bereiche bleiben erhalten. Für Automationen steht die Aktion `aqara_fp400.remove_target` mit `device_id` und `target_id` (0–255) bereit.
@@ -217,7 +249,7 @@ Es wird nur diese Erkennung verworfen, kein Matter-Gerät und keine Kopplung gel
 Die App-Daten gehören zur jeweiligen Installation. Der Wechsel erfolgt daher mit geprüfter Datenübernahme, nicht durch erneutes Koppeln.
 
 1. HA einschließlich der lokalen FP400-App sichern. Die bisherige App nicht deinstallieren.
-2. Die lokale App aus diesem Paket auf 0.1.7 aktualisieren. Vorher ihre Quelldateien sichern. Dieser Schritt erfordert einen administrativen Dateizugriff; der Erstinstallationshelfer überschreibt absichtlich keine vorhandene lokale App.
+2. Die lokale App auf eine Version mit Migrationsmodus aktualisieren: mindestens 0.1.7, in diesem Paket 0.2.0. Vorher ihre Quelldateien sichern. Dieser Schritt erfordert einen administrativen Dateizugriff; der Erstinstallationshelfer überschreibt absichtlich keine vorhandene lokale App.
 3. In der lokalen App `migration_mode: export` einstellen, Watchdog ausschalten und neu starten. Der Export läuft vor dem Controllerstart; der Controller bleibt angehalten. Im Protokoll muss „Export vollständig geprüft“ stehen.
 4. Die lokale App stoppen und ihren automatischen Start ausschalten. Ihre Daten bleiben als Rückweg erhalten.
 5. Die Repository-App aus `https://github.com/ckundel2008/fp400-card` installieren. Vor ihrem ersten Start `migration_mode: import` setzen und die bisherige Einstellung `network_interface` übernehmen. Nur starten, wenn die lokale App gestoppt ist.

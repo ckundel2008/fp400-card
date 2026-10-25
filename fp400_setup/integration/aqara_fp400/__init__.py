@@ -19,6 +19,7 @@ from homeassistant.core import HomeAssistant, ServiceCall, SupportsResponse, cal
 from homeassistant.exceptions import ConfigEntryNotReady, HomeAssistantError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 from homeassistant.loader import async_get_integration
 from matter_server.client.models.node import MatterNode
@@ -42,6 +43,8 @@ from .const import (
     VENDOR_ID,
 )
 from .node import FP400Node, Zone
+from .zone_names import ZoneNames
+from .device_lookup import node_device
 from .separate_controller import CONF_CONTROLLER_URL, connect_controller, original_node_for, schedule_reload
 
 PLATFORMS = [Platform.SENSOR, Platform.SWITCH, Platform.BUTTON, Platform.SELECT, Platform.NUMBER]
@@ -79,6 +82,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: FP400ConfigEntry) -> boo
     client = original_client
     data = FP400Data()
     entry.runtime_data = data
+    names_key = f"{DOMAIN}_zone_names"
+    if names_key not in hass.data:
+        names = ZoneNames(hass)
+        await names.async_load()
+        hass.data[names_key] = names
     controller_url = entry.options.get(CONF_CONTROLLER_URL, entry.data.get(CONF_CONTROLLER_URL, ""))
     if controller_url:
         client, data.listener = await connect_controller(hass, controller_url)
@@ -126,7 +134,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: FP400ConfigEntry) -> boo
             hass=hass, node=node, matter_client=client,
             registry_node_id=original.node_id if original else None,
             linked_identifier=get_node_device_identifier(original_client.server_info, original.node_id) if original else None,
+            config_entry_id=entry.entry_id,
+            matter_config_entry_id=matter_entry.entry_id,
         )
+        fp.zone_names_store = hass.data[names_key]
         await fp.async_start()
         if controller_url and hass.data.get(f"{DOMAIN}_live_preferences", {}).get(fp.own_identifier) is True:
             await fp.async_set_live_tracking(True)
@@ -151,7 +162,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: FP400ConfigEntry) -> boo
         if controller_url:
             fp.node.node_data.available = False
             fp._notify()
-        elif device := device_registry.async_get_device(identifiers={fp.own_identifier}):
+        elif device := node_device(hass, fp):
             device_registry.async_remove_device(device.id)  # takes its entities along
         LOGGER.info("Removed %s (node %s)", fp.name, node_id)
 
@@ -162,6 +173,30 @@ async def async_setup_entry(hass: HomeAssistant, entry: FP400ConfigEntry) -> boo
     data.unsubscribe.append(client.subscribe_events(callback=_on_node_removed, event_filter=EventType.NODE_REMOVED))
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    known_zone_entities = {
+        item["entity_id"] for fp in data.nodes.values()
+        for item in fp.zone_names_store.entity_names(fp).values()
+    }
+
+    @callback
+    def _entity_registry_updated(event) -> None:
+        entity_id = event.data.get("entity_id")
+        if event.data.get("action") == "update" and not {
+            "name", "device_id", "config_entry_id", "unique_id", "entity_id"
+        }.intersection(event.data.get("changes", {})):
+            return
+        current = er.async_get(hass).async_get(entity_id) if entity_id else None
+        if entity_id not in known_zone_entities and not (
+            current and current.config_entry_id == matter_entry.entry_id
+            and current.platform == "matter" and current.domain == "binary_sensor"
+        ):
+            return
+        known_zone_entities.clear()
+        for fp in data.nodes.values():
+            known_zone_entities.update(item["entity_id"] for item in fp.zone_names_store.entity_names(fp).values())
+            fp._notify()
+
+    entry.async_on_unload(hass.bus.async_listen(er.EVENT_ENTITY_REGISTRY_UPDATED, _entity_registry_updated))
     _async_register_services(hass, entry)
     return True
 
@@ -268,6 +303,14 @@ SET_ZONES_SCHEMA = vol.Schema(
     }
 )
 DEVICE_SCHEMA = vol.Schema({vol.Required("device_id"): cv.string})
+SET_ZONE_NAME_SCHEMA = vol.Schema({
+    vol.Required("device_id"): cv.string,
+    vol.Required("zone_id"): vol.All(vol.Coerce(int), vol.Range(min=1, max=8)),
+    vol.Required("name"): cv.string,
+    vol.Optional("rename_entity", default=False): cv.boolean,
+    vol.Optional("expected_entity_id"): cv.entity_id,
+    vol.Optional("expected_entity_name"): vol.Any(None, cv.string),
+})
 SET_REGION_SCHEMA = vol.Schema(
     {
         vol.Required("device_id"): cv.string,
@@ -302,7 +345,8 @@ def _node_for_device(hass: HomeAssistant, device_id: str) -> FP400Node:
         raise HomeAssistantError(f"device {device_id} not found")
     for entry in hass.config_entries.async_loaded_entries(DOMAIN):
         for fp in entry.runtime_data.nodes.values():
-            if device.identifiers & {fp.device_identifier, fp.own_identifier}:
+            resolved = [node_device(hass, fp), node_device(hass, fp, matter=True)]
+            if any(candidate and candidate.id == device_id for candidate in resolved):
                 return fp
     raise HomeAssistantError(f"device {device.name_by_user or device.name} is not an Aqara FP400")
 
@@ -327,6 +371,11 @@ def _async_register_services(hass: HomeAssistant, entry: FP400ConfigEntry) -> No
     async def clear_zones(call: ServiceCall) -> None:
         fp = _node_for_device(hass, call.data["device_id"])
         await fp.async_set_zones([])
+
+    async def set_zone_name(call: ServiceCall) -> None:
+        fp = _node_for_device(hass, call.data["device_id"])
+        kwargs = {key: call.data[key] for key in ("rename_entity", "expected_entity_id", "expected_entity_name") if key in call.data}
+        await fp.zone_names_store.async_set(fp, call.data["zone_id"], call.data["name"], user_id=call.context.user_id, **kwargs)
 
     async def set_region(call: ServiceCall) -> None:
         fp = _node_for_device(hass, call.data["device_id"])
@@ -355,6 +404,7 @@ def _async_register_services(hass: HomeAssistant, entry: FP400ConfigEntry) -> No
         DOMAIN, SERVICE_SET_ZONES, set_zones, schema=SET_ZONES_SCHEMA, supports_response=SupportsResponse.OPTIONAL
     )
     hass.services.async_register(DOMAIN, SERVICE_CLEAR_ZONES, clear_zones, schema=DEVICE_SCHEMA)
+    hass.services.async_register(DOMAIN, "set_zone_name", set_zone_name, schema=SET_ZONE_NAME_SCHEMA)
     hass.services.async_register(DOMAIN, SERVICE_SET_REGION, set_region, schema=SET_REGION_SCHEMA)
     hass.services.async_register(DOMAIN, SERVICE_CLEAR_REGION, clear_region, schema=CLEAR_REGION_SCHEMA)
     hass.services.async_register(DOMAIN, SERVICE_SUBSCRIBE_LOCATION, subscribe_location, schema=SUBSCRIBE_SCHEMA)

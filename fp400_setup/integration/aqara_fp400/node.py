@@ -13,7 +13,6 @@ from typing import Any
 from homeassistant.components.matter.helpers import get_node_device_identifier
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.util import dt as dt_util
 from matter_server.client.models.node import MatterNode
@@ -52,6 +51,7 @@ from .const import (
     mask_to_cells,
     to_bytes,
 )
+from .device_lookup import node_device
 
 
 @dataclass
@@ -185,9 +185,13 @@ class FP400Node:
     matter_client: Any
     registry_node_id: int | None = None
     linked_identifier: tuple[str, str] | None = None
+    config_entry_id: str | None = None
+    matter_config_entry_id: str | None = None
     zones: list[Zone] = field(default_factory=list)
+    zone_names_store: Any = None
     targets: list[Target] = field(default_factory=list)
     targets_updated: datetime | None = None
+    position_received: datetime | None = None
     last_motion: str | None = None
     last_motion_zone: int | None = None
     last_motion_at: datetime | None = None
@@ -205,6 +209,18 @@ class FP400Node:
     _renew_now: asyncio.Event = field(default_factory=asyncio.Event)
     _was_available: bool = True
     _renew_failing: bool = False
+
+    @property
+    def zone_names(self) -> dict[str, str]:
+        """Shared names keyed by zone id, independent of Matter attributes."""
+        return self.zone_names_store.for_node(self) if self.zone_names_store else {}
+
+    async def _async_confirm_zone_names(self, zones: list[Zone]) -> None:
+        if self.zone_names_store:
+            try:
+                await self.zone_names_store.async_confirm(self, zones)
+            except Exception:
+                LOGGER.exception("%s: could not update saved zone names; will retry after next read", self.name)
 
     @property
     def node_id(self) -> int:
@@ -231,8 +247,7 @@ class FP400Node:
     def device_info(self) -> DeviceInfo:
         """Own device, linked to the Matter device (a device belongs to one config entry)."""
         attrs = self.node.node_data.attributes
-        matter_devices = dr.async_get(self.hass).async_get_devices(identifiers={self.device_identifier})
-        matter_device = next(iter(matter_devices), None)
+        matter_device = node_device(self.hass, self, matter=True)
         return DeviceInfo(
             identifiers={self.own_identifier},
             name=f"{self.name} radar",
@@ -381,14 +396,20 @@ class FP400Node:
             return None
         if not isinstance(result, dict) or path not in result:
             return None
+        raw = result[path]
+        if not isinstance(raw, list):
+            return None  # A missing/null list is not a confirmed deletion.
+        parsed = [parse_zone(item) for item in raw]
+        if any(zone is None for zone in parsed):
+            return None
         self.node.node_data.attributes[path] = result[path]
-        return sorted(
-            (z for z in (parse_zone(item) for item in result[path] or []) if z is not None), key=lambda z: z.zone_id
-        )
+        return sorted(parsed, key=lambda z: z.zone_id)
 
     async def _async_initial_zones(self) -> None:
-        if (zones := await self.async_read_zones()) is not None:
+        if (zones := await self.async_read_zones()) is not None and not self.zones_pending:
             self.zones = zones
+            self.zones_error = None
+            await self._async_confirm_zone_names(zones)
             self._notify()
         await self.async_read_regions()
         self._notify()
@@ -408,9 +429,11 @@ class FP400Node:
                 # re-check after the await: a local write may have started meanwhile
                 if self.zones_pending or zones is None:
                     continue
-                if _zone_signature(zones) != _zone_signature(self.zones):
+                if _zone_signature(zones) != _zone_signature(self.zones) or self.zones_error:
                     self.zones = zones
+                    self.zones_error = None
                     self._notify()
+                await self._async_confirm_zone_names(zones)
                 before = {k: list(v) for k, v in self.regions.items()}
                 await self.async_read_regions()
                 if self.regions != before:
@@ -429,6 +452,7 @@ class FP400Node:
             got = await self.async_read_zones()
             if got is not None and _zone_signature(got) == want:
                 self.zones, self.zones_pending, self.zones_error = got, False, None
+                await self._async_confirm_zone_names(got)
                 self._notify()
                 return
         self.zones_pending = False
@@ -598,9 +622,19 @@ class FP400Node:
         if data.cluster_id == CLUSTER_LOCATION and data.event_id == EVENT_LOCATION_INFO:
             if data.endpoint_id != SENSOR_ENDPOINT:
                 return
-            raw_targets = _get(payload, "targets", 0, default=[]) if isinstance(payload, dict) else []
-            self.targets = [t for t in (parse_target(item) for item in raw_targets or []) if t is not None]
-            self.targets_updated = dt_util.utcnow()
+            raw_targets = _get(payload, "targets", 0, default=None) if isinstance(payload, dict) else None
+            if not isinstance(raw_targets, list):
+                return
+            if any(not isinstance(item, dict) or
+                   _get(item, "targetId", "targetID", 0, default=None) is None or
+                   _get(item, "x", 1, default=None) is None or
+                   _get(item, "y", 2, default=None) is None for item in raw_targets):
+                return
+            parsed = [parse_target(item) for item in raw_targets]
+            if any(target is None for target in parsed):
+                return
+            self.targets = parsed
+            self.targets_updated = self.position_received = dt_util.utcnow()
             self._notify_targets()
         elif data.cluster_id == CLUSTER_RADAR and data.event_id == EVENT_MOTION_DETECTED:
             code = _get(payload, "motion", 0, default=None) if isinstance(payload, dict) else payload

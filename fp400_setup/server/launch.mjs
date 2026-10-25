@@ -50,7 +50,9 @@ try {
     env, stdio: ['ignore', 'inherit', 'inherit'],
   });
   const pairer = new Pairer(rpc);
-  const wizard = createWizard({ installer, pairer, controllerReady: () => ready });
+  const wizard = createWizard({ installer, pairer, controllerReady: () => ready,
+    appVersion: typeof data.version === 'string' ? data.version : null,
+    availableAppVersion: typeof data.version_latest === 'string' ? data.version_latest : null });
   await new Promise((resolve, reject) => {
     wizard.once('error', reject);
     wizard.listen(data.ingress_port, '172.30.32.1', resolve);

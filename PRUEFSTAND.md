@@ -1,4 +1,61 @@
-# Prüfstand – Integration 1.2.1 / FP400 Einrichtung 0.1.7
+# Prüfstand – Integration 1.3.0 / FP400 Controller 0.2.0
+
+Stand: 25.10.2026. Erweiterter Stand lokal gebaut; noch nicht veröffentlicht. Der unten dokumentierte Live-Test betrifft den früheren Entwicklungsstand 1.3.0 mit Zonennamen und Bearbeitungsmodus. Die anschließend ergänzten Funktionen sind separat aufgeführt. Die laufende Controller-App bleibt bei 0.1.7; App 0.2.0 ist noch nicht live installiert.
+
+## Ergänzende Prüfung: Controller, Anzeigenamen, Drehung und Aktualität
+
+- Vollständiger lokaler Lauf nach dem Gegencheck: **86 Node-Tests und 44 Python-Tests bestanden**. Paketbau erfolgreich; kanonische und App-gebündelte Integration identisch geprüft.
+- Backend: optionale Anzeigenamenänderung nur für aktive Administratoren, eindeutige Matter-Zuordnung, Vergleich von Entity-ID und bisherigem nullable Registry-Namen, erneute Prüfung nach der Namensspeicherung, klare Teilfehlermeldung und unveränderte Entity-IDs. Bestehende gespeicherte Namen bleiben kompatibel.
+- Registry-Aufrufe anhand der offiziellen HA-2026.9.0-Quellen geprüft. Die zuvor beanstandete veraltete Gerätesuche ist ersetzt. Ein tatsächlicher Lauf auf HA 2026.9 wurde nicht durchgeführt.
+- 23 Karten-Zuverlässigkeitstests, darunter 5.760 Zellzuordnungen über verschiedene Drehwinkel, Randbegrenzung und Vereinigung des Störflächenentwurfs mit bestehenden Zellen, Zeitstempel ausschließlich echter Positionsmeldungen sowie gesperrte Aktionen bei veralteten oder zeitlich widersprüchlichen Meldungen.
+- Browserprüfung der simulierten Karte in Chrome bei 390 px Kartenbreite: +45°-Drehung, aufrechte Beschriftung, Namensvorschau mit ursprünglichem und neuem Anzeigenamen, korrekter Dienstauftrag mit erwarteter Entity-ID/Registry-Name, Rücksetzen der einmaligen Auswahl nach Speicherung. Störflächenentwurf vergrößerte die simulierte Interferenzmaske von einer auf fünf Zellen; „Verwerfen“ stellte eine Zelle wieder her, ohne einen Bereichsdienst aufzurufen.
+- App-Prüfung in Chrome bei 1280 × 900 und 390 × 844: Übersicht für gespeicherte, auch offline befindliche Sensoren, Navigation zur Einrichtung, Downgrade-Sperre, keine beobachteten Browserfehler oder horizontalen Überläufe. Simulierte Zustände, keine echte Kopplung.
+- Unabhängiger Gegencheck fand zwei reproduzierbare Randfälle, beide korrigiert und nachgeprüft: paralleles HACS-Update während der Installationsjournal-Schreibung; Positionszeitstempel weit in der Zukunft. Das tatsächlich verschobene Installationsbackup wird vor dem Commit erneut geprüft. Zeitstempel mehr als fünf Sekunden in der Zukunft sperren Personenaktionen und zeigen eine Zeitabweichung.
+
+**Noch offen für diesen erweiterten Stand:** Live-Installation, temporäre Anzeigenamenänderung mit exakter Wiederherstellung, neue echte Bilder, Live-Abnahme der App 0.2.0 sowie GitHub-HACS/Hassfest-Lauf und Veröffentlichung. Die unten beschriebenen älteren Live- und Sitz-/Gangtests werden dafür nicht als Ersatz gezählt. Ein Testpaket wurde in den HA-Konfigurationsordner hochgeladen; allein dieser Upload aktiviert keine Änderung.
+
+## Neue Bedienung und Namensspeicherung
+
+Früherer Entwicklungsstand vor den obigen Ergänzungen: **67 Node-Tests und 36 Python-Tests bestanden**, Paketbau und Compileall erfolgreich. Der Pakettest bestätigt identische kanonische und App-gebündelte Integrationsdateien sowie passende Archiv-Prüfsummen. HACS und Hassfest sind im Veröffentlichungsworkflow vorgesehen, für diesen noch unveröffentlichten Stand aber nicht neu auf GitHub gelaufen.
+
+- Automatisierte Frontendprüfungen: Standardansicht ohne Schreibmöglichkeit, Vorschau-/Offline-/Pending-Sperren, Entwurfswechsel und Verwerfen, Rückbestätigung statt bloßer Dienstannahme, Fehler und Zeitüberschreitung, konkurrierende Änderungen, Namensentwürfe und ungültig gewordene Personenauswahl.
+- 15 zusätzliche Zuverlässigkeitsprüfungen decken unter anderem Abbruchdialoge mit gelöschten Zonen, verspätete Namensmeldungen, ID-Wiederverwendung, Eingabefokus und Textauswahl ab. Zwei reproduzierte Fehler wurden behoben: Beim Speichern einer gelöschten Zone wird kein überholter Namenauftrag mehr gesendet; verzögerte HA-Meldungen setzen bestätigte Namen nicht auf den alten Wert zurück und erzeugen keinen falschen Konflikt beim nächsten Bearbeiten.
+- Backendprüfungen: persistente Namen für mehrere Geräte, Neustart, parallele Speicherung, Speicherfehler, gültige Zonen, bewusster Namensreset, bestätigte Löschung und ID-Wiederverwendung. Übernahme alter HA-Namen nur mit exakter Matter-Geräte-/Endpunkt-/Occupancy-Zuordnung; Mehrdeutigkeiten und erzeugte Standardnamen werden ausgelassen.
+- Gegencheck durch getrennte Implementierer: zusätzliche Sperren für fremde ausstehende Schreibvorgänge, Namenskonflikte und Prüfung vor dem Verwerfen ergänzt. Veraltete Zonenfehler werden nach erfolgreichem neuem Sensorabruf gelöscht; Regression dazu vorhanden.
+- Browserprüfung über native Chrome-Steuerung auf `http://127.0.0.1:8768/tests/fixtures/card-ux.html`: sichtbare Karte, Namensänderung „Sofa“ → „Sitzecke“, Auswahlring mit Kennung und Position, Abbrechen ohne Verwerfen, Zeichnen nach Freigabe, Abbruchdialog und Entwurf verwerfen. Ein simulierter Speichervorgang zeigt zunächst „Sensorbestätigung abwarten…“ und kehrt nach Rückmeldung zur Live-Ansicht zurück.
+- Darstellung in 560 px und 390 px Kartenbreite geprüft. Gefundenen Kontrastfehler der Bereichsschalter korrigiert. Keine aufgezeichneten JavaScript-Laufzeitfehler oder unbehandelten Promise-Fehler in der finalen Testseite. Dies ersetzt keine vollständige Auswertung aller Browserkonsolenwarnungen.
+
+Die isolierte Browserprüfung verwendet ausdrücklich simulierte Zustände und Dienste. Ergänzend wurde die folgende Bedienung am echten HA geprüft. Echte Touch-Gesten auf einem Smartphone, ARM64 und eine reale Anlage mit 32 Geräten bleiben offen. Die veröffentlichten echten Bilddateien zeigen weiterhin den historischen Sitztest.
+
+## Live-Bedienprüfung 1.3.0 – 25.10.2026
+
+- Bisherige Integrationsdateien vor der Installation separat gesichert. Upload-Prüfsumme und installierte Dateien gegen das gebaute Paket geprüft. Eine zurückgebliebene alte komprimierte Kartendatei wurde ebenfalls gesichert und aus dem aktiven Verzeichnis genommen.
+- Nach Core-Neustart neue Oberfläche mit Live-Positionen und vier Zonen geladen. Die Cloud-Verbindung war während des Starts mehrere Minuten unterbrochen; der HA-MCP blieb zunächst auch nach Rückkehr der Oberfläche nicht erreichbar. Deshalb wurden die Bedienprüfungen über die echte HA-Oberfläche durchgeführt.
+- Alle vier vorhandenen benutzerdefinierten Matter-Belegungsnamen wurden automatisch anhand der Geräte-/Endpunktzuordnung übernommen: `Belegung (Sofa)`, `Belegung (Küche)`, `Belegung (Esstisch)`, `Belegung (Spielmatte)`.
+- Klick ins Raster in der Live-Ansicht änderte keine Zone; Bearbeitung wird erst nach „Bereiche bearbeiten“ angeboten. Rückkehr über „Abbrechen“ geprüft.
+- Zone 1 in der Karte vorübergehend in `FP400 Prüftest – Sofa` umbenannt, gespeichert und nach vollständigem Browser-Neuladen erneut angezeigt. Anschließend den exakten Originalnamen `Belegung (Sofa)` wieder gespeichert und in der Live-Ansicht bestätigt. Die bestehenden Belegungsentitäten wurden dabei nicht umbenannt.
+- Echte Erkennung ausgewählt: deutlicher Doppelring, Beschriftung mit Kennung, Position und Zonenname sowie Bestätigungsbereich sichtbar. „Abbrechen“ entfernt die Auswahl; die Erkennung blieb vorhanden. Es wurde keine Person am Sensor verworfen.
+- Nach Rückkehr des HA-MCP vollständiger Vorher-/Nachher-Vergleich: alle Zellen, Typen und Aktivierungsflags der vier Zonen sowie sämtliche Bereichsmasken identisch; keine ausstehenden Schreibvorgänge oder Zonen-/Bereichsfehler. Alle 16 vorhandenen Matter-Geräteregister-IDs und die vier ursprünglichen Belegungsentitätseinträge unverändert. Haupt-Matter-App 9.2.0 und Zusatzcontroller-App 0.1.7 laufen; Integrationseintrag geladen und Kartenressource auf `v=1.3.0` aktualisiert.
+- Keine Zonen- oder Bereichsgeometrie am Sensor geschrieben, keine Matter-Geräte neu gekoppelt und keine Fabric verändert. Fehlerfälle des Schreibens und Verwerfens sind automatisiert mit simuliertem Transport geprüft; daraus wird kein Hardware-Schreibtest abgeleitet.
+
+### Im erweiterten Quellstand behobener Wartungspunkt
+
+Der frühere Live-Test auf HA 2026.10.2 protokollierte eine Deprecation-Warnung zu `device_registry.async_get_device`. Im erweiterten Quellstand ist diese Abfrage durch die eindeutig auf den Konfigurationseintrag bezogene API ersetzt und automatisiert geprüft. Die erneute Live-Prüfung steht aus; daraus folgt keine Freigabe für zukünftige HA-Versionen.
+
+## Reproduktion dieser Version
+
+```sh
+python3.13 tools/build_package.py
+node --test tests/*.test.mjs
+python3.13 tests/test_config_flow.py
+python3.13 tests/test_node_updates.py
+python3.13 tests/test_zone_names.py
+python3.13 -m compileall -q custom_components
+```
+
+Für die isolierte Bedienprüfung das Repository lokal mit `python3.13 -m http.server 8768 --bind 127.0.0.1` bereitstellen und `/tests/fixtures/card-ux.html` öffnen. Diese Testseite verbindet sich nicht mit Home Assistant.
+
+# Historischer Prüfstand – Integration 1.2.1 / FP400 Einrichtung 0.1.7
 
 ## Migration zur Repository-App
 

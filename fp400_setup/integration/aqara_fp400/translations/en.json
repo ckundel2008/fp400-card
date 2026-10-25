@@ -3,16 +3,16 @@
     "step": {
       "user": {
         "title": "Connect the additional FP400 controller",
-        "description": "First open the FP400 Einrichtung app and complete pairing there. Your FP400 must also remain connected to Home Assistant's existing Matter integration. Submit this dialog to check both connections and match the device by its serial number. Your other Matter devices and your existing server are not changed."
+        "description": "First open the FP400 Controller app and complete pairing there. Your FP400 must also remain connected to Home Assistant's existing Matter integration. Submit this dialog to check both connections and match the device by its serial number. Your other Matter devices and your existing server are not changed."
       }
     },
     "error": {
-      "cannot_connect": "The FP400 Einrichtung app is not reachable. Start it, wait a minute and try again.",
+      "cannot_connect": "The FP400 Controller app is not reachable. Start it, wait a minute and try again.",
       "matter_not_loaded": "The existing Matter integration is not ready. Wait until your existing Matter devices are available, then try again.",
       "fp400_not_in_matter": "No FP400 was found in the existing Matter integration. Add it there first without removing your other devices.",
-      "fp400_not_paired": "The additional controller has no FP400 yet. Complete pairing in the FP400 Einrichtung app, then submit this dialog again.",
+      "fp400_not_paired": "The additional controller has no FP400 yet. Complete pairing in the FP400 Controller app, then submit this dialog again.",
       "fp400_mismatch": "The FP400 on the additional controller cannot be matched unambiguously to your existing Matter device. Check that you shared the same FP400. Do not reset it.",
-      "fp400_unavailable": "The FP400 pairing is stored, but the sensor is not reachable yet. Wait a minute and check the FP400 Einrichtung app. Do not pair or reset the sensor again.",
+      "fp400_unavailable": "The FP400 pairing is stored, but the sensor is not reachable yet. Wait a minute and check the FP400 Controller app. Do not pair or reset the sensor again.",
       "invalid_controller_url": "Use ws://127.0.0.1:5581/ws or leave empty."
     },
     "abort": {
@@ -23,17 +23,19 @@
   "options": {
     "step": {
       "init": {
-        "description": "Keep this switch enabled to use the FP400 Einrichtung app. Your existing Matter pairing and other devices are preserved. Disable it only to return to the main Matter server; FP400 zones and live positions may then be restricted by that server's vendor ID.",
-        "data": {"use_secondary_controller": "Use the additional FP400 controller (recommended)"}
+        "description": "Keep this switch enabled to use the FP400 Controller app. Your existing Matter pairing and other devices are preserved. Disable it only to return to the main Matter server; FP400 zones and live positions may then be restricted by that server's vendor ID.",
+        "data": {
+          "use_secondary_controller": "Use the additional FP400 controller (recommended)"
+        }
       }
     },
     "error": {
       "invalid_controller_url": "Use ws://127.0.0.1:5581/ws or leave empty.",
-      "cannot_connect": "The FP400 Einrichtung app is not reachable. Start it, wait a minute and try again.",
+      "cannot_connect": "The FP400 Controller app is not reachable. Start it, wait a minute and try again.",
       "matter_not_loaded": "The existing Matter integration is not ready. Wait until your existing Matter devices are available, then try again.",
       "fp400_not_in_matter": "No FP400 was found in the existing Matter integration. Add it there first.",
-      "fp400_not_paired": "Complete FP400 pairing in the FP400 Einrichtung app first.",
-      "fp400_unavailable": "The FP400 pairing is stored, but the sensor is currently unreachable. Wait and check the FP400 Einrichtung app; do not pair or reset it again.",
+      "fp400_not_paired": "Complete FP400 pairing in the FP400 Controller app first.",
+      "fp400_unavailable": "The FP400 pairing is stored, but the sensor is currently unreachable. Wait and check the FP400 Controller app; do not pair or reset it again.",
       "fp400_mismatch": "The additional FP400 cannot be matched unambiguously to your existing Matter device. Share the same device and do not reset it."
     }
   },
@@ -158,6 +160,36 @@
     }
   },
   "services": {
+    "set_zone_name": {
+      "name": "Name a zone",
+      "description": "Stores the name centrally in Home Assistant for all FP400 cards.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The FP400."
+        },
+        "zone_id": {
+          "name": "Zone",
+          "description": "ID of an existing zone."
+        },
+        "name": {
+          "name": "Name",
+          "description": "Up to 80 characters. Leave empty to restore the default name."
+        },
+        "rename_entity": {
+          "name": "Also change HA display name",
+          "description": "Optional, off by default. Administrators only; preserves the entity ID."
+        },
+        "expected_entity_id": {
+          "name": "Expected entity",
+          "description": "Unambiguously matched occupancy entity from the current preview."
+        },
+        "expected_entity_name": {
+          "name": "Expected previous name",
+          "description": "Current registry name from the preview; null when no custom name is set."
+        }
+      }
+    },
     "set_zones": {
       "name": "Set zones",
       "description": "Replaces all detection zones. Cells are [row, column] on the 20-row x 16-column grid (row 0 nearest the sensor, column 8 straight ahead) or a \"rows,cols\" range such as \"3-4,6-10\".",

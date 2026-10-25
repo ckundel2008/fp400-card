@@ -1,7 +1,7 @@
-name: FP400 Einrichtung
-version: "0.1.7"
+name: FP400 Controller
+version: "0.2.0"
 slug: fp400_setup
-description: FP400-Zonen und Live-Positionen mit zusätzlichem Controller einrichten
+description: Dauerhafter Zusatzcontroller für FP400-Zonen und Live-Positionen
 url: https://github.com/ckundel2008/fp400-card
 arch:
   - amd64
@@ -16,7 +16,7 @@ host_network: true
 ingress: true
 ingress_port: 0
 panel_icon: mdi:radar
-panel_title: FP400 Einrichtung
+panel_title: FP400 Controller
 panel_admin: true
 map:
   - type: homeassistant_config

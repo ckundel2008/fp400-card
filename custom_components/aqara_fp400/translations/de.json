@@ -3,16 +3,16 @@
     "step": {
       "user": {
         "title": "FP400-Zusatzcontroller verbinden",
-        "description": "Öffne zuerst die App **FP400 Einrichtung** und schließe dort die zusätzliche Kopplung ab. Dein FP400 muss außerdem weiterhin in der bisherigen Matter-Integration von Home Assistant vorhanden sein. Mit **Absenden** werden beide Verbindungen geprüft und derselbe FP400 anhand seiner Seriennummer zugeordnet. Dein bisheriger Matter-Server und die anderen Geräte werden nicht verändert."
+        "description": "Öffne zuerst die App **FP400 Controller** und schließe dort die zusätzliche Kopplung ab. Dein FP400 muss außerdem weiterhin in der bisherigen Matter-Integration von Home Assistant vorhanden sein. Mit **Absenden** werden beide Verbindungen geprüft und derselbe FP400 anhand seiner Seriennummer zugeordnet. Dein bisheriger Matter-Server und die anderen Geräte werden nicht verändert."
       }
     },
     "error": {
-      "cannot_connect": "Die App FP400 Einrichtung ist nicht erreichbar. Starte sie, warte eine Minute und versuche es erneut.",
+      "cannot_connect": "Die App FP400 Controller ist nicht erreichbar. Starte sie, warte eine Minute und versuche es erneut.",
       "matter_not_loaded": "Die bisherige Matter-Integration ist noch nicht bereit. Warte, bis deine bisherigen Matter-Geräte erreichbar sind, und versuche es erneut.",
       "fp400_not_in_matter": "In der bisherigen Matter-Integration wurde kein FP400 gefunden. Füge ihn zuerst dort hinzu. Deine anderen Geräte bleiben bestehen.",
-      "fp400_not_paired": "Im Zusatzcontroller ist noch kein FP400 vorhanden. Schließe zuerst die Kopplung in der App FP400 Einrichtung ab und sende diesen Dialog danach erneut ab.",
+      "fp400_not_paired": "Im Zusatzcontroller ist noch kein FP400 vorhanden. Schließe zuerst die Kopplung in der App FP400 Controller ab und sende diesen Dialog danach erneut ab.",
       "fp400_mismatch": "Der FP400 im Zusatzcontroller lässt sich deinem bisherigen Matter-Gerät nicht eindeutig zuordnen. Prüfe, ob du denselben FP400 geteilt hast. Setze ihn nicht zurück.",
-      "fp400_unavailable": "Die FP400-Kopplung ist gespeichert, der Sensor aber noch nicht erreichbar. Warte eine Minute und prüfe die App FP400 Einrichtung. Kopple den Sensor nicht erneut und setze ihn nicht zurück.",
+      "fp400_unavailable": "Die FP400-Kopplung ist gespeichert, der Sensor aber noch nicht erreichbar. Warte eine Minute und prüfe die App FP400 Controller. Kopple den Sensor nicht erneut und setze ihn nicht zurück.",
       "invalid_controller_url": "Verwende ws://127.0.0.1:5581/ws oder lasse das Feld leer."
     },
     "abort": {
@@ -24,7 +24,7 @@
     "step": {
       "init": {
         "title": "Verbindung zum FP400",
-        "description": "Lasse den Schalter eingeschaltet, um die App FP400 Einrichtung zu verwenden. Deine bisherige Matter-Verbindung und die anderen Geräte bleiben erhalten. Ausschalten bedeutet Rückkehr zum Hauptserver; dort können Zonen und Live-Positionen wegen seiner Herstellerkennung eingeschränkt sein.",
+        "description": "Lasse den Schalter eingeschaltet, um die App FP400 Controller zu verwenden. Deine bisherige Matter-Verbindung und die anderen Geräte bleiben erhalten. Ausschalten bedeutet Rückkehr zum Hauptserver; dort können Zonen und Live-Positionen wegen seiner Herstellerkennung eingeschränkt sein.",
         "data": {
           "use_secondary_controller": "Zusätzlichen FP400-Controller verwenden (empfohlen)"
         }
@@ -32,11 +32,11 @@
     },
     "error": {
       "invalid_controller_url": "Verwende ws://127.0.0.1:5581/ws oder lasse das Feld leer.",
-      "cannot_connect": "Die App FP400 Einrichtung ist nicht erreichbar. Starte sie, warte eine Minute und versuche es erneut.",
+      "cannot_connect": "Die App FP400 Controller ist nicht erreichbar. Starte sie, warte eine Minute und versuche es erneut.",
       "matter_not_loaded": "Warte, bis die bisherige Matter-Integration und ihre Geräte wieder erreichbar sind.",
       "fp400_not_in_matter": "In der bisherigen Matter-Integration wurde kein FP400 gefunden. Füge ihn zuerst dort hinzu.",
-      "fp400_not_paired": "Schließe zuerst die zusätzliche FP400-Kopplung in der App FP400 Einrichtung ab.",
-      "fp400_unavailable": "Die Kopplung ist gespeichert, der FP400 aber momentan nicht erreichbar. Warte und prüfe die App FP400 Einrichtung. Nicht erneut koppeln oder zurücksetzen.",
+      "fp400_not_paired": "Schließe zuerst die zusätzliche FP400-Kopplung in der App FP400 Controller ab.",
+      "fp400_unavailable": "Die Kopplung ist gespeichert, der FP400 aber momentan nicht erreichbar. Warte und prüfe die App FP400 Controller. Nicht erneut koppeln oder zurücksetzen.",
       "fp400_mismatch": "Der zusätzliche FP400 lässt sich deinem bisherigen Gerät nicht eindeutig zuordnen. Teile denselben FP400 und setze ihn nicht zurück."
     }
   },
@@ -110,6 +110,36 @@
     }
   },
   "services": {
+    "set_zone_name": {
+      "name": "Zone benennen",
+      "description": "Speichert den Namen zentral in Home Assistant für alle FP400-Karten.",
+      "fields": {
+        "device_id": {
+          "name": "Gerät",
+          "description": "Der FP400."
+        },
+        "zone_id": {
+          "name": "Zone",
+          "description": "Kennung einer bestehenden Zone."
+        },
+        "name": {
+          "name": "Name",
+          "description": "Bis zu 80 Zeichen. Leer lassen, um den Standardnamen wiederherzustellen."
+        },
+        "rename_entity": {
+          "name": "HA-Anzeigenamen ebenfalls ändern",
+          "description": "Optional, standardmäßig aus. Nur für Administratoren; die Entitäts-ID bleibt erhalten."
+        },
+        "expected_entity_id": {
+          "name": "Erwartete Entität",
+          "description": "Eindeutig zugeordnete Belegungsentität aus der aktuellen Vorschau."
+        },
+        "expected_entity_name": {
+          "name": "Erwarteter bisheriger Name",
+          "description": "Aktueller Registry-Name aus der Vorschau; null, falls kein eigener Name vergeben ist."
+        }
+      }
+    },
     "remove_target": {
       "name": "Einzelne Erkennung verwerfen",
       "description": "Eine falsche Personenerkennung verwerfen. Tatsächlich anwesende Personen können erneut erkannt werden.",

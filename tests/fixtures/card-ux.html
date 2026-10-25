@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="de"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FP400 – lokale Bedienprüfung (Simulation)</title>
+<style>
+body{margin:0;padding:16px;font:16px system-ui;background:#f4f5f7;color:#20242a;--primary-color:#007fa8;--primary-text-color:#20242a;--secondary-text-color:#52616c;--secondary-background-color:#e9edf1;--card-background-color:#fff;--divider-color:#b8c4cb;--text-primary-color:#fff;--error-color:#b3261e}main{max-width:560px;margin:auto}ha-card{background:#fff;border-radius:16px}header{padding:12px;background:#fff3cd;margin-bottom:12px}button,select{padding:10px;margin:3px;font:inherit}pre{white-space:pre-wrap;font-size:12px}footer{height:400px}
+</style><main><header><strong>SIMULATION – kein echter Sensor</strong><p>Lokale Bedienprüfung. Alle Dienste ändern ausschließlich diese Beispieldaten.</p></header>
+<div><button id="move">Person bewegen</button><button id="gone">Person entfernen/anzeigen</button><button id="external">Externe Zonenänderung</button><button id="offline">Verbindung an/aus</button><button id="lang">Deutsch / English</button><button id="preview">Vorschau an/aus</button><button id="old">Namensdienst an/aus</button><label>Speichern <select id="result"><option value="ok">Bestätigen nach 1 s</option><option value="error">Sensorfehler</option><option value="timeout">Keine Bestätigung</option></select></label></div>
+<aqara-fp400-zone-card></aqara-fp400-zone-card><p>Dienstaufrufe (Simulation):</p><pre id="log">Keine</pre><footer>Scrollbereich für Mobilprüfung</footer></main>
+<script type="module">
+import '../../custom_components/aqara_fp400/www/aqara-fp400-zone-card.js';
+const errors=document.createElement('pre');errors.id='errors';errors.textContent='Browserfehler: keine';document.querySelector('header').appendChild(errors);
+function reportError(message){errors.textContent+='\n'+message;errors.style.color='#b3261e';}
+window.addEventListener('error',event=>reportError(event.message));
+window.addEventListener('unhandledrejection',event=>reportError(event.reason?.stack || String(event.reason)));
+const card=document.querySelector('aqara-fp400-zone-card');
+const mobile=document.createElement('button');mobile.textContent='Mobilbreite 390 px';document.querySelector('header').appendChild(mobile);mobile.onclick=()=>{const main=document.querySelector('main');main.style.maxWidth=main.style.maxWidth==='390px'?'560px':'390px';};
+const z='sensor.demo_zones',r='sensor.demo_regions',t='sensor.demo_people';
+const target={id:7,x:100,y:250,activity:'still',zones:[1]};
+let names=true;
+const hass={language:'de',user:{is_admin:true},services:{aqara_fp400:{set_zone_name:{}}},entities:{[z]:{device_id:'demo'},[r]:{device_id:'demo'},[t]:{device_id:'demo'}},states:{
+ [z]:{state:'2',attributes:{friendly_name:'Wohnzimmer',grid_cols:16,grid_rows:20,max_zones:8,zone_names:{1:'Sofa',2:'Esstisch'},zone_entity_names:{1:{entity_id:'binary_sensor.demo_sofa',name:'Belegung (Sofa)',display_name:'Belegung (Sofa)'},2:{entity_id:'binary_sensor.demo_table',name:null,display_name:'Belegung 3'}},zones:[{id:1,enabled:true,type:0,cells:[[4,5],[4,6],[5,5],[5,6]]},{id:2,enabled:true,type:0,cells:[[8,8],[8,9],[9,8],[9,9]]}]}},
+ [r]:{state:'3',attributes:{grid_rows:20,regions:{entry_exit:[[0,7],[0,8]],monitoring:[],interference:[[12,2]]},pending:{},error:{}}},
+ [t]:{state:'1',attributes:{targets:[target],live_tracking:true,activity_state:'still',position_received:new Date().toISOString()}},
+},async callService(domain,service,data){
+ document.querySelector('#log').textContent=JSON.stringify({domain,service,data},null,2);
+ if(service==='remove_target'){hass.states[t].attributes.targets=[];render();return;}
+ if(service==='set_zone_name'){const entity=hass.states[z].attributes.zone_entity_names[data.zone_id];if(data.rename_entity){if(!hass.user.is_admin||data.expected_entity_id!==entity.entity_id||data.expected_entity_name!==entity.name)throw new Error('Entity rename conflict');entity.name=data.name;entity.display_name=data.name;}hass.states[z].attributes.zone_names[data.zone_id]=data.name;render();return;}
+ const a=hass.states[service==='set_zones'?z:r].attributes;
+ if(service==='set_zones'){a.pending=true;a.error=null;}else{a.pending[data.region]=true;a.error[data.region]=null;}
+ render();
+ const result=document.querySelector('#result').value;
+ if(result==='timeout')return;
+ setTimeout(()=>{if(service==='set_zones'){a.pending=false;if(result==='error')a.error='Simulierter Sensorfehler';else a.zones=data.zones;}else{a.pending[data.region]=false;if(result==='error')a.error[data.region]='Simulierter Sensorfehler';else a.regions[data.region]=data.cells;}render();},1000);
+}};
+let config={entity:z,regions_entity:r,targets_entity:t,title:'Wohnzimmer · Simulation'};
+const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Visueller Karteneditor (Simulation)';details.appendChild(summary);
+const editor=document.createElement('aqara-fp400-zone-card-editor');details.appendChild(editor);card.before(details);
+editor.setConfig(config);editor.addEventListener('config-changed',event=>{config=event.detail.config;card.setConfig(config);render();});
+function render(){card.hass={...hass};editor.hass=hass;}
+card.setConfig(config);render();
+let reports=true;
+const controls=document.createElement('div');card.before(controls);
+for(const [label,action] of [
+ ['Positionsmeldungen an/aus',()=>{reports=!reports;}],
+ ['Veraltete Daten',()=>{reports=false;hass.states[t].attributes.position_received=new Date(Date.now()-20000).toISOString();}],
+ ['Keine Positionsmeldung',()=>{reports=false;delete hass.states[t].attributes.position_received;}],
+ ['Frische Positionsmeldung',()=>{reports=true;hass.states[t].attributes.position_received=new Date().toISOString();}],
+ ['Tracking an/aus',()=>{hass.states[t].attributes.live_tracking=!hass.states[t].attributes.live_tracking;}],
+ ['Admin an/aus',()=>{hass.user.is_admin=!hass.user.is_admin;}],
+]){const button=document.createElement('button');button.textContent=label;button.onclick=()=>{action();render();};controls.appendChild(button);}
+document.querySelector('#move').onclick=()=>{target.x+=25;target.y+=10;hass.states[t].attributes.position_received=new Date().toISOString();render();};
+document.querySelector('#gone').onclick=()=>{hass.states[t].attributes.targets=hass.states[t].attributes.targets.length?[]:[target];render();};
+document.querySelector('#external').onclick=()=>{hass.states[z].attributes.zones[0].cells.push([2,Math.floor(Math.random()*16)]);render();};
+document.querySelector('#offline').onclick=()=>{hass.states[z].state=hass.states[z].state==='unavailable'?'2':'unavailable';render();};
+document.querySelector('#lang').onclick=()=>{hass.language=hass.language==='de'?'en':'de';render();};
+document.querySelector('#preview').onclick=()=>{card.preview=!card.preview;render();};
+document.querySelector('#old').onclick=()=>{names=!names;hass.services.aqara_fp400=names?{set_zone_name:{}}:{};render();};
+setInterval(()=>{if(reports&&hass.states[t].attributes.live_tracking&&hass.states[z].state!=='unavailable')hass.states[t].attributes.position_received=new Date().toISOString();render();},1500);
+</script></html>

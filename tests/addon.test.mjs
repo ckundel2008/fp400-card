@@ -23,7 +23,7 @@ async function fixture(t) {
   t.after(() => fs.rm(root, { recursive: true, force: true }));
   const config = path.join(root, 'config'), source = path.join(root, 'source');
   await fs.mkdir(config); await fs.mkdir(source);
-  await fs.writeFile(path.join(source, 'manifest.json'), '{"version":"new"}');
+  await fs.writeFile(path.join(source, 'manifest.json'), '{"version":"1.3.0"}');
   await fs.writeFile(path.join(source, 'config_flow.py'), '# new\n');
   const installer = new Installer(config, source);
   return { root, config, source, installer };
@@ -31,6 +31,7 @@ async function fixture(t) {
 test('installer preserves main Matter and all unrelated configuration; backup is exact', async t => {
   const { config, installer } = await fixture(t);
   await fs.mkdir(installer.target, { recursive: true });
+  await fs.writeFile(path.join(installer.target, 'manifest.json'), '{"version":"1.0.0"}');
   await fs.writeFile(path.join(installer.target, 'old.py'), 'user modification');
   await fs.mkdir(path.join(config, '.storage'));
   const matter = JSON.stringify({ secret: 'private', devices: Array.from({ length: 32 }, (_, id) => ({ id })) });

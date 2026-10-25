@@ -20,9 +20,22 @@ Ein experimenteller Fork von [RAR/ha-aqara-fp400](https://github.com/RAR/ha-aqar
 
 *Die Bilder stammen aus dem bestandenen Sitztest. Den später abgeschlossenen Gangtest bestätigte der Nutzer am 23.10.2026; die Bilder zeigen weiterhin den Sitztest. Die Ausschnitte enthalten keine HA-Adresse, Zugangsdaten oder persönlichen Profilangaben.*
 
+## Bedienupdate 1.3.0
+
+- Live-Ansicht als Standard: auf dem Handy scrollen, ohne Zellen zu zeichnen.
+- **Bereiche bearbeiten** aktiviert Änderungen an Zonen, Ein-/Ausgängen, Monitoring und Interferenzflächen. Entwürfe werden bewusst gespeichert oder verworfen.
+- **Zonen benennen:** Namen wie „Sofa“ zentral für alle unsere Karten speichern. HA-Anzeigenamen bleiben standardmäßig erhalten; Administratoren können sie pro Speicherung ausdrücklich mitändern. Entitäts-IDs bleiben unverändert.
+- **Geistererkennung auswählen:** deutliche Markierung mit Kennung, Position und Zonen vor dem Verwerfen.
+- **Kartendrehung:** im visuellen Editor oder mit `map_rotation` von −180° bis 180° drehen. Das verändert nur die Darstellung.
+- **Störfläche vorbereiten:** **Stelle als Interferenz markieren** erstellt einen Entwurf um eine aktuelle Erkennung. Erst **Speichern** überträgt ihn an den Sensor.
+- **Aktualität erkennen:** fehlende oder veraltete Positionsmeldungen werden von ausgeschaltetem Live-Tracking und einer unterbrochenen Verbindung unterschieden.
+- **Controller-App:** **Übersicht** zeigt Kopplungs- und Versionsstand; **Einrichtung** enthält die bewusst auszuführenden Installationsschritte. Neuere Integrationsdateien werden nicht durch eine ältere mitgelieferte Version ersetzt.
+
+Die [Bedienanleitung](ANLEITUNG.md#zonen-und-bereiche-bewusst-bearbeiten-ab-130) beschreibt die Schritte. Das lokal vorbereitete Paket enthält Integration 1.3.0 / App 0.2.0; verfügbare veröffentlichte Downloads stehen unter [Releases](https://github.com/ckundel2008/fp400-card/releases). Der [Prüfstand](PRUEFSTAND.md) trennt neue Prüfungen von historischen Hardwaretests. Die Bilder oben zeigen den historischen Sitztest, nicht die neue Bedienoberfläche.
+
 ## Was das Projekt macht
 
-Die Integration liefert eine interaktive Zonenkarte, Radar-Sensoren und Einstellungen. Für die herstellerspezifischen Zusatzfunktionen läuft eine eigene HA-App **FP400 Einrichtung** mit einem lokalen Matter-Controller. Ausschließlich der bereits in HA vorhandene FP400 wird zusätzlich verbunden. Er wird anhand von Seriennummer, Hersteller und Produkt seinem bestehenden HA-Gerät zugeordnet.
+Die Integration liefert eine interaktive Zonenkarte, Radar-Sensoren und Einstellungen. Für die herstellerspezifischen Zusatzfunktionen läuft eine eigene HA-App **FP400 Controller** mit einem lokalen Matter-Controller. Ausschließlich der bereits in HA vorhandene FP400 wird zusätzlich verbunden. Er wird anhand von Seriennummer, Hersteller und Produkt seinem bestehenden HA-Gerät zugeordnet.
 
 Der bisherige Matter-Server wird nicht ersetzt oder umkonfiguriert. Die zusätzliche App hat eigene gespeicherte Kopplungsdaten; es werden keine bisherigen Geräte oder Fabrics entfernt. Der Controller muss für die Zusatzfunktionen weiterlaufen.
 
@@ -45,15 +58,15 @@ Für den kompletten Einrichtungsdialog ist HACS nicht erforderlich:
 
 1. **Einstellungen → Apps → App-Store → Menü → Repositorys** öffnen.
 2. `https://github.com/ckundel2008/fp400-card` hinzufügen und die Store-Seite neu laden.
-3. Unter **FP400 Card & Controller** die App **FP400 Einrichtung** installieren. Der lokale Build kann mehrere Minuten dauern.
+3. Unter **FP400 Card & Controller** die App **FP400 Controller** installieren. Der lokale Build kann mehrere Minuten dauern.
 
 ### Schritt 3: Einrichtungsdialog öffnen
 
-Aktiviere **Beim Systemstart starten**, starte die App und wähle **Benutzeroberfläche öffnen**. Lass den Schutzmodus eingeschaltet. Bestätige im Dialog deine abgeschlossene Sicherung.
+Aktiviere **Beim Systemstart starten**, starte die App und wähle **Benutzeroberfläche öffnen**. Lass den Schutzmodus eingeschaltet. Öffne **Einrichtung** und bestätige deine abgeschlossene Sicherung. Bei einer bereits gespeicherten Kopplung zeigt die App zunächst **Übersicht**; ein vorübergehend nicht erreichbarer FP400 muss nicht neu gekoppelt werden.
 
 ### Schritt 4: FP400-Integration vorbereiten
 
-Klicke im Dialog **FP400-Integration installieren**. Eine vorhandene FP400-Integration wird vorher gesichert. Starte danach **Home Assistant einmal neu** und öffne den Assistenten wieder. Der bestehende Matter-Server bleibt eingerichtet.
+Installiere die Integration bevorzugt über HACS. Alternativ wähle unter **Einrichtung → Mitgelieferte Integration installieren**. Eine ersetzte FP400-Version wird vorher gesichert; neuere oder nicht sicher vergleichbare Versionen werden nicht überschrieben. Ist die mitgelieferte Ausgabe bereits installiert, ist kein erneutes Installieren nötig. Starte nach einer Installation **Home Assistant einmal neu** und öffne die App wieder. Der bestehende Matter-Server bleibt eingerichtet.
 
 ### Schritt 5: Nur den FP400 zusätzlich verbinden
 
@@ -74,11 +87,11 @@ Klicke im Dialog **FP400-Integration installieren**. Eine vorhandene FP400-Integ
 
 Öffne das Radar-Gerät und schalte **Live-Positionen** ein. Füge die Karte wie unter [Karte anzeigen](#karte-anzeigen) beschrieben hinzu. Bewege dich vor dem Sensor: Die Personenanzahl und Positionen sollen sich verändern. Bei Fernzugriff muss dafür jemand zu Hause sein.
 
-Prüfe anschließend einige deiner bisherigen Matter-Geräte und eine bestehende Automation. Sichere den fertigen Zustand **einschließlich FP400 Einrichtung**. Die App bleibt für die Zusatzfunktionen eingeschaltet.
+Prüfe anschließend einige deiner bisherigen Matter-Geräte und eine bestehende Automation. Sichere den fertigen Zustand **einschließlich FP400 Controller**. Die App bleibt für die Zusatzfunktionen eingeschaltet.
 
 Wenn HA beim Hinzufügen der Repository-Adresse einen Fehler wie `required key not provided ... repository` meldet, den ZIP-Weg unten verwenden. Diese Meldung trat im getesteten HA-Dialog auf; über die Supervisor-Schnittstelle wurde dieselbe Quelle akzeptiert und die App korrekt im Katalog erkannt. Dafür müssen keine bestehenden Matter-Einstellungen geändert werden.
 
-**Schon die lokale App aus dem ZIP installiert?** Diese weiterverwenden. Die Repository-App hat einen anderen internen Namen und eigene Kopplungsdaten. Nicht beide gleichzeitig starten (Port 5581), die lokale App nicht einfach deinstallieren. Eine Migration der gespeicherten Controllerdaten ist hier nicht automatisiert.
+**Schon die lokale App aus dem ZIP installiert?** Für ein Kartenupdate diese weiterverwenden. Die Repository-App hat einen anderen internen Namen und eigene Kopplungsdaten. Nicht beide gleichzeitig starten (Port 5581), die lokale App nicht einfach deinstallieren. Für einen späteren Wechsel gibt es die [Export-/Import-Anleitung](ANLEITUNG.md#wechsel-der-lokalen-app-zur-github-app-ab-017).
 
 ## Optional: Integration mit HACS verwalten
 
@@ -95,7 +108,7 @@ Das Repository ist für **HACS → Benutzerdefinierte Repositories → Typ Integ
 
 Die Aufnahme in den allgemeinen HACS-Katalog wurde mit [Antrag #12425](https://github.com/hacs/default/pull/12425) eingereicht. Sie ist noch nicht angenommen; bis dahin erfolgt die Installation als benutzerdefinierte Quelle. [Offizielle Anforderungen](https://www.hacs.xyz/docs/publish/integration/), [benutzerdefinierte Quellen](https://www.hacs.xyz/docs/faq/custom_repositories/).
 
-**Zusätzlich geprüft:** Das echte HA akzeptiert die Quelle als benutzerdefinierte HACS-Integration und erkennt die Controller-App im App-Katalog. Für 1.2.0 werden Paketbau, 49 Tests, HACS und Hassfest vor der Veröffentlichung geprüft. Der Projektinhaber bestätigt außerdem einen erfolgreichen Praxistest des Pakets bei einem Kollegen. 1.2.0 führt diese reguläre Veröffentlichung fort; Vorabversionen müssen dafür nicht aktiviert werden. Einzelheiten und Grenzen stehen im [Prüfstand](PRUEFSTAND.md).
+**Zusätzlich geprüft:** Das echte HA akzeptiert die Quelle als benutzerdefinierte HACS-Integration und erkennt die Controller-App im App-Katalog. Der Release-Workflow prüft Paketbau, Regressionstests, HACS und Hassfest vor der Veröffentlichung. Der Projektinhaber bestätigt außerdem einen erfolgreichen Praxistest einer Vorgängerausgabe bei einem Kollegen. Einzelheiten und Grenzen stehen im [Prüfstand](PRUEFSTAND.md).
 
 ## Karte anzeigen
 
@@ -116,7 +129,7 @@ title: FP400
 sensor_at: top
 ```
 
-Alle drei Platzhalter durch die vollständigen Entitäts-IDs desselben FP400-Radar-Geräts ersetzen. Unter **Einstellungen → Geräte & Dienste → Entitäten** die jeweilige Entität öffnen und in ihren Einstellungen die **Entitäts-ID** mit dem Kopiersymbol kopieren. Keine Entitäten umbenennen oder neu anlegen.
+Alle drei Platzhalter durch die vollständigen Entitäts-IDs desselben FP400-Radar-Geräts ersetzen. Unter **Einstellungen → Geräte & Dienste → Entitäten** die jeweilige Entität öffnen und in ihren Einstellungen die **Entitäts-ID** mit dem Kopiersymbol kopieren. Dafür keine Entitäts-IDs ändern und keine Entitäten neu anlegen. Die optionale Anzeigenamensänderung beim Benennen einer Zone ändert keine ID.
 
 | Karten-Eintrag | Entität (Deutsch / Englisch) | Liefert |
 | --- | --- | --- |
@@ -124,19 +137,21 @@ Alle drei Platzhalter durch die vollständigen Entitäts-IDs desselben FP400-Rad
 | `targets_entity` | Verfolgte Personen / Tracked people | Personenpositionen und Live-Tracking-Zustand |
 | `regions_entity` | Bereiche / Regions | Entry/Exit, Monitoring und Interference gemeinsam |
 
-Ab 1.1.4 erkennt die Karte zugehörige Sensoren anhand ihrer Attribute und der HA-Gerätezuordnung, unabhängig von deutschen oder umbenannten IDs. Bei mehrdeutiger Zuordnung die drei Entitäten ausdrücklich auswählen. „Personenanzahl“ ist kein Ersatz für „Verfolgte Personen“. Fehlen gültige Tracking-Daten, erscheint „Personen-Entität prüfen“ statt einer falschen Aus-Anzeige. In älteren Versionen erwartet die automatische Zuordnung englische Endungen; dort alle drei IDs ausdrücklich in YAML angeben.
+Ab 1.1.4 erkennt die Karte zugehörige Sensoren anhand ihrer Attribute und der HA-Gerätezuordnung, unabhängig von deutschen oder umbenannten IDs. Bei mehrdeutiger Zuordnung die drei Entitäten ausdrücklich auswählen. „Personenanzahl“ ist kein Ersatz für „Verfolgte Personen“. Die aktuelle Karte unterscheidet fehlende Positionsmeldungen, ausgeschaltetes Live-Tracking, veraltete Daten und eine unterbrochene Verbindung. In älteren Versionen erwartet die automatische Zuordnung englische Endungen; dort alle drei IDs ausdrücklich in YAML angeben.
 
-Für Entry/Exit, Monitoring und Interference gibt es keine separaten YAML-Einträge. Bleiben sie nach korrekter Zuordnung leer, unter **Entwicklerwerkzeuge → Zustände** bei der Bereiche-Entität das Attribut `regions` prüfen. `title` setzt den Kartentitel; `sensor_at` erlaubt nur `top` oder `bottom`, keine Eckposition oder freie Drehung.
+Für Entry/Exit, Monitoring und Interference gibt es keine separaten YAML-Einträge. Bleiben sie nach korrekter Zuordnung leer, unter **Entwicklerwerkzeuge → Zustände** bei der Bereiche-Entität das Attribut `regions` prüfen. `title` setzt den Kartentitel; `sensor_at` erlaubt `top` oder `bottom`. `map_rotation` dreht die Darstellung um −180 bis 180 Grad, ohne Sensorflächen zu verändern. Positive Winkel drehen im Uhrzeigersinn; der Standard ist 0°.
+
+Beim Benennen einer Zone ist **Auch den HA-Anwesenheitssensor umbenennen (nur diesmal)** standardmäßig aus. Nur Administratoren können diese Option für eine eindeutig zugeordnete Entität aktivieren und die Vorschau bestätigen. Namen in Aqara oder Apple werden nicht geändert.
 
 Die Integration registriert die Kartenressource automatisch. Bei „Custom element doesn't exist“ den Browser vollständig neu laden. Nach einem vollständigen HA-Neustart den Schalter **Live-Positionen** prüfen und bei Bedarf einschalten.
 
 ## ZIP für die manuelle Installation
 
-Version 1.2.0 enthält die Schritt-für-Schritt-Anleitung für den Kartenkatalog und Entitäten-Dialog, den aktualisierten Prüfstand und beide echten Bilder. Der Karteneditor aus 1.1.4 wurde am 23.10.2026 im echten HA erfolgreich geprüft: Katalogsuche, automatische Vorauswahl, manuelle Entitätenauswahl und Übernahme in den Konfigurationscode. Version 1.2.0 ergänzt das bestätigte Verwerfen einzelner Erkennungen und korrigiert Live-Attributmeldungen.
+Das Paket 1.3.0 enthält die Schritt-für-Schritt-Anleitung für Kartenkatalog, Entitäten-Dialog und neue Bedienung, den Prüfstand und beide echten Bilder des historischen Sitztests. Der Karteneditor aus 1.1.4 wurde am 23.10.2026 im echten HA erfolgreich geprüft; dieser ältere Test ersetzt keine Abnahme neuer Funktionen.
 
-[Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/download/v1.2.1/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads](https://github.com/ckundel2008/fp400-card/releases/tag/v1.2.1)
+[Zuletzt veröffentlichtes Startpaket herunterladen](https://github.com/ckundel2008/fp400-card/releases/latest/download/FP400-Startpaket.zip) · [Schritt-für-Schritt-Anleitung](ANLEITUNG.md) · [Alle Downloads und Versionsstände](https://github.com/ckundel2008/fp400-card/releases)
 
-Das Startpaket wurde für App 0.1.6 und Integration 1.2.0 neu gebaut. Es enthält die aktuelle Anleitung, den ergänzten Prüfstand und beide echten Bilder. Die App bleibt eine reguläre Ausgabe (`stable`) und bündelt die neue Integration. Der Controller und seine Kopplungsdaten bleiben unverändert.
+Das lokal vorbereitete Startpaket bündelt App 0.2.0 und Integration 1.3.0. Der Downloadlink liefert bis zur Veröffentlichung weiterhin die vorherige Ausgabe; die Versionsnummer steht auf der Release-Seite. Der Controller und seine Kopplungsdaten bleiben unverändert.
 
 Dieser alternative Ablauf nutzt File editor und Terminal & SSH, prüft die ZIP-Prüfsumme und legt eine lokale App an. Das ist dieselbe Controller-Lösung, aber ein anderer Installationsweg. Für eine neue Installation nur einen der beiden App-Wege wählen.
 
@@ -167,6 +182,6 @@ MIT-Lizenz; ursprüngliche Integration und Karte © 2026 Andrew Rankin. OHF Matt
 
 Live-Attributmeldungen aktualisieren den Zustand zuverlässig auch bei einzelnen Zahlenwerten. Falsche Personenpunkte lassen sich nach Anklicken und ausdrücklicher Bestätigung verwerfen. Die Vorschau bleibt schreibgeschützt. [Bedienung und Update](ANLEITUNG.md). Die neuen Funktionen wurden automatisiert geprüft; die bisherigen echten Sitz- und Gangtests sind im Prüfstand separat dokumentiert.
 
-## Aktuelles Paket 1.2.1 / App 0.1.7
+## Migration seit Paket 1.2.1 / App 0.1.7
 
 Der Wechsel einer lokalen App zur GitHub-App kann jetzt ihre Kopplungsdaten mit geprüftem Export/Import erhalten. [Migrationsanleitung](ANLEITUNG.md#wechsel-der-lokalen-app-zur-github-app-ab-017). Die Übernahme wird ausdrücklich aktiviert; normale Updates verändern keine Kopplungsdaten. HACS verwaltet Integration und Karte, der HA-App-Katalog die Repository-App.

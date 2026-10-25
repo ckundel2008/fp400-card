@@ -1,3 +1,11 @@
+# 0.2.0 – 2026-10-25
+
+- Anzeigename FP400 Controller; Übersicht mit Verbindungs- und Versionsstatus sowie separat erreichbarer Einrichtungsdialog.
+- Schutz vor dem Überschreiben einer neueren oder nicht sicher bestimmbaren Integrationsversion.
+- Integration 1.3.0 mit bewusstem Bearbeitungsmodus, zentralen Zonennamen und deutlicher Personenauswahl gebündelt.
+- Controller, App-Slug, Ports und Kopplungsspeicher unverändert.
+- Integration über HACS aktualisieren oder im aktualisierten Einrichtungsdialog installieren; danach HA neu starten und Browser neu laden. Keine erneute Kopplung.
+
 # 0.1.7 – 2026-10-24
 
 - Optionaler Migrationsmodus `export`/`import` für lokale Kopplungsdaten; Standard `none`.

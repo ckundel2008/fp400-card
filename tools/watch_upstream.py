@@ -8,6 +8,14 @@ from urllib.request import Request, urlopen
 REPO = "RAR/ha-aqara-fp400"
 # Observation baseline, NOT a claim that these changes are integrated in this fork.
 BASELINE = "87d41d8d3ff534d0f92c4021d90a9a39c060333e"
+# Local review decisions are maintained separately from the time of a GitHub fetch.
+REVIEWED_ON = "2026-10-25"
+REVIEWED_CHANGES = (
+    "Upstream v1.1.1 callback fix: adopted in fork v1.2.0 with regression tests.",
+    "Upstream v1.2.0 remove_target: adopted in fork v1.2.0 with confirmation, preview guard and error tests.",
+    "Upstream PR #6 (native activity/human-count refresh): not adopted. The corrected per-attribute subscriptions already receive these values; no additional periodic polling of activity or human count is added. Existing zone/region polling is unchanged.",
+    "New upstream changes still require individual review. Adoption does not imply installation in HA; see PRUEFSTAND.md for live verification.",
+)
 
 
 def get(path):
@@ -33,9 +41,8 @@ def main():
              f"Commits since observation baseline: {comparison['ahead_by']}",
              f"Compare: https://github.com/{REPO}/compare/{BASELINE}...{commits[0]['sha']}", "",
              "## Reviewed changes in our fork", "",
-             "- Upstream v1.1.1 callback fix: adopted in fork v1.2.0 with regression tests.",
-             "- Upstream v1.2.0 remove_target: adopted in fork v1.2.0 with confirmation, preview guard and error tests.",
-             "- New upstream changes still require individual review. Adoption does not imply installation in HA.", "", "## Releases", ""]
+             f"Local review decisions updated: {REVIEWED_ON} (independent of the upstream fetch time).", "",
+             *(f"- {decision}" for decision in REVIEWED_CHANGES), "", "## Releases", ""]
     for release in releases:
         lines.extend([f"### {clean(release['tag_name'])}", release['html_url'],
                       f"Published: {release['published_at']}; prerelease: {release['prerelease']}",

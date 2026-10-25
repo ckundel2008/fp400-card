@@ -9,9 +9,13 @@ const errors = {
   invalid_code: 'Bitte den neuen Freigabecode des FP400 eingeben, nicht den Code vom Aufkleber.',
   installation_busy: 'Die Installation läuft bereits.', pairing_busy: 'Die Kopplung läuft bereits.',
   pairing_uncertain: 'Der letzte Versuch ist nicht eindeutig abgeschlossen. Nur diese FP400-App stoppen und wieder starten, bevor du es erneut versuchst.',
+  integration_downgrade: 'Die installierte Integration ist neuer als die mitgelieferte Version. Sie wird nicht ersetzt. Updates erhältst du über HACS.',
+  integration_version_unknown: 'Die vorhandene Version lässt sich nicht sicher vergleichen. Sie wird nicht ersetzt. Prüfe die Integration in HACS.',
+  integration_changed: 'Die Integration wurde während der Vorbereitung geändert. Es wurde nichts ersetzt. Bitte den Versionsstand erneut prüfen.',
 };
-export function createWizard({ installer, pairer, controllerReady, allowAddress = trustedAddress }) {
+export function createWizard({ installer, pairer, controllerReady, appVersion = null, availableAppVersion = null, allowAddress = trustedAddress }) {
   const csrf = randomBytes(32).toString('hex');
+  let knownPaired = null;
   const json = (response, status, body) => {
     response.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8' });
     response.end(JSON.stringify(body));
@@ -34,8 +38,10 @@ export function createWizard({ installer, pairer, controllerReady, allowAddress 
         let nodes = [], ready = false;
         try { ready = controllerReady(); if (ready) nodes = await pairer.nodes(); }
         catch { ready = false; }
+        if (ready) knownPaired = nodes.length === 1;
         return json(response, 200, { csrf, controller: ready, integration: await installer.status(),
-          pairing: pairer.state, paired: nodes.length === 1, available: nodes.length === 1 && nodes[0].available === true });
+          appVersion, availableAppVersion, defaultView: knownPaired === false ? 'setup' : 'overview',
+          pairing: pairer.state, paired: knownPaired, available: ready && nodes.length === 1 ? nodes[0].available === true : null });
       }
       if (request.method !== 'POST') return json(response, 404, { error: 'Nicht gefunden.' });
       const token = request.headers['x-fp400-token'];

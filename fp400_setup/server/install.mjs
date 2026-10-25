@@ -33,6 +33,30 @@ async function safeDirectory(directory) {
   if (await fs.realpath(directory) !== path.resolve(directory)) throw new Error('unsafe_path');
 }
 
+// Unknown/non-release versions are deliberately not ordered: never guess when
+// deciding whether replacing a user's integration could be a downgrade.
+export function compareVersions(a, b) {
+  const parse = value => typeof value === 'string' && /^\d+\.\d+\.\d+$/.test(value)
+    ? value.split('.').map(Number) : null;
+  const left = parse(a), right = parse(b);
+  if (!left || !right || [...left, ...right].some(n => !Number.isSafeInteger(n))) return null;
+  for (let i = 0; i < 3; i++) if (left[i] !== right[i]) return left[i] > right[i] ? 1 : -1;
+  return 0;
+}
+async function version(root) {
+  try {
+    const file = path.join(root, 'manifest.json');
+    const stat = await fs.lstat(file);
+    if (!stat.isFile() || stat.isSymbolicLink()) throw new Error('unsafe_path');
+    const value = JSON.parse(await fs.readFile(file, 'utf8')).version;
+    return typeof value === 'string' && value.length <= 80 ? value : null;
+  } catch (error) {
+    if (error.message === 'unsafe_path') throw error;
+    if (error.code === 'ENOENT' || error instanceof SyntaxError) return null;
+    throw error;
+  }
+}
+
 export class Installer {
   constructor(configRoot, sourceRoot) {
     this.configRoot = configRoot;
@@ -65,24 +89,43 @@ export class Installer {
     await fs.unlink(this.journal);
   }
   async status() {
-    await this.prepare();
+    await safeDirectory(this.configRoot);
+    if (await exists(path.dirname(this.target))) await safeDirectory(path.dirname(this.target));
     const present = await exists(this.target);
+    if (present) await safeDirectory(this.target);
     const installed = present && await digestTree(this.target) === await digestTree(this.sourceRoot);
-    return { installed, existing: present, backupDirectory: '/config/fp400-sicherungen' };
+    const bundledVersion = await version(this.sourceRoot);
+    const installedVersion = present ? await version(this.target) : null;
+    const comparison = compareVersions(installedVersion, bundledVersion);
+    const relation = !present ? 'absent' : installed ? 'same' : comparison === null ? 'unknown'
+      : comparison > 0 ? 'newer' : comparison < 0 ? 'older' : 'different';
+    return { installed, existing: present, installedVersion, bundledVersion, availableVersion: null,
+      relation, canInstall: !present || (!installed && comparison !== null && comparison <= 0),
+      backupDirectory: '/config/fp400-sicherungen' };
   }
   async install() {
     if (this.busy) throw new Error('installation_busy');
     this.busy = true;
     let staging;
     try {
+      const before = await this.status();
+      if (before.installed) return { installed: true, changed: false };
+      if (before.relation === 'newer') throw new Error('integration_downgrade');
+      if (!before.canInstall) throw new Error('integration_version_unknown');
       await this.recover();
-      if ((await this.status()).installed) return { installed: true, changed: false };
+      const current = await this.status();
+      if (current.installed) return { installed: true, changed: false };
+      if (current.relation === 'newer') throw new Error('integration_downgrade');
+      if (!current.canInstall) throw new Error('integration_version_unknown');
+      const originalDigest = current.existing ? await digestTree(this.target) : null;
       const id = randomUUID();
       staging = path.join(path.dirname(this.target), `.fp400-stage-${id}`);
       await filesBelow(this.sourceRoot);
       await fs.cp(this.sourceRoot, staging, { recursive: true, errorOnExist: true, force: false });
       if (await digestTree(staging) !== await digestTree(this.sourceRoot)) throw new Error('copy_verification_failed');
       const hadOriginal = await exists(this.target);
+      if (hadOriginal !== current.existing || (hadOriginal && await digestTree(this.target) !== originalDigest))
+        throw new Error('integration_changed');
       const backup = path.join(this.backups, id, DOMAIN);
       if (hadOriginal) {
         await filesBelow(this.target); // Refuse symlinks before moving any original file.
@@ -94,9 +137,25 @@ export class Installer {
       finally { await handle.close(); }
       await fs.rename(pendingJournal, this.journal);
       if (hadOriginal) await fs.rename(this.target, backup);
-      try { await fs.rename(staging, this.target); }
+      try {
+        // Verify the directory actually moved, not just the path observed before
+        // journal I/O. HACS may have replaced that path in the meantime.
+        if (hadOriginal) {
+          await safeDirectory(backup);
+          const comparison = compareVersions(await version(backup), current.bundledVersion);
+          if (comparison === null || comparison > 0 || await digestTree(backup) !== originalDigest)
+            throw new Error('integration_changed');
+        }
+        if (await exists(this.target)) throw new Error('integration_changed');
+        await fs.rename(staging, this.target);
+      }
       catch (error) {
-        if (hadOriginal) await fs.rename(backup, this.target);
+        // A concurrent writer may have recreated the target. Preserve both that
+        // directory and our backup instead of overwriting either during rollback.
+        if (hadOriginal && !await exists(this.target)) {
+          await fs.rename(backup, this.target);
+          await fs.unlink(this.journal);
+        }
         throw error;
       }
       await fs.unlink(this.journal);

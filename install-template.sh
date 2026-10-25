@@ -43,5 +43,5 @@ fi
 curl -fsS --max-time 60 -X POST \
   -H "Authorization: Bearer $SUPERVISOR_TOKEN" \
   http://supervisor/store/reload >/dev/null || fail 'App-Dateien liegen bereit, aber der Katalog konnte nicht neu eingelesen werden. Installationshilfe später erneut ausführen.'
-printf '\n%s\n' 'Fertig. Im App-Store unter Lokale Apps: FP400 Einrichtung installieren.'
+printf '\n%s\n' 'Fertig. Im App-Store unter Lokale Apps: FP400 Controller installieren.'
 printf '%s\n' 'Der bestehende Matter-Server wurde nicht verändert oder neu gestartet.'

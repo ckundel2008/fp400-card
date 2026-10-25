@@ -57,7 +57,7 @@ class ZonesSensor(FP400Entity, SensorEntity):
 
     _attr_entity_category = EntityCategory.DIAGNOSTIC
     _attr_icon = "mdi:vector-square"
-    _unrecorded_attributes = frozenset({"zones", "zone_endpoints"})
+    _unrecorded_attributes = frozenset({"zones", "zone_endpoints", "zone_names", "zone_entity_names"})
 
     def __init__(self, fp: FP400Node) -> None:
         super().__init__(fp, "zones")
@@ -70,6 +70,8 @@ class ZonesSensor(FP400Entity, SensorEntity):
     def extra_state_attributes(self) -> dict[str, Any]:
         return {
             "zones": [zone.as_dict() for zone in self.fp.zones],
+            "zone_names": self.fp.zone_names,
+            "zone_entity_names": self.fp.zone_names_store.entity_names(self.fp) if self.fp.zone_names_store else {},
             "pending": self.fp.zones_pending,
             "error": self.fp.zones_error,
             "max_zones": self.fp.max_zones,
@@ -110,7 +112,7 @@ class TargetsSensor(FP400Entity, SensorEntity):
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_icon = "mdi:account-multiple"
     _follows_targets = True
-    _unrecorded_attributes = frozenset({"targets", "updated"})
+    _unrecorded_attributes = frozenset({"targets", "updated", "position_received"})
 
     def __init__(self, fp: FP400Node) -> None:
         super().__init__(fp, "targets")
@@ -124,6 +126,7 @@ class TargetsSensor(FP400Entity, SensorEntity):
         return {
             "targets": [target.as_dict() for target in self.fp.targets],
             "updated": self.fp.targets_updated,
+            "position_received": self.fp.position_received,
             "live_tracking": self.fp.live_tracking,
             "activity_state": self.fp.activity_state,
             "human_count": self.fp.human_count,

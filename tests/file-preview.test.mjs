@@ -7,7 +7,8 @@ test('local HTML preview never calls controller API and opens only a valid HA ad
   const elements = new Map();
   const get = id => {
     if (!elements.has(id)) elements.set(id, { hidden: true, disabled: false, value: '', handlers: {},
-      addEventListener(type, callback) { this.handlers[type] = callback; } });
+      addEventListener(type, callback) { this.handlers[type] = callback; },
+      setAttribute(name, value) { this[name] = value; }, removeAttribute(name) { delete this[name]; } });
     return elements.get(id);
   };
   const location = { protocol: 'file:', href: 'file:///preview/index.html' };

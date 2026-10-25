@@ -8,7 +8,7 @@ async function cardClasses() {
   const classes = new Map();
   const context = { HTMLElement: class { dispatchEvent(e) { this.event = e; } },
     CustomEvent: class { constructor(type, options) { this.type = type; Object.assign(this, options); } },
-    customElements: { define: (name, cls) => classes.set(name, cls) }, window: {},
+    customElements: { define: (name, cls) => classes.set(name, cls) }, window: {}, setTimeout, clearTimeout, setInterval, clearInterval,
     document: { createElement: name => new (classes.get(name))() } };
   vm.runInNewContext(await fs.readFile('custom_components/aqara_fp400/www/aqara-fp400-zone-card.js', 'utf8'), context);
   return { Card: classes.get('aqara-fp400-zone-card'), Editor: classes.get('aqara-fp400-zone-card-editor'), context };
@@ -17,7 +17,7 @@ async function cardClasses() {
 function fixture() {
   return { states: {
     'sensor.wohnzimmer_zonen_2': { attributes: { zones: [], grid_rows: 20 } },
-    'sensor.wohnzimmer_personen': { attributes: { targets: [], live_tracking: true } },
+    'sensor.wohnzimmer_personen': { attributes: { targets: [], live_tracking: true, position_received:new Date().toISOString() } },
     'sensor.wohnzimmer_bereiche': { attributes: { regions: {}, grid_rows: 20 } },
     'sensor.fremde_personen': { attributes: { targets: [], live_tracking: true } },
   }, entities: {
@@ -63,6 +63,13 @@ test('editor changes emit full config and changing device clears old companion s
   assert.equal(editor.event.detail.config.targets_entity, undefined);
   assert.equal(editor.event.detail.config.regions_entity, undefined);
   assert.equal(editor.event.detail.config.title, 'Mein Radar');
+});
+
+test('visual editor stores numeric rotation, rejects invalid input and zero restores default',async()=>{
+  const {Editor}=await cardClasses();const editor=new Editor();editor._render=()=>{};editor.hass=fixture();editor.setConfig({entity:'sensor.wohnzimmer_zonen_2',title:'Room'});
+  editor._change('map_rotation','45');assert.equal(editor.event.detail.config.map_rotation,45);assert.equal(editor.event.detail.config.title,'Room');
+  editor._change('map_rotation','181');assert.equal(editor._config.map_rotation,45);editor._change('map_rotation','invalid');assert.equal(editor._config.map_rotation,45);
+  editor._change('map_rotation',0);assert.equal(editor.event.detail.config.map_rotation,undefined);
 });
 
 test('existing cards resolve companion sensors by device while explicit selection wins', async () => {
@@ -139,4 +146,85 @@ test('HACS integration and app-bundled integration are identical', async () => {
   assert.deepEqual(await fs.readdir('custom_components'), ['aqara_fp400']);
   const brand = await fs.readFile(`${canonical}/brand/icon.png`);
   assert.equal(brand.subarray(1, 4).toString(), 'PNG');
+});
+
+async function editableCard() {
+  const {Card}=await cardClasses(); const card=new Card();card._build=()=>{};card._render=()=>{};
+  card.setConfig({entity:'sensor.wohnzimmer_zonen_2'}); card._hass=fixture();
+  card._hass.states[card._config.entity].attributes.zones=[{id:1,cells:[[1,1]],enabled:true,type:0}];
+  card._hass.services={aqara_fp400:{set_zone_name:{}}};
+  const error={textContent:''};card.shadowRoot={querySelector:()=>error};
+  return {card,error};
+}
+
+test('live view, preview, offline and conflict block all area mutations',async()=>{
+  const {card}=await editableCard();
+  card._paintZone(20,true);card._toggleEnabled(1);card._deleteZone(1);assert.equal(card._edit,null);
+  card._beginEditing();card._paintZone(20,true);assert.ok(card._edit.zones.get(1).cells.has(20));
+  card._finishEdit();card.preview=true;card._beginEditing();assert.equal(card._editing,false);
+  card.preview=false;card._beginEditing();card._conflict=true;card._paintZone(22,true);assert.equal(card._edit,null);
+  card._conflict=false;card._hass.states[card._config.entity].state='unavailable';card._deleteZone(1);assert.equal(card._edit,null);
+});
+
+test('dirty layer change is guarded and discard never invokes a service',async()=>{
+  const {card}=await editableCard();card._hass.callService=()=>assert.fail('discard is local');
+  card._beginEditing();card._paintZone(20,true);card._leave('monitoring');
+  assert.equal(card._mode,'zones');assert.equal(card._guard.mode,'monitoring');assert.ok(card._edit);
+  card._finishEdit(card._guard.mode);assert.equal(card._mode,'monitoring');assert.equal(card._edit,null);assert.equal(card._editing,true);
+  card._leave();assert.equal(card._editing,false);
+});
+
+test('save waits for actual sensor echo, not successful service response',async()=>{
+  const {card}=await editableCard();card._beginEditing();card._paintZone(20,true);
+  let payload;card._hass.callService=async(d,s,p)=>{payload=p;};
+  await card._save();assert.ok(card._awaiting);assert.ok(card._edit);assert.equal(card._editing,true);
+  card._checkState();assert.ok(card._awaiting);
+  const attrs=card._hass.states[card._config.entity].attributes;attrs.zones=payload.zones;attrs.pending=true;
+  card._checkState();assert.ok(card._awaiting);
+  attrs.pending=false;card._checkState();assert.equal(card._editing,false);assert.equal(card._edit,null);
+  card.disconnectedCallback();
+});
+
+test('sensor failure and timeout keep drafts; external writes block overwrites',async()=>{
+  const {card,error}=await editableCard();card._beginEditing();card._paintZone(20,true);
+  card._hass.callService=async()=>{};await card._save();
+  const attrs=card._hass.states[card._config.entity].attributes;attrs.error='Sensor rejected';card._checkState();
+  assert.equal(card._awaiting,null);assert.ok(card._edit);assert.equal(error.textContent,'Sensor rejected');
+  attrs.error=null;await card._save();card._awaiting.deadline=0;card._checkState();assert.ok(card._edit);assert.match(error.textContent,/Keine Sensorbestätigung/);
+  attrs.zones[0].cells.push([3,3]);card._checkState();assert.equal(card._conflict,true);
+  card._hass.callService=()=>assert.fail('conflict must block service');await card._save();card.disconnectedCallback();
+});
+
+test('selected track disappears on missing target, disconnect or tracking off',async()=>{
+  const {card}=await editableCard();const state=card._hass.states[card._targetsEntity()];
+  state.attributes.targets=[{id:7}];card._forget=7;card._checkState();assert.equal(card._forget,7);
+  state.attributes.targets=[];card._checkState();assert.equal(card._forget,null);
+  state.attributes.targets=[{id:7}];state.attributes.live_tracking=false;card._forget=7;card._checkState();assert.equal(card._forget,null);
+  state.attributes.live_tracking=true;card._forget=7;card._hass.states[card._config.entity].state='unavailable';card._checkState();assert.equal(card._forget,null);
+});
+
+test('names use central attributes and saving preserves draft on failure',async()=>{
+  const {card}=await editableCard();card._hass.states[card._config.entity].attributes.zone_names={'1':'Sofa <script>'};
+  assert.equal(card._zoneName(1),'Sofa <script>');assert.equal(card._zoneName(2),'Zone 2');
+  card._beginEditing();card._nameDrafts[1]='Couchtisch';card._hass.callService=async()=>{throw new Error('storage failed');};
+  assert.equal(await card._saveName(1,'Couchtisch'),false);assert.equal(card._nameDrafts[1],'Couchtisch');
+  let data;card._hass.callService=async(d,s,p)=>{assert.equal(s,'set_zone_name');data=p;};
+  assert.equal(await card._saveName(1,'  Sofa  '),true);assert.equal(data.name,'Sofa');assert.equal(data.zone_id,1);assert.equal(card._nameDrafts[1],undefined);
+});
+
+test('region draft waits for matching confirmed region and blocks target removal during editing',async()=>{
+  const {card}=await editableCard();card._mode='monitoring';card._beginEditing();card._paintRegion(5,true);
+  let data;card._hass.callService=async(d,s,p)=>{data=p;};await card._saveRegion();assert.ok(card._regionEdit);
+  assert.equal(await card._runService('remove_target',{target_id:7}),false);
+  card._hass.states[card._regionsEntity()].attributes.regions={monitoring:data.cells};card._checkState();
+  assert.equal(card._regionEdit,null);assert.equal(card._editing,false);card.disconnectedCallback();
+});
+
+test('other cards pending writes lock edit entry and writes; name conflicts retain draft',async()=>{
+  const {card}=await editableCard();const attrs=card._hass.states[card._config.entity].attributes;
+  attrs.pending=true;card._beginEditing();assert.equal(card._editing,false);
+  attrs.pending=false;attrs.zone_names={'1':'Sofa'};card._beginEditing();card._nameDrafts[1]='My sofa';
+  attrs.zone_names={'1':'Other card name'};card._checkState();assert.equal(card._conflict,true);assert.equal(card._nameDrafts[1],'My sofa');
+  card._hass.callService=()=>assert.fail('must not overwrite another card');assert.equal(await card._saveName(1,'My sofa'),false);
+  card._finishEdit();card._beginEditing();attrs.pending=true;card._paintZone(5,true);assert.equal(card._edit,null);
 });

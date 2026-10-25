@@ -5,7 +5,7 @@ import sys
 import types
 import unittest
 from pathlib import Path
-from unittest.mock import AsyncMock, Mock
+from unittest.mock import AsyncMock, Mock, patch
 from datetime import datetime, timezone
 
 
@@ -35,6 +35,102 @@ c = importlib.import_module('fp400_test.const')
 
 
 class NodeUpdates(unittest.IsolatedAsyncioTestCase):
+    async def test_position_received_changes_only_on_real_location_frames(self):
+        obj = self.node()
+        frame = types.SimpleNamespace(cluster_id=c.CLUSTER_LOCATION, event_id=c.EVENT_LOCATION_INFO,
+                                      endpoint_id=c.SENSOR_ENDPOINT, data={'targets':[{'targetId':7,'x':120,'y':300}]})
+        first = datetime(2026, 10, 25, 12, 0, tzinfo=timezone.utc)
+        with patch.object(n.dt_util, 'utcnow', return_value=first):
+            obj._handle_node_event(frame)
+        self.assertEqual(obj.position_received, first)
+        self.assertEqual(obj.targets[0].target_id, 7)
+        for payload in ({}, {'targets':None}, {'targets':[{}]}, {'targets':['invalid']}):
+            frame.data = payload
+            obj._handle_node_event(frame)
+            self.assertEqual(obj.position_received, first)
+            self.assertEqual(len(obj.targets), 1)
+        # Local remove/clear may update the legacy 'updated' but never fake a report.
+        obj._command = AsyncMock(return_value={'status':0})
+        await obj.async_remove_target(7)
+        self.assertEqual(obj.position_received, first)
+        obj.targets = [types.SimpleNamespace(target_id=7)]
+        obj._clear_targets()
+        self.assertEqual(obj.position_received, first)
+        frame.endpoint_id = c.SENSOR_ENDPOINT + 1
+        frame.data = {'targets':[]}
+        obj._handle_node_event(frame)
+        self.assertEqual(obj.position_received, first)
+        frame.endpoint_id = c.SENSOR_ENDPOINT
+        second = datetime(2026, 10, 25, 12, 1, tzinfo=timezone.utc)
+        with patch.object(n.dt_util, 'utcnow', return_value=second):
+            obj._handle_node_event(frame)
+        self.assertEqual(obj.position_received, second)
+
+    async def test_failed_verify_recovers_name_writes_only_after_fresh_successful_poll(self):
+        module('homeassistant.helpers.storage', Store=lambda *args: types.SimpleNamespace(async_save=AsyncMock()))
+        module('homeassistant.helpers.entity_registry')
+        names_module = importlib.import_module('fp400_test.zone_names')
+        obj = self.node()
+        obj.zones = [n.Zone(zone_id=1, cells=[[1, 2]])]
+        store = names_module.ZoneNames(obj.hass)
+        store.device_id = lambda fp: 'radar-device'
+        # No matching original Matter identifier in this transport fixture: no import.
+        obj.zone_names_store = store
+        obj.async_read_zones = AsyncMock(return_value=None)
+        obj.async_read_regions = AsyncMock()
+        with patch.object(n.asyncio, 'sleep', new=AsyncMock()), self.assertLogs(c.LOGGER, level='WARNING'):
+            await obj._async_verify_zones(obj.zones)
+        self.assertIsNotNone(obj.zones_error)
+        with self.assertRaises(RuntimeError):
+            await store.async_set(obj, 1, 'Sofa')
+
+        # One failed poll preserves the diagnostic and name-write lock.
+        with patch.object(n.asyncio, 'sleep', new=AsyncMock(side_effect=[None, asyncio.CancelledError()])):
+            with self.assertRaises(asyncio.CancelledError):
+                await obj._zone_poll_loop()
+        self.assertIsNotNone(obj.zones_error)
+
+        # A successful read with the same zones clears the old error and publishes it.
+        obj.async_read_zones = AsyncMock(return_value=list(obj.zones))
+        obj._notify.reset_mock()
+        with patch.object(n.asyncio, 'sleep', new=AsyncMock(side_effect=[None, asyncio.CancelledError()])):
+            with self.assertRaises(asyncio.CancelledError):
+                await obj._zone_poll_loop()
+        self.assertIsNone(obj.zones_error)
+        obj._notify.assert_called()
+        await store.async_set(obj, 1, 'Sofa')
+        self.assertEqual(store.for_node(obj), {'1': 'Sofa'})
+
+    async def test_missing_or_null_zone_read_is_not_an_empty_confirmation(self):
+        obj = self.node()
+        path = f'1/{c.CLUSTER_CONFIG}/{c.ATTR_ZONES}'
+        for response in ({}, {path: None}, {path: 'invalid'}):
+            obj.matter_client.read_attribute = AsyncMock(return_value=response)
+            self.assertIsNone(await obj.async_read_zones())
+        obj.matter_client.read_attribute = AsyncMock(return_value={path: []})
+        self.assertEqual(await obj.async_read_zones(), [])
+
+    async def test_initial_zone_read_confirms_names_only_after_success(self):
+        obj = self.node()
+        obj.zone_names_store = types.SimpleNamespace(async_confirm=AsyncMock())
+        obj.async_read_regions = AsyncMock()
+        obj.async_read_zones = AsyncMock(return_value=None)
+        await obj._async_initial_zones()
+        obj.zone_names_store.async_confirm.assert_not_awaited()
+        obj.async_read_zones = AsyncMock(return_value=[])
+        await obj._async_initial_zones()
+        obj.zone_names_store.async_confirm.assert_awaited_once_with(obj, [])
+
+    async def test_names_storage_failure_does_not_stop_sensor_reads(self):
+        obj = self.node()
+        obj.zone_names_store = types.SimpleNamespace(async_confirm=AsyncMock(side_effect=OSError("full")))
+        obj.async_read_zones = AsyncMock(return_value=[])
+        obj.async_read_regions = AsyncMock()
+        with self.assertLogs(c.LOGGER, level="ERROR"):
+            await obj._async_initial_zones()
+        obj.async_read_regions.assert_awaited_once()
+        obj._notify.assert_called()
+
     def node(self):
         cache = {'1/%s/%s' % (c.CLUSTER_RADAR, c.ATTR_HUMAN_COUNT): 1}
         transport = Mock()

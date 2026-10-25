@@ -1,3 +1,16 @@
+# 1.3.0 – 25.10.2026
+
+- Karte startet als Live-Ansicht; Zonen und Bereiche erst nach „Bereiche bearbeiten“ verändern.
+- Zentrale Zonennamen in HA; pro Speichern optional auch den Anzeigenamen der eindeutig zugeordneten HA-Entität ändern, mit Vorschau und Konfliktschutz. IDs und Matter-Kopplungen bleiben erhalten.
+- Eindeutig zugeordnete, ausdrücklich vergebene HA-Zonennamen übernehmen; bewusst geleerte Namen nicht erneut importieren.
+- Deutliche Auswahl einzelner Erkennungen mit Markierung und Bestätigung; veraltete Auswahl wird aufgehoben.
+- Schutz ungespeicherter Änderungen, Rückbestätigung beim Speichern und deutsche/englische Bedienung.
+- Kartendrehung von −180° bis 180° mit unverändertem Sensorraster und aufrechten Beschriftungen.
+- Ausgewählte aktuelle Erkennung als Störflächenentwurf vormerken; Übertragung erst nach ausdrücklichem Speichern.
+- Aktualität anhand echter Positionsmeldungen anzeigen; fehlende Meldungen nicht als leeren Raum deuten.
+- Gerätezuordnung über die unterstützte Registry-Schnittstelle und den passenden Matter-Konfigurationseintrag.
+- App 0.2.0 heißt FP400 Controller, trennt Übersicht und Einrichtung und verhindert ein Downgrade der Integration. Prüfgrenzen und tatsächliche Testergebnisse stehen im Prüfstand.
+
 # 1.2.1 – 24.10.2026
 
 - App 0.1.7 mit geprüftem Export/Import der FP400-Kopplungsdaten für den Wechsel von einer lokalen zur Repository-App.
