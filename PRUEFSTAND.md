@@ -1,6 +1,6 @@
 # Prüfstand – Integration 1.3.0 / FP400 Controller 0.2.0
 
-Stand: 25.10.2026. Erweiterter Integrationsstand lokal gebaut und auf HA geprüft; Veröffentlichung vorbereitet. Die neu ergänzten Funktionen und der frühere Entwicklungsstand sind getrennt aufgeführt. Die laufende Controller-App bleibt bei 0.1.7; App 0.2.0 ist noch nicht live installiert.
+Stand: 25.10.2026. Erweiterter Integrationsstand und FP400 Controller 0.2.0 lokal sowie auf HA geprüft. Die neu ergänzten Funktionen und der frühere Entwicklungsstand sind getrennt aufgeführt.
 
 ## Ergänzende Prüfung: Controller, Anzeigenamen, Drehung und Aktualität
 
@@ -14,7 +14,15 @@ Stand: 25.10.2026. Erweiterter Integrationsstand lokal gebaut und auf HA geprüf
 
 **Live-Prüfung des erweiterten Integrationsstands:** Vorherige Dateien separat gesichert, Paket-Prüfsumme auf HA bestätigt, installierte Karte mit der lokalen SHA-256 verglichen. HA-Konfigurationsprüfung erfolgreich; nach einmaligem Neustart neue Karte und Positionszeitstempel sichtbar. Zone 1 und deren eindeutig zugeordneter HA-Anzeigename vorübergehend gemeinsam umbenannt; die Rückvorschau bestätigte den geänderten Registry-Namen. Beide anschließend exakt zurückgesetzt. Der HA-MCP bestätigte danach identische vollständige Registereinträge aller vier Belegungsentitäten, dieselben 16 Matter-Geräte-IDs und unveränderte Zellen, Typen und Aktivierungsflags sämtlicher Zonen und Bereiche. Keine Sensorflächen geschrieben und keine Erkennung verworfen. Im abgefragten neuen Startprotokoll nur die allgemeine Warnung für eine Custom Integration, keine bisherige Registry-Deprecation und kein FP400-Fehler.
 
-GitHub-Prüfungen des vorbereiteten Quellstands: Pakettests, HACS und Hassfest erfolgreich ([Lauf 40168850671](https://github.com/ckundel2008/fp400-card/actions/runs/40168850671)). **Noch offen:** neue echte Bilder, Live-Abnahme der App 0.2.0 und Veröffentlichung. Ein aktueller Störflächenentwurf konnte mangels aktueller Personenerkennung nicht erneut am echten Sensor vorbereitet werden; die oben genannten simulierten Browser- und Regressionstests sind dafür separat ausgewiesen. Die historischen Sitz-/Gangtests werden nicht als Ersatz gezählt.
+GitHub-Prüfungen des vorbereiteten Quellstands: Pakettests, HACS und Hassfest erfolgreich ([Lauf 40168850671](https://github.com/ckundel2008/fp400-card/actions/runs/40168850671)). Ein aktueller Störflächenentwurf konnte mangels aktueller Personenerkennung nicht erneut am echten Sensor vorbereitet werden; die oben genannten simulierten Browser- und Regressionstests sind dafür separat ausgewiesen. Die historischen Sitz-/Gangtests werden nicht als Ersatz gezählt. Neue echte Bildschirmansichten wurden angesehen; zusätzliche veröffentlichbare Bilddateien konnten wegen Fehlern der macOS-Aufnahmefunktion nicht erstellt werden. Die vorhandenen echten Sitztestbilder bleiben unverändert und entsprechend beschriftet.
+
+### Live-Update des Controllers 0.2.0
+
+- Separate Sicherung der vorhandenen Controller-App vor dem Update erstellt und in der Sicherungsübersicht bestätigt. Keine Sicherung wiederhergestellt und keine App deinstalliert.
+- Das bestehende GitHub-App-Repository neu eingelesen: angebotene Version wechselte von 0.1.7 auf 0.2.0. Ausschließlich die vorhandene FP400-App aktualisiert.
+- Supervisor bestätigt **FP400 Controller 0.2.0, gestartet**. Die echte Ingress-Oberfläche öffnet direkt die Übersicht und zeigt **Controller bereit**, **Kopplung gespeichert**, **Sensor online**, App-Version 0.2.0 und installierte/mitgelieferte Integration 1.3.0. Die Anzeige bestätigt übereinstimmende Integrationsdateien. Der gesonderte Einrichtungstab ist sichtbar; die Navigation wurde im simulierten Browser geprüft.
+- Nach dem App-Neustart ist eine neue echte Positionsmeldung eingegangen. Der vollständige Vergleich sämtlicher Zonen- und Bereichszellen sowie aller 16 Matter-Geräte-IDs ist erneut identisch. Der unveränderte Haupt-Matter-Server 9.2.0 läuft weiter.
+- Die abgefragten App-Fehlerzeilen betreffen ältere Zeitüberschreitungen vom Vortag; im abgefragten Fenster kein neuer Fehler nach diesem Update. Kein neues Koppeln, keine Änderungen an der Haupt-Fabric und kein künstlicher Personentest.
 
 ## Neue Bedienung und Namensspeicherung
 
